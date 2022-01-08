@@ -1,4 +1,4 @@
-package manager;
+package manager.player;
 
 public class PlayerManager {
 }

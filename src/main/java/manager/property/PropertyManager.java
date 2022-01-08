@@ -1,4 +1,4 @@
-package manager;
+package manager.property;
 
 public class PropertyManager {
 }

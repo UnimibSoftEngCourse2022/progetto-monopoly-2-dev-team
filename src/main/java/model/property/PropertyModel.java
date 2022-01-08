@@ -1,4 +1,4 @@
-package model;
+package model.property;
 
 public class PropertyModel {
 }

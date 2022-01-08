@@ -1,2 +1,4 @@
-package manager;public class PriceManager {
+package manager;
+
+public class PriceManager {
 }
