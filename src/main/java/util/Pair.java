@@ -1,10 +1,10 @@
 package util;
 
-public class Pair<T> {
+public class Pair<T, R> {
     private final T first;
-    private final T second;
+    private final R second;
 
-    public Pair(T first, T second) {
+    public Pair(T first, R second) {
         this.first = first;
         this.second = second;
     }
@@ -13,7 +13,7 @@ public class Pair<T> {
         return first;
     }
 
-    public T getSecond() {
+    public R getSecond() {
         return second;
     }
 
