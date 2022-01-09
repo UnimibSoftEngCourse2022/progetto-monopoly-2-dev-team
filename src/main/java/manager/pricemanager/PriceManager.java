@@ -8,7 +8,7 @@ public abstract class PriceManager {
     protected final PropertyOwnerMapper propertyOwnerMapper;
     protected final PropertyCategoryMapper propertyCategoryMapper;
 
-    public PriceManager(PropertyOwnerMapper propertyOwnerMapper, PropertyCategoryMapper propertyCategoryMapper) {
+    protected PriceManager(PropertyOwnerMapper propertyOwnerMapper, PropertyCategoryMapper propertyCategoryMapper) {
         this.propertyOwnerMapper = propertyOwnerMapper;
         this.propertyCategoryMapper = propertyCategoryMapper;
     }

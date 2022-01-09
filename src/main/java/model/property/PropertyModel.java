@@ -15,9 +15,6 @@ public class PropertyModel {
     private int mortgageValue;
     private int[] rentValue;
 
-    public PropertyModel() {
-    }
-
     public String getName() {
         return name;
     }
