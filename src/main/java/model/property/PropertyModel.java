@@ -58,15 +58,19 @@ public class PropertyModel {
         return rentValue[0];
     }
 
+    public int getHouseRent() {
+        return getHouseRent(houseNumber);
+    }
+
     public int getHouseRent(int houseNumber) {
-        if(!isImprovable() && (houseNumber < 0 || houseNumber > 4)) {
+        if (!isImprovable() || houseNumber < 0 || houseNumber > 4) {
             return 0;
         }
         return rentValue[houseNumber];
     }
 
     public int getHotelRent() {
-        if(!isImprovable()) {
+        if (!isImprovable()) {
             return 0;
         }
         return rentValue[5];
