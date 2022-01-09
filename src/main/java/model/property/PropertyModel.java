@@ -18,27 +18,6 @@ public class PropertyModel {
     public PropertyModel() {
     }
 
-    public PropertyModel(String name,
-                         PropertyCategory category,
-                         int price,
-                         int houseNumber,
-                         int hotelNumber,
-                         int housePrice,
-                         int hotelPrice,
-                         int mortgageValue,
-                         int[] rentValue
-    ) {
-        this.name = name;
-        this.category = category;
-        this.price = price;
-        this.houseNumber = houseNumber;
-        this.hotelNumber = hotelNumber;
-        this.housePrice = housePrice;
-        this.hotelPrice = hotelPrice;
-        this.mortgageValue = mortgageValue;
-        this.rentValue = rentValue;
-    }
-
     public String getName() {
         return name;
     }

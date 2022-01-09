@@ -34,12 +34,12 @@ public class PropertyMapperTest {
         List<PropertyModel> categoryProperties = propertyMapper.getCategoryProperties(PropertyCategory.BROWN);
 
         Assert.assertNotNull(categoryProperties);
-
         Assert.assertEquals(2, categoryProperties.size());
 
-        Assert.assertEquals(PropertyCategory.BROWN, categoryProperties.get(0).getCategory());
+        PropertyModel model = categoryProperties.get(0);
 
-        Assert.assertTrue(categoryProperties.get(0).getHouseRent(3) < categoryProperties.get(0).getHouseRent(4));
+        Assert.assertEquals(PropertyCategory.BROWN, model.getCategory());
+        Assert.assertTrue(model.getHouseRent(3) < model.getHouseRent(4));
     }
 
 }
