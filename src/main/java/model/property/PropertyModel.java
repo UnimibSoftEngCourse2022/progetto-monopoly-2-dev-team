@@ -1,10 +1,14 @@
 package model.property;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class PropertyModel {
     private String name;
     private PropertyCategory category;
     private int price;
+    @JsonIgnore
     private int houseNumber = 0;
+    @JsonIgnore
     private int hotelNumber = 0;
     private int housePrice = 0;
     private int hotelPrice = 0;
@@ -67,16 +71,26 @@ public class PropertyModel {
         return mortgageValue;
     }
 
+    public int[] getRentValue() {
+        return rentValue;
+    }
+
     public int getBaseRent() {
         return rentValue[0];
     }
 
-    public int getRent() {
+    public int getHouseRent(int houseNumber) {
+        if(!isImprovable() && (houseNumber < 0 || houseNumber > 4)) {
+            return 0;
+        }
         return rentValue[houseNumber];
     }
 
-    public int getRent(int houseNumber) {
-        return rentValue[houseNumber];
+    public int getHotelRent() {
+        if(!isImprovable()) {
+            return 0;
+        }
+        return rentValue[5];
     }
 
     public boolean isImprovable() {
@@ -90,4 +104,6 @@ public class PropertyModel {
     public void setHotelNumber(int hotelNumber) {
         this.hotelNumber = hotelNumber;
     }
+
+
 }

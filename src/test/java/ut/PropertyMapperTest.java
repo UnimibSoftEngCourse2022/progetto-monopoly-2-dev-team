@@ -30,16 +30,14 @@ public class PropertyMapperTest {
     }
 
     @Test
-    public void getPlayerPropertyTest() {
+    public void categoryMapperTest() {
         List<PropertyModel> categoryProperties = propertyMapper.getCategoryProperties(PropertyCategory.BROWN);
 
         Assert.assertNotNull(categoryProperties);
 
-        Assert.assertEquals(categoryProperties.size(), 1);
+        Assert.assertEquals(2, categoryProperties.size());
 
-        Assert.assertEquals(categoryProperties.get(0).getHotelNumber(), 0);
-
-        Assert.assertEquals(categoryProperties.get(0).getCategory(), PropertyCategory.BROWN);
+        Assert.assertEquals(PropertyCategory.BROWN, categoryProperties.get(0).getCategory());
     }
 
 }
