@@ -38,6 +38,8 @@ public class PropertyMapperTest {
         Assert.assertEquals(2, categoryProperties.size());
 
         Assert.assertEquals(PropertyCategory.BROWN, categoryProperties.get(0).getCategory());
+
+        Assert.assertTrue(categoryProperties.get(0).getHouseRent(3) < categoryProperties.get(0).getHouseRent(4));
     }
 
 }
