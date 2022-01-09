@@ -8,10 +8,11 @@ public class PropertyModel {
     private int hotelNumber = 0;
     private int housePrice = 0;
     private int hotelPrice = 0;
-    private int mortgagePrice;
-    private int baseRent;
-    private int[] houseRent;
-    private int hotelRent;
+    private int mortgageValue;
+    private int[] rentValue;
+
+    public PropertyModel() {
+    }
 
     public PropertyModel(String name,
                          PropertyCategory category,
@@ -20,10 +21,9 @@ public class PropertyModel {
                          int hotelNumber,
                          int housePrice,
                          int hotelPrice,
-                         int mortgagePrice,
-                         int baseRent,
-                         int[] houseRent,
-                         int hotelRent) {
+                         int mortgageValue,
+                         int[] rentValue
+    ) {
         this.name = name;
         this.category = category;
         this.price = price;
@@ -31,10 +31,8 @@ public class PropertyModel {
         this.hotelNumber = hotelNumber;
         this.housePrice = housePrice;
         this.hotelPrice = hotelPrice;
-        this.mortgagePrice = mortgagePrice;
-        this.baseRent = baseRent;
-        this.houseRent = houseRent;
-        this.hotelRent = hotelRent;
+        this.mortgageValue = mortgageValue;
+        this.rentValue = rentValue;
     }
 
     public String getName() {
@@ -65,27 +63,24 @@ public class PropertyModel {
         return hotelPrice;
     }
 
-    public int getMortgagePrice() {
-        return mortgagePrice;
+    public int getMortgageValue() {
+        return mortgageValue;
     }
 
     public int getBaseRent() {
-        return baseRent;
+        return rentValue[0];
     }
 
-    public int getHouseRent() {
-        return houseRent[houseNumber];
+    public int getRent() {
+        return rentValue[houseNumber];
     }
 
-    public int getHouseRent(int houseNumber) {
-        if(houseNumber < 0 || houseNumber > 4) {
-            return 0;
-        }
-        return houseRent[houseNumber];
+    public int getRent(int houseNumber) {
+        return rentValue[houseNumber];
     }
 
-    public int getHotelRent() {
-        return hotelRent;
+    public boolean isImprovable() {
+        return !category.equals(PropertyCategory.RAILROAD) && !category.equals(PropertyCategory.UTILITY);
     }
 
     public void setHouseNumber(int houseNumber) {

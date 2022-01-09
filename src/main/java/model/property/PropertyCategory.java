@@ -2,13 +2,13 @@ package model.property;
 
 public enum PropertyCategory {
     BROWN,
-    CELESTE,
+    LIGHTBLUE,
     PINK,
     ORANGE,
     RED,
     YELLOW,
     GREEN,
-    BLUE,
+    DARKBLUE,
     RAILROAD,
     UTILITY
 }
