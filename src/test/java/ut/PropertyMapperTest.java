@@ -2,7 +2,9 @@ package ut;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import model.PropertyCategoryMapper;
 import model.PropertyMapper;
+import model.PropertyOwnerMapper;
 import model.property.PropertyCategory;
 import model.property.PropertyModel;
 import org.junit.Assert;
@@ -15,23 +17,12 @@ import java.util.List;
 
 public class PropertyMapperTest {
 
-    private static PropertyMapper propertyMapper;
-    private static List<PropertyModel> properties;
-
-    @BeforeClass
-    public static void init() throws Exception {
-        ObjectMapper jacksonMapper = new ObjectMapper();
-        URL jsonURL = PropertyMapperTest.class.getClassLoader().getResource("properties.json");
-        if (jsonURL != null) {
-            properties = jacksonMapper.readValue(new File(jsonURL.toURI()), new TypeReference<>() {
-            });
-            propertyMapper = new PropertyMapper(properties);
-        }
-    }
+    private static PropertyCategoryMapper propertyCategoryMapper = TestUtils.getPropertyCategoryMapper();
+    private static PropertyOwnerMapper propertyOwnerMapper = TestUtils.getPropertyOwnerMapper();
 
     @Test
     public void categoryMapperTest() {
-        List<PropertyModel> categoryProperties = propertyMapper.getCategoryProperties(PropertyCategory.BROWN);
+        List<PropertyModel> categoryProperties = propertyCategoryMapper.getCategoryProperties(PropertyCategory.BROWN);
 
         Assert.assertNotNull(categoryProperties);
         Assert.assertEquals(2, categoryProperties.size());
