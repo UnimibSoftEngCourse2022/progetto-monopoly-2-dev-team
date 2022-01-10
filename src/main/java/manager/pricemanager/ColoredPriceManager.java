@@ -48,4 +48,12 @@ public class ColoredPriceManager extends PriceManager {
         }
         return rent;
     }
+
+    public int getHousePrice(PropertyModel property) {
+        return property.getHousePrice();
+    }
+
+    public int getHotelPrice(PropertyModel property) {
+        return property.getHotelPrice();
+    }
 }
