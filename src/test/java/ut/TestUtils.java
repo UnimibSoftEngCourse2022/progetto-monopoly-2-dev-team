@@ -21,7 +21,7 @@ public class TestUtils {
 
     private static void init() {
         ObjectMapper jacksonMapper = new ObjectMapper();
-        URL jsonURL = PropertyMapperTest.class.getClassLoader().getResource("properties.json");
+        URL jsonURL = PropertyMapperTest.class.getClassLoader().getResource("properties-test.json");
         if (jsonURL != null) {
             try {
                 properties = jacksonMapper.readValue(new File(jsonURL.toURI()), new TypeReference<>() {
