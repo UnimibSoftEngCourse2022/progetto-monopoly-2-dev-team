@@ -2,21 +2,22 @@ package ut;
 
 import manager.pricemanager.ColoredPriceManager;
 import manager.pricemanager.PriceManager;
+import manager.pricemanager.RailroadPriceManager;
+import manager.pricemanager.UtilityPriceManager;
 import model.PropertyCategoryMapper;
 import model.PropertyOwnerMapper;
 import model.player.PlayerModel;
+import model.property.PropertyCategory;
 import model.property.PropertyModel;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.List;
 
 public class PriceManagerTest {
     private static PropertyCategoryMapper propertyCategoryMapper = TestUtils.getPropertyCategoryMapper();
     private static PropertyOwnerMapper propertyOwnerMapper = TestUtils.getPropertyOwnerMapper();
 
     @Test
-    public void coloredPriceManagerTest() {
+    public void coloredPriceManagerNoRandomizationTest() {
         PriceManager priceManager = new ColoredPriceManager(propertyOwnerMapper, propertyCategoryMapper);
         PropertyModel property = TestUtils.getProperties().get(0);
         Assert.assertEquals(60, priceManager.getPrice(property));
@@ -30,5 +31,37 @@ public class PriceManagerTest {
         Assert.assertEquals(30, priceManager.getRent(property));
         property.setHotelNumber(1);
         Assert.assertEquals(250, priceManager.getRent(property));
+    }
+
+    @Test
+    public void railroadPriceManagerNoRandomizationTest() {
+        PriceManager priceManager = new RailroadPriceManager(propertyOwnerMapper, propertyCategoryMapper);
+        PropertyModel property = TestUtils
+                .getPropertyCategoryMapper()
+                .getCategoryProperties(PropertyCategory.RAILROAD)
+                .get(0);
+        Assert.assertEquals(200, priceManager.getPrice(property));
+        Assert.assertEquals(25, priceManager.getRent(property));
+        PlayerModel playerModel = new PlayerModel("0", "name", 1000);
+        for (PropertyModel categoryProperty : propertyCategoryMapper.getCategoryProperties(property.getCategory())) {
+            propertyOwnerMapper.setOwner(categoryProperty, playerModel);
+        }
+        Assert.assertEquals(200 , priceManager.getRent(property));
+    }
+
+    @Test
+    public void UtilityPriceManagerNoRandomizationTest() {
+        PriceManager priceManager = new UtilityPriceManager(propertyOwnerMapper, propertyCategoryMapper);
+        PropertyModel property = TestUtils
+                .getPropertyCategoryMapper()
+                .getCategoryProperties(PropertyCategory.UTILITY)
+                .get(0);
+        Assert.assertEquals(150, priceManager.getPrice(property));
+        Assert.assertEquals(4 * 6, priceManager.getRent(property));
+        PlayerModel playerModel = new PlayerModel("0", "name", 1000);
+        for (PropertyModel categoryProperty : propertyCategoryMapper.getCategoryProperties(property.getCategory())) {
+            propertyOwnerMapper.setOwner(categoryProperty, playerModel);
+        }
+        Assert.assertEquals(10 * 6 , priceManager.getRent(property));
     }
 }

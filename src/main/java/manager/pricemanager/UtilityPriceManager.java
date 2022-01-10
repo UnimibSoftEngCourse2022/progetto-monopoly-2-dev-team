@@ -10,7 +10,7 @@ public class UtilityPriceManager extends PriceManager {
 
     //TODO Add randomization logic
 
-    protected UtilityPriceManager(PropertyOwnerMapper propertyOwnerMapper, PropertyCategoryMapper propertyCategoryMapper) {
+    public UtilityPriceManager(PropertyOwnerMapper propertyOwnerMapper, PropertyCategoryMapper propertyCategoryMapper) {
         super(propertyOwnerMapper, propertyCategoryMapper);
     }
 
@@ -26,7 +26,7 @@ public class UtilityPriceManager extends PriceManager {
 
     private int getRentMultiplier(PropertyModel property) {
         PlayerModel player = propertyOwnerMapper.getOwner(property);
-        int ownedUtilities = 0;
+        int ownedUtilities = 1;
         if (player != null) {
             ownedUtilities = (int) propertyOwnerMapper.getPlayerProperties(player)
                     .stream()

@@ -26,7 +26,7 @@ public class RailroadPriceManager extends PriceManager {
 
     private int getCleanRent(PropertyModel property) {
         PlayerModel player = propertyOwnerMapper.getOwner(property);
-        int ownedRailroads = 0;
+        int ownedRailroads = 1;
         if (player != null) {
             ownedRailroads = (int) propertyOwnerMapper.getPlayerProperties(player)
                     .stream()
