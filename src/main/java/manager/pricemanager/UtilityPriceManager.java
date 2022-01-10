@@ -1,17 +1,21 @@
 package manager.pricemanager;
 
+import controller.DiceRoller;
 import model.PropertyCategoryMapper;
 import model.PropertyOwnerMapper;
 import model.player.PlayerModel;
 import model.property.PropertyCategory;
 import model.property.PropertyModel;
+import util.Pair;
 
 public class UtilityPriceManager extends PriceManager {
 
     //TODO Add randomization logic
+    private DiceRoller diceRoller;
 
-    public UtilityPriceManager(PropertyOwnerMapper propertyOwnerMapper, PropertyCategoryMapper propertyCategoryMapper) {
+    public UtilityPriceManager(PropertyOwnerMapper propertyOwnerMapper, PropertyCategoryMapper propertyCategoryMapper, DiceRoller diceRoller) {
         super(propertyOwnerMapper, propertyCategoryMapper);
+        this.diceRoller = diceRoller;
     }
 
     @Override
@@ -37,6 +41,7 @@ public class UtilityPriceManager extends PriceManager {
     }
 
     private int getDiceRollValue() {
-        return 6; //TODO implement dice roll
+        Pair<Integer, Integer> roll = diceRoller.rollDice();
+        return roll.getFirst() + roll.getSecond();
     }
 }

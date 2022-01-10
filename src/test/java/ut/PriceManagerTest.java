@@ -1,5 +1,6 @@
 package ut;
 
+import controller.DiceRoller;
 import manager.pricemanager.ColoredPriceManager;
 import manager.pricemanager.PriceManager;
 import manager.pricemanager.RailroadPriceManager;
@@ -11,6 +12,7 @@ import model.property.PropertyCategory;
 import model.property.PropertyModel;
 import org.junit.Assert;
 import org.junit.Test;
+import util.Pair;
 
 public class PriceManagerTest {
     private static PropertyCategoryMapper propertyCategoryMapper = TestUtils.getPropertyCategoryMapper();
@@ -46,22 +48,26 @@ public class PriceManagerTest {
         for (PropertyModel categoryProperty : propertyCategoryMapper.getCategoryProperties(property.getCategory())) {
             propertyOwnerMapper.setOwner(categoryProperty, playerModel);
         }
-        Assert.assertEquals(200 , priceManager.getRent(property));
+        Assert.assertEquals(200, priceManager.getRent(property));
     }
 
     @Test
     public void UtilityPriceManagerNoRandomizationTest() {
-        PriceManager priceManager = new UtilityPriceManager(propertyOwnerMapper, propertyCategoryMapper);
+        PriceManager priceManager = new UtilityPriceManager(
+                propertyOwnerMapper,
+                propertyCategoryMapper,
+                () -> new Pair<>(5, 3)
+        );
         PropertyModel property = TestUtils
                 .getPropertyCategoryMapper()
                 .getCategoryProperties(PropertyCategory.UTILITY)
                 .get(0);
         Assert.assertEquals(150, priceManager.getPrice(property));
-        Assert.assertEquals(4 * 6, priceManager.getRent(property));
+        Assert.assertEquals(4 * (5 + 3), priceManager.getRent(property));
         PlayerModel playerModel = new PlayerModel("0", "name", 1000);
         for (PropertyModel categoryProperty : propertyCategoryMapper.getCategoryProperties(property.getCategory())) {
             propertyOwnerMapper.setOwner(categoryProperty, playerModel);
         }
-        Assert.assertEquals(10 * 6 , priceManager.getRent(property));
+        Assert.assertEquals(10 * (5 + 3), priceManager.getRent(property));
     }
 }
