@@ -30,16 +30,22 @@ public class PropertyMapper implements PropertyOwnerMapper, PropertyCategoryMapp
     }
 
     public void setOwner(final PropertyModel property, final PlayerModel player) {
-        playerProperties.computeIfAbsent(player, k -> new ArrayList<>()).add(property);
-        propertyOwner.put(property, player);
+        if (player != null) {
+            playerProperties.computeIfAbsent(player, k -> new ArrayList<>()).add(property);
+            propertyOwner.put(property, player);
+        } else {
+            propertyOwner.remove(property);
+        }
     }
 
     public void removeOwner(final PropertyModel property) {
         PlayerModel player = propertyOwner.remove(property);
-        playerProperties.computeIfPresent(player, (playerModel, propertyModels) -> {
-            propertyModels.remove(property);
-            return propertyModels;
-        });
+        if (player != null) {
+            playerProperties.computeIfPresent(player, (playerModel, propertyModels) -> {
+                propertyModels.remove(property);
+                return propertyModels;
+            });
+        }
     }
 
     public List<PropertyModel> getCategoryProperties(PropertyCategory category) {
