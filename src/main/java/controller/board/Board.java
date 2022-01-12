@@ -1,5 +1,6 @@
 package controller.board;
 
+import controller.DiceRoller;
 import controller.board.dispenser.*;
 import controller.board.space.Space;
 import model.property.PropertyModel;
@@ -29,4 +30,12 @@ public class Board {
     public List<Space> getGameboard() {
         return gameboard;
     }
+
+    public Space getSpace(int position) {
+        if (position > 0 && position < gameboard.size()) {
+            return gameboard.get(position);
+        }
+        return null;
+    }
+
 }
