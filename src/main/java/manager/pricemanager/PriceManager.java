@@ -13,6 +13,8 @@ public abstract class PriceManager {
         this.propertyCategoryMapper = propertyCategoryMapper;
     }
 
-    public abstract int getPrice(PropertyModel property);
+    public int getPrice(PropertyModel property) {
+        return property.getPrice();
+    }
     public abstract int getRent(PropertyModel property);
 }

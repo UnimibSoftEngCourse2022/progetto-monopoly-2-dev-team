@@ -19,11 +19,6 @@ public class UtilityPriceManager extends PriceManager {
     }
 
     @Override
-    public int getPrice(PropertyModel property) {
-        return property.getPrice();
-    }
-
-    @Override
     public int getRent(PropertyModel property) {
         return getRentMultiplier(property) * getDiceRollValue();
     }
