@@ -49,7 +49,7 @@ public class PriceManagerTest {
     }
 
     @Test
-    public void UtilityPriceManagerNoRandomizationTest() {
+    public void utilityPriceManagerNoRandomizationTest() {
         PriceManager priceManager = new UtilityPriceManager(
                 propertyOwnerMapper,
                 propertyCategoryMapper,
@@ -69,7 +69,7 @@ public class PriceManagerTest {
     }
 
     @Test
-    public void PriceManagerDispatcherNoRandomizationTest() {
+    public void priceManagerDispatcherNoRandomizationTest() {
         PriceManager priceManager = new PriceManagerDispatcher(
                 propertyOwnerMapper,
                 propertyCategoryMapper,
@@ -112,5 +112,6 @@ public class PriceManagerTest {
         Assert.assertEquals(200, priceManager.getRent(property));
         property.setHotelNumber(1);
         Assert.assertEquals(950, priceManager.getRent(property));
+        Assert.assertEquals(90, priceManager.getMortgageValue(property));
     }
 }
