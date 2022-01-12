@@ -16,5 +16,14 @@ public abstract class PriceManager {
     public int getPrice(PropertyModel property) {
         return property.getPrice();
     }
+
+    public int getHousePrice(PropertyModel property) {
+        return property.getHousePrice();
+    }
+
+    public int getHotelPrice(PropertyModel property) {
+        return property.getHotelPrice();
+    }
+
     public abstract int getRent(PropertyModel property);
 }
