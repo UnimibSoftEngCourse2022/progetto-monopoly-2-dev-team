@@ -9,4 +9,8 @@ public class PropertySpace implements Space{
     public PropertySpace(PropertyModel property) {
         this.property = property;
     }
+
+    public PropertyModel getProperty() {
+        return property;
+    }
 }

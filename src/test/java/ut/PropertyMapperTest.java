@@ -1,18 +1,12 @@
 package ut;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import model.PropertyCategoryMapper;
-import model.PropertyMapper;
 import model.PropertyOwnerMapper;
 import model.property.PropertyCategory;
 import model.property.PropertyModel;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.File;
-import java.net.URL;
 import java.util.List;
 
 public class PropertyMapperTest {
