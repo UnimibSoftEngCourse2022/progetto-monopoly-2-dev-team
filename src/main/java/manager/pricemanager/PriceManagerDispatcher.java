@@ -11,7 +11,7 @@ public class PriceManagerDispatcher extends PriceManager {
     private final UtilityPriceManager utilityPriceManager;
     private final ColoredPriceManager coloredPriceManager;
 
-    protected PriceManagerDispatcher(
+    public PriceManagerDispatcher(
             PropertyOwnerMapper propertyOwnerMapper,
             PropertyCategoryMapper propertyCategoryMapper,
             DiceRoller diceRoller
