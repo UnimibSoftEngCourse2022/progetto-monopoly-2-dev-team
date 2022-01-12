@@ -13,6 +13,8 @@ public class PropertyModel {
     private int housePrice = 0;
     private int hotelPrice = 0;
     private int mortgageValue;
+    @JsonIgnore
+    private boolean mortgaged;
     private int[] rentValue;
 
     public String getName() {
@@ -45,6 +47,10 @@ public class PropertyModel {
 
     public int getMortgageValue() {
         return mortgageValue;
+    }
+
+    public boolean isMortgaged() {
+        return mortgaged;
     }
 
     public int[] getRentValue() {
