@@ -25,5 +25,9 @@ public abstract class PriceManager {
         return property.getHotelPrice();
     }
 
+    public int getMortgageValue(PropertyModel property) {
+        return property.getMortgageValue();
+    }
+
     public abstract int getRent(PropertyModel property);
 }

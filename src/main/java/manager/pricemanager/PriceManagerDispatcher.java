@@ -33,6 +33,12 @@ public class PriceManagerDispatcher extends PriceManager {
     }
 
     @Override
+    public int getMortgageValue(PropertyModel property) {
+        return super.getMortgageValue(property);
+    }
+
+
+    @Override
     public int getRent(PropertyModel property) {
         return getInstance(property).getRent(property);
     }
