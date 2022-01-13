@@ -63,19 +63,19 @@ public class PropertyManager {
     }
 
     public boolean mortgage(PropertyModel property) {
-        if(!canMortgage(property)) {
+        if (!canMortgage(property)) {
             return false;
         }
         property.setMortgaged(true);
-        return  true;
+        return true;
     }
 
     public boolean liftMortgage(PropertyModel property) {
-        if(!canLiftMortgage(property)) {
+        if (!canLiftMortgage(property)) {
             return false;
         }
         property.setMortgaged(false);
-        return  true;
+        return true;
     }
 
     public boolean canImproveHouse(PropertyModel property) {
@@ -109,7 +109,7 @@ public class PropertyManager {
     }
 
     public boolean canMortgage(PropertyModel property) {
-        return  !property.isMortgaged() && canSell(property);
+        return !property.isMortgaged() && canSell(property);
     }
 
     public boolean canSell(PropertyModel property) {
@@ -117,11 +117,27 @@ public class PropertyManager {
     }
 
     public boolean canCollectRent(PropertyModel property) {
-        return !property.isMortgaged();
+        return !property.isMortgaged() && ownerMapper.getOwner(property) != null;
     }
 
     public boolean canLiftMortgage(PropertyModel property) {
         return property.isMortgaged();
+    }
+
+    public void setOwner(PropertyModel property, PlayerModel player) {
+        ownerMapper.setOwner(property, player);
+    }
+
+//    public PlayerModel removeOwner(PropertyModel property) {
+//        return ownerMapper.removeOwner(property);
+//    }
+
+    public PlayerModel getOwner(PropertyModel property) {
+        return ownerMapper.getOwner(property);
+    }
+
+    public PriceManager getPriceManager() {
+        return priceManager;
     }
 
     //PRIVATE METHODS
