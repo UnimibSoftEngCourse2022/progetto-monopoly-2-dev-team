@@ -13,5 +13,5 @@ public interface PropertyOwnerMapper {
 
     void setOwner(final PropertyModel property, final PlayerModel player);
 
-    void removeOwner(final PropertyModel property);
+    PlayerModel removeOwner(final PropertyModel property);
 }

@@ -128,9 +128,9 @@ public class PropertyManager {
         ownerMapper.setOwner(property, player);
     }
 
-//    public PlayerModel removeOwner(PropertyModel property) {
-//        return ownerMapper.removeOwner(property);
-//    }
+    public PlayerModel removeOwner(PropertyModel property) {
+        return ownerMapper.removeOwner(property);
+    }
 
     public PlayerModel getOwner(PropertyModel property) {
         return ownerMapper.getOwner(property);
