@@ -146,9 +146,9 @@ public class PropertyManager {
                 .getCategoryProperties(property.getCategory());
         for (PropertyModel categoryProperty : categoryProperties) {
             if (removing) {
-                valid &= property.getHouseNumber() <= categoryProperty.getHouseNumber();
-            } else {
                 valid &= property.getHouseNumber() >= categoryProperty.getHouseNumber();
+            } else {
+                valid &= property.getHouseNumber() <= categoryProperty.getHouseNumber();
             }
         }
         return valid;
