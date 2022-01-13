@@ -62,11 +62,27 @@ public class PropertyManager {
         return false;
     }
 
+    public boolean mortgage(PropertyModel property) {
+        if(!canMortgage(property)) {
+            return false;
+        }
+        property.setMortgaged(true);
+        return  true;
+    }
+
+    public boolean liftMortgage(PropertyModel property) {
+        if(!canLiftMortgage(property)) {
+            return false;
+        }
+        property.setMortgaged(false);
+        return  true;
+    }
+
     public boolean canImproveHouse(PropertyModel property) {
         return property != null &&
                 hasRightCategory(property) &&
                 hasValidBuildingsForHouse(property) &&
-                ownerHasEveryPropertyInCategory(property) &&
+                ownerHasEveryPropertyInCategoryAndUnmortgaged(property) &&
                 hasLessOrEqualBuildingsInCategoryForBuildingHouse(property);
     }
 
@@ -74,7 +90,7 @@ public class PropertyManager {
         return property != null &&
                 hasRightCategory(property) &&
                 hasValidBuildingsForHotel(property) &&
-                ownerHasEveryPropertyInCategory(property) &&
+                ownerHasEveryPropertyInCategoryAndUnmortgaged(property) &&
                 hasLessOrEqualBuildingsInCategoryForBuildingHotel(property);
     }
 
@@ -93,7 +109,7 @@ public class PropertyManager {
     }
 
     public boolean canMortgage(PropertyModel property) {
-        return  canSell(property);
+        return  !property.isMortgaged() && canSell(property);
     }
 
     public boolean canSell(PropertyModel property) {
@@ -104,11 +120,17 @@ public class PropertyManager {
         return !property.isMortgaged();
     }
 
+    public boolean canLiftMortgage(PropertyModel property) {
+        return property.isMortgaged();
+    }
+
+    //PRIVATE METHODS
+
     private boolean hasRightCategory(PropertyModel property) {
         return property.isImprovable() && !property.isMortgaged();
     }
 
-    private boolean ownerHasEveryPropertyInCategory(PropertyModel property) {
+    private boolean ownerHasEveryPropertyInCategoryAndUnmortgaged(PropertyModel property) {
         List<PropertyModel> categoryProperties = categoryMapper
                 .getCategoryProperties(property.getCategory());
         Stream<PropertyModel> ownerProperties = categoryProperties
@@ -116,7 +138,7 @@ public class PropertyManager {
                 .filter(
                         propertyModel -> {
                             PlayerModel owner = ownerMapper.getOwner(property);
-                            return owner != null && owner.equals(ownerMapper.getOwner(propertyModel));
+                            return owner != null && !property.isMortgaged() && owner.equals(ownerMapper.getOwner(propertyModel));
                         }
                 );
         return categoryProperties.size() == ownerProperties.count();

@@ -91,5 +91,7 @@ public class PropertyModel {
         this.hotelNumber = hotelNumber;
     }
 
-
+    public void setMortgaged(boolean mortgaged) {
+        this.mortgaged = mortgaged;
+    }
 }
