@@ -1,5 +1,6 @@
-package controller.player;
+package controller;
 
+import controller.player.PlayerController;
 import controller.property.PropertyController;
 import manager.player.PlayerManager;
 import model.player.PlayerModel;

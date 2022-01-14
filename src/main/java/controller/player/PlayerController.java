@@ -6,10 +6,11 @@ import model.player.PlayerModel;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerController {
     private List<PlayerModel> players;
-    private Map<PlayerModel, PlayerManager> playerManagerMap;
+    private Map<PlayerModel, PlayerManager> playerManagerMap = new ConcurrentHashMap<>();
 
     public PlayerController(List<PlayerModel> players, PropertyOwnerMapper ownerMapper) {
         this.players = players;
@@ -30,6 +31,6 @@ public class PlayerController {
     }
 
     public PlayerManager getManager(PlayerModel player) {
-        return playerManagerMap.get(player);
+        return playerManagerMap.getOrDefault(player, null);
     }
 }

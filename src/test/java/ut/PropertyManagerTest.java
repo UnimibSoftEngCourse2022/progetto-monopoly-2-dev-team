@@ -1,6 +1,5 @@
 package ut;
 
-import manager.pricemanager.PriceManager;
 import manager.property.PropertyManager;
 import model.PropertyCategoryMapper;
 import model.PropertyOwnerMapper;
@@ -110,18 +109,7 @@ public class PropertyManagerTest {
         return new PropertyManager(
                 propertyModel,
                 ownerMapper,
-                categoryMapper,
-                new PriceManager(ownerMapper, categoryMapper) {
-                    @Override
-                    public int getPrice(PropertyModel property) {
-                        return 0;
-                    }
-
-                    @Override
-                    public int getRent(PropertyModel property) {
-                        return 0;
-                    }
-                }
+                categoryMapper
         );
     }
 

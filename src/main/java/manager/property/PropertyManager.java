@@ -19,11 +19,11 @@ public class PropertyManager {
     private static final int MAX_NUMBER_OF_HOUSES = 4;
     private static final int MAX_NUMBER_OF_HOTEL = 1;
 
-    public PropertyManager(PropertyModel property, PropertyOwnerMapper ownerMapper, PropertyCategoryMapper categoryMapper, PriceManager priceManager) {
+    public PropertyManager(PropertyModel property, PropertyOwnerMapper ownerMapper, PropertyCategoryMapper categoryMapper) {
         this.property = property;
         this.ownerMapper = ownerMapper;
         this.categoryMapper = categoryMapper;
-        this.priceManager = priceManager;
+        //this.priceManager = ; //TODO create category based price manager
     }
 
     public boolean buildHouse() {
