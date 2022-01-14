@@ -42,7 +42,7 @@ public class PropertyManagerTest {
         }
         Assert.assertFalse(propertyManager.buildHouse(firstProperty));
 
-        PlayerModel player = new PlayerModel("id", "name", 1000);
+        PlayerModel player = new PlayerModel("id", "name");
         for (PropertyModel property : properties) {
             ownerMapper.setOwner(property, player);
         }

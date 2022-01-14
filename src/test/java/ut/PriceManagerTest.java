@@ -9,8 +9,6 @@ import model.property.PropertyModel;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.List;
-
 public class PriceManagerTest {
     private static PropertyCategoryMapper propertyCategoryMapper = TestUtils.getPropertyCategoryMapper();
     private static PropertyOwnerMapper propertyOwnerMapper = TestUtils.getPropertyOwnerMapper();
@@ -21,7 +19,7 @@ public class PriceManagerTest {
         PropertyModel property = TestUtils.getProperties().get(0);
         Assert.assertEquals(60, priceManager.getPrice(property));
         Assert.assertEquals(2, priceManager.getRent(property));
-        PlayerModel playerModel = new PlayerModel("0", "name", 1000);
+        PlayerModel playerModel = new PlayerModel("0", "name");
         for (PropertyModel categoryProperty : propertyCategoryMapper.getCategoryProperties(property.getCategory())) {
             propertyOwnerMapper.setOwner(categoryProperty, playerModel);
         }

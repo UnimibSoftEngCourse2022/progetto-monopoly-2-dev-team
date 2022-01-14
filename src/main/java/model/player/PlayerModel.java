@@ -4,7 +4,7 @@ public class PlayerModel {
     private String id;
     private String name;
 
-    public PlayerModel(String id, String name, int funds) {
+    public PlayerModel(String id, String name) {
         this.id = id;
         this.name = name;
     }
