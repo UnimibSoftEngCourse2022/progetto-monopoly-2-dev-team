@@ -126,6 +126,6 @@ public class PropertyManagerTest {
     }
 
     public static PlayerModel getPlayer() {
-        return new PlayerModel("id", "name", 1000);
+        return new PlayerModel("id", "name");
     }
 }
