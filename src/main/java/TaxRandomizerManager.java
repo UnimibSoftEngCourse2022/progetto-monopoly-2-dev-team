@@ -3,13 +3,15 @@ public class TaxRandomizerManager implements Randomizer{
     private float taxesPercentage;
     private float randomnessIndex;
 
-    public TaxRandomizerManager(float taxesPercentage) {
-        this.taxesPercentage = randomValue();
+    public TaxRandomizerManager(float randomnessIndex) {
+        this.randomnessIndex = randomnessIndex;
     }
 
     @Override
     public void randomize() {
-        taxesPercentage = randomValue();
+        if (Math.random() < randomnessIndex) {
+            taxesPercentage = randomValue();
+        }
     }
 
     private float randomValue() {
