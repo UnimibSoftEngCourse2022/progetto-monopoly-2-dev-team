@@ -1,6 +1,7 @@
 package manager.property;
 
 import manager.pricemanager.PriceManager;
+import manager.pricemanager.PriceManagerDispatcher;
 import model.PropertyCategoryMapper;
 import model.PropertyOwnerMapper;
 import model.player.PlayerModel;
@@ -23,7 +24,9 @@ public class PropertyManager {
         this.property = property;
         this.ownerMapper = ownerMapper;
         this.categoryMapper = categoryMapper;
-        //this.priceManager = ; //TODO create category based price manager
+        this.priceManager =
+                new PriceManagerDispatcher(ownerMapper, categoryMapper, null) //TODO DiceRoller
+                        .getPriceManager(property);
     }
 
     public boolean buildHouse() {
@@ -151,7 +154,7 @@ public class PropertyManager {
         List<PropertyModel> categoryProperties = categoryMapper
                 .getCategoryProperties(property.getCategory());
         PlayerModel owner = ownerMapper.getOwner(property);
-        if(owner == null) {
+        if (owner == null) {
             return false;
         }
         Stream<PropertyModel> ownerProperties = categoryProperties

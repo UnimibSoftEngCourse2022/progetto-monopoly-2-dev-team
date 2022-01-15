@@ -16,11 +16,6 @@ public class ColoredPriceManager extends PriceManager {
     }
 
     @Override
-    public int getPrice(PropertyModel property) {
-        return property.getPrice();
-    }
-
-    @Override
     public int getRent(PropertyModel property) {
         return getCleanRent(property);
     }
@@ -47,5 +42,13 @@ public class ColoredPriceManager extends PriceManager {
             }
         }
         return rent;
+    }
+
+    public int getHousePrice(PropertyModel property) {
+        return property.getHousePrice();
+    }
+
+    public int getHotelPrice(PropertyModel property) {
+        return property.getHotelPrice();
     }
 }

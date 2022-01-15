@@ -360,7 +360,6 @@
     "mortgageValue": 100,
     "rentValue": [
       25,
-      25,
       50,
       100,
       200
@@ -374,7 +373,6 @@
     "hotelPrice": 0,
     "mortgageValue": 100,
     "rentValue": [
-      25,
       25,
       50,
       100,
@@ -390,7 +388,6 @@
     "mortgageValue": 100,
     "rentValue": [
       25,
-      25,
       50,
       100,
       200
@@ -405,7 +402,6 @@
     "mortgageValue": 100,
     "rentValue": [
       25,
-      25,
       50,
       100,
       200
@@ -419,7 +415,6 @@
     "hotelPrice": 0,
     "mortgageValue": 75,
     "rentValue": [
-      0,
       4,
       10
     ]
@@ -432,7 +427,6 @@
     "hotelPrice": 0,
     "mortgageValue": 75,
     "rentValue": [
-      0,
       4,
       10
     ]
