@@ -6,50 +6,29 @@ import model.PropertyOwnerMapper;
 import model.property.PropertyCategory;
 import model.property.PropertyModel;
 
-public class PriceManagerDispatcher extends PriceManager {
-    private final RailroadPriceManager railroadPriceManager;
-    private final UtilityPriceManager utilityPriceManager;
-    private final ColoredPriceManager coloredPriceManager;
+public class PriceManagerDispatcher {
+
+    private final PropertyOwnerMapper propertyOwnerMapper;
+    private final PropertyCategoryMapper propertyCategoryMapper;
+    private final DiceRoller diceRoller;
 
     public PriceManagerDispatcher(
             PropertyOwnerMapper propertyOwnerMapper,
             PropertyCategoryMapper propertyCategoryMapper,
             DiceRoller diceRoller
     ) {
-        super(propertyOwnerMapper, propertyCategoryMapper);
-        this.railroadPriceManager = new RailroadPriceManager(propertyOwnerMapper, propertyCategoryMapper);
-        this.utilityPriceManager = new UtilityPriceManager(propertyOwnerMapper, propertyCategoryMapper, diceRoller);
-        this.coloredPriceManager = new ColoredPriceManager(propertyOwnerMapper, propertyCategoryMapper);
+        this.propertyOwnerMapper = propertyOwnerMapper;
+        this.propertyCategoryMapper = propertyCategoryMapper;
+        this.diceRoller= diceRoller;
     }
 
-    @Override
-    public int getHousePrice(PropertyModel property) {
-        return super.getHousePrice(property);
-    }
-
-    @Override
-    public int getHotelPrice(PropertyModel property) {
-        return super.getHotelPrice(property);
-    }
-
-    @Override
-    public int getMortgageValue(PropertyModel property) {
-        return super.getMortgageValue(property);
-    }
-
-
-    @Override
-    public int getRent(PropertyModel property) {
-        return getInstance(property).getRent(property);
-    }
-
-    private PriceManager getInstance(PropertyModel property) {
+    public PriceManager getPriceManager(PropertyModel property) {
         PropertyCategory category = property.getCategory();
         if (PropertyCategory.RAILROAD.equals(category)) {
-            return railroadPriceManager;
+            return new RailroadPriceManager(propertyOwnerMapper, propertyCategoryMapper);
         } else if (PropertyCategory.UTILITY.equals(category)) {
-            return utilityPriceManager;
+            return new UtilityPriceManager(propertyOwnerMapper, propertyCategoryMapper, diceRoller);
         }
-        return coloredPriceManager;
+        return new ColoredPriceManager(propertyOwnerMapper, propertyCategoryMapper);
     }
 }
