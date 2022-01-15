@@ -6,14 +6,6 @@ public class PropertyRandomize {
     private final float hotelPricePercentage;
     private final float rentPercentage;
 
-    public PropertyRandomize() {
-        this(randomValue(),
-                randomValue(),
-                randomValue(),
-                randomValue(),
-                randomValue());
-    }
-
     public PropertyRandomize(float pricePercentage,
                              float mortgagePercentage,
                              float housePricePercentage,
@@ -44,9 +36,5 @@ public class PropertyRandomize {
 
     public float getRentPercentage() {
         return rentPercentage;
-    }
-
-    private static float randomValue() {
-        return (float) Math.random() * 2 - 1;
     }
 }

@@ -17,6 +17,7 @@ public class PropertyRandomizerManager implements Randomizer {
 
     @Override
     public void randomize() {
+        randomizeMap.clear();
         for (PropertyModel property : properties) {
             if (Math.random() < randomnessIndex) {
                 randomizeMap.put(property, new PropertyRandomize(randomValue(),
@@ -28,8 +29,12 @@ public class PropertyRandomizerManager implements Randomizer {
         }
     }
 
+    public PropertyRandomize getPropertyRandomize(PropertyModel propertyModel) {
+        return randomizeMap.getOrDefault(propertyModel, null);
+    }
+
     private float randomValue() {
         float random = (float) Math.random();
-        return (random * 2 - random / 2) * randomnessIndex;
+        return (random - (random / 2)) * randomnessIndex;
     }
 }
