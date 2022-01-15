@@ -1,14 +1,17 @@
 package controller.player;
 
+import controller.ManagerController;
+import controller.command.ModelCommand;
 import manager.player.PlayerManager;
 import model.PropertyOwnerMapper;
 import model.player.PlayerModel;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class PlayerController {
+public class PlayerController extends ManagerController<PlayerModel, PlayerManager> {
     private List<PlayerModel> players;
     private Map<PlayerModel, PlayerManager> playerManagerMap = new ConcurrentHashMap<>();
 
@@ -30,7 +33,16 @@ public class PlayerController {
         playerManagerMap.remove(player);
     }
 
+    public List<PlayerModel> getModels() {
+        return players;
+    }
+
     public PlayerManager getManager(PlayerModel player) {
         return playerManagerMap.getOrDefault(player, null);
+    }
+
+    @Override
+    public List<ModelCommand<PlayerModel>> getCommands(PlayerModel model) {
+        return Collections.emptyList();
     }
 }

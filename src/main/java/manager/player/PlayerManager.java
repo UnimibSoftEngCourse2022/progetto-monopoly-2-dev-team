@@ -34,8 +34,12 @@ public class PlayerManager {
     }
 
     public Position move(int diceRoll, boolean direct) {
+        return moveTo(position.getIntPosition() + diceRoll, direct);
+    }
+
+    public Position moveTo(int space, boolean direct) {
         if (canMove()) {
-            position.setPosition(position.getIntPosition() + diceRoll, direct);
+            position.setPosition(space, direct);
         }
         return position;
     }
