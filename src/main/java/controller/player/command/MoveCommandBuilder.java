@@ -9,6 +9,8 @@ public class MoveCommandBuilder implements CommandBuilder {
     private PlayerModel player;
     private int space;
     private boolean directMovement = false;
+    private boolean goToJail = false;
+    private MoveCommand.Type type;
 
     public MoveCommandBuilder(PlayerController playerController) {
         this.playerController = playerController;
@@ -19,7 +21,8 @@ public class MoveCommandBuilder implements CommandBuilder {
         return this;
     }
 
-    public MoveCommandBuilder setSpace(int space) {
+    public MoveCommandBuilder setSpace(MoveCommand.Type type, int space) {
+        this.type = type;
         this.space = space;
         return this;
     }
@@ -29,12 +32,19 @@ public class MoveCommandBuilder implements CommandBuilder {
         return this;
     }
 
+    public MoveCommandBuilder setGoToJail(boolean goToJail) {
+        this.goToJail = goToJail;
+        return this;
+    }
+
     public MoveCommand build() {
         return new MoveCommand(
                 playerController,
                 player,
+                type,
                 space,
-                directMovement
+                directMovement,
+                goToJail
         );
     }
 }

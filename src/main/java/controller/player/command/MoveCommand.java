@@ -10,12 +10,21 @@ public class MoveCommand implements Command {
     private final PlayerModel player;
     private final int space;
     private final boolean directMovement;
+    private final boolean goToJail;
+    private final Type type;
 
-    public MoveCommand(PlayerController playerController, PlayerModel player, int space, boolean directMovement) {
+    public enum Type {
+        MOVE_OF,
+        MOVE_TO
+    }
+
+    public MoveCommand(PlayerController playerController, PlayerModel player, Type type, int space, boolean directMovement, boolean goToJail) {
         this.playerController = playerController;
         this.player = player;
+        this.type = type;
         this.space = space;
         this.directMovement = directMovement;
+        this.goToJail = goToJail;
     }
 
     @Override
@@ -32,7 +41,14 @@ public class MoveCommand implements Command {
     public void execute() {
         if (player != null && playerController != null) {
             PlayerManager manager = playerController.getManager(player);
-            manager.moveTo(space, directMovement);
+            if(goToJail) {
+                //space = //TODO set jail space
+            }
+            if(Type.MOVE_TO.equals(type)) {
+                manager.moveTo(space, goToJail || directMovement);
+            } else {
+                manager.move(space, goToJail || directMovement);
+            }
         }
     }
 }

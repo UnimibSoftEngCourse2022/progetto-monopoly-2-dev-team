@@ -5,6 +5,7 @@ import model.player.PlayerModel;
 import model.player.PlayerState;
 import model.player.Position;
 import model.property.PropertyModel;
+import util.Pair;
 
 import java.util.List;
 
@@ -33,13 +34,17 @@ public class PlayerManager {
         checkBankrupt();
     }
 
-    public Position move(int diceRoll, boolean direct) {
-        return moveTo(position.getIntPosition() + diceRoll, direct);
+    public Position move(int movement, boolean direct) {
+        return moveTo(position.getIntPosition() + movement, direct);
     }
 
     public Position moveTo(int space, boolean direct) {
         if (canMove()) {
             position.setPosition(space, direct);
+        }
+        Pair<Integer, Integer> movement = position.getLastMovement().getMovement();
+        if (!direct && movement.getFirst() > movement.getSecond()) {
+            earn(EARN_ON_GO);
         }
         return position;
     }
