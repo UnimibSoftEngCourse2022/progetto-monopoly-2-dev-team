@@ -39,8 +39,9 @@ public class MainCommandBuilderDispatcher implements CommandBuilderDispatcher {
             return className.cast(new DiceRollCommandBuilder(
                     playerController,
                     eventDispatcher,
-                    new MoveCommandBuilder(playerController))
-            );
+                    new MoveCommandBuilder(playerController),
+                    new PayCommandBuilder(tradeController)
+            ));
         }
         return null;
     }

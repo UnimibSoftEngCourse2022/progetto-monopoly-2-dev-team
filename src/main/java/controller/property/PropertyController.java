@@ -32,16 +32,16 @@ public class PropertyController extends ManagerController<PropertyModel, Propert
     }
 
     @Override
-    public List<Command> getCommands(PropertyModel model) {
-        List<Command> modelCommands = new ArrayList<>();
-        PropertyCommandBuilder builder = commandBuilderDispatcher.createCommandBuilder(PropertyCommandBuilder.class).setProperty(model);
-        modelCommands.add(builder.setType(PropertyCommandBuilder.Type.MORTGAGE).build());
-        if (model.isImprovable()) {
-            modelCommands.add(builder.setType(PropertyCommandBuilder.Type.BUILD_HOTEL).build());
-            modelCommands.add(builder.setType(PropertyCommandBuilder.Type.BUILD_HOUSE).build());
-            modelCommands.add(builder.setType(PropertyCommandBuilder.Type.SELL_HOUSE).build());
-            modelCommands.add(builder.setType(PropertyCommandBuilder.Type.SELL_HOTEL).build());
+    public List<Command> getCommands(PropertyModel property) {
+        List<Command> commands = new ArrayList<>();
+        PropertyCommandBuilder builder = commandBuilderDispatcher.createCommandBuilder(PropertyCommandBuilder.class).setProperty(property);
+        commands.add(builder.setType(PropertyCommandBuilder.Type.MORTGAGE).build());
+        if (property.isImprovable()) {
+            commands.add(builder.setType(PropertyCommandBuilder.Type.BUILD_HOTEL).build());
+            commands.add(builder.setType(PropertyCommandBuilder.Type.BUILD_HOUSE).build());
+            commands.add(builder.setType(PropertyCommandBuilder.Type.SELL_HOUSE).build());
+            commands.add(builder.setType(PropertyCommandBuilder.Type.SELL_HOTEL).build());
         }
-        return modelCommands;
+        return commands;
     }
 }

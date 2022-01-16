@@ -16,6 +16,7 @@ public class PlayerManager {
     private Position position;
     private PropertyOwnerMapper ownerMapper;
     private final int EARN_ON_GO = 200; //TODO Check configuration
+    private int getOutOfJailTries = 0;
 
     public PlayerManager(PlayerModel player, int funds, PropertyOwnerMapper ownerMapper) {
         this.player = player;
@@ -35,7 +36,7 @@ public class PlayerManager {
     }
 
     public Position move(int movement, boolean direct) {
-        return moveTo(position.getIntPosition() + movement, direct);
+        return moveTo((position.getIntPosition() + movement) % 40, direct);
     }
 
     public Position moveTo(int space, boolean direct) {
@@ -53,8 +54,21 @@ public class PlayerManager {
         state = PlayerState.IN_JAIL;
     }
 
+    public boolean tryToGetOutOfJail() {
+        if (PlayerState.IN_JAIL.equals(state)) {
+            getOutOfJailTries++;
+            boolean succeeded = getOutOfJailTries == 3;
+            if(succeeded) {
+                getOutOfJail();
+            }
+            return succeeded;
+        }
+        return false;
+    }
+
     public void getOutOfJail() {
         if (PlayerState.IN_JAIL.equals(state) || PlayerState.FINED.equals(state)) {
+            getOutOfJailTries = 0;
             state = PlayerState.FREE;
         }
     }

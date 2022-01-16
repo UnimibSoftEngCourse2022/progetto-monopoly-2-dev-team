@@ -2,46 +2,64 @@ package controller.player.command;
 
 import controller.command.Command;
 import controller.command.CommandBuilder;
+import controller.command.ComposableCommand;
 import controller.event.EventDispatcher;
 import controller.player.PlayerController;
+import manager.player.PlayerManager;
 import model.player.PlayerModel;
+import model.player.PlayerState;
 
 public class DiceRollCommandBuilder implements CommandBuilder {
     private final PlayerController playerController;
     private final EventDispatcher eventDispatcher;
     private PlayerModel player;
     private final MoveCommandBuilder moveCommandBuilder;
-    private Type type = Type.ROLL_FOR_MOVEMENT;
+    private final PayCommandBuilder payCommandBuilder;
 
-    public enum Type {
-        ROLL_FOR_MOVEMENT,
-        ROLL_TO_GET_OUT_OF_JAIL,
-        ROLL_WITH_FIND
-    }
-
-    public DiceRollCommandBuilder(PlayerController playerController, EventDispatcher eventDispatcher, MoveCommandBuilder moveCommandBuilder) {
+    public DiceRollCommandBuilder(PlayerController playerController,
+                                  EventDispatcher eventDispatcher,
+                                  MoveCommandBuilder moveCommandBuilder,
+                                  PayCommandBuilder payCommandBuilder) {
         this.playerController = playerController;
         this.eventDispatcher = eventDispatcher;
         this.moveCommandBuilder = moveCommandBuilder;
+        this.payCommandBuilder = payCommandBuilder;
     }
 
-    public void setPlayer(PlayerModel player) {
+    public DiceRollCommandBuilder setPlayer(PlayerModel player) {
         this.player = player;
+        return this;
     }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
 
     @Override
     public Command build() {
-        if (Type.ROLL_FOR_MOVEMENT.equals(type)) {
-            return new DiceRollForMovementCommand(playerController, eventDispatcher, player, moveCommandBuilder);
-        } else if (Type.ROLL_TO_GET_OUT_OF_JAIL.equals(type)) {
+        PlayerManager manager = playerController.getManager(player);
+        if (PlayerState.IN_JAIL.equals(manager.getState())) {
+            return new DiceRollForJailCommand(playerController, eventDispatcher, player, moveCommandBuilder);
+        }
 
-        } else {//if (Type.ROLL_WITH_FIND.equals(type))
+        DiceRollForMovementCommand rollForMovementCommand = new DiceRollForMovementCommand(playerController, eventDispatcher, player, moveCommandBuilder);
 
+        if (PlayerState.FREE.equals(manager.getState())) {
+            return rollForMovementCommand;
+        } else if (PlayerState.FINED.equals(manager.getState())) {
+
+            PayCommand payCommand = payCommandBuilder.addDebtor(player).setMoney(50).build();
+
+            ComposableCommand composableCommand = new ComposableCommand() {
+                @Override
+                public String getCommandName() {
+                    return rollForMovementCommand.getCommandName();
+                }
+
+                @Override
+                public boolean isEnabled() {
+                    return rollForMovementCommand.isEnabled();
+                }
+            };
+            composableCommand.addCommand(rollForMovementCommand);
+            composableCommand.addCommand(payCommand);
+            return composableCommand;
         }
         return null;
     }

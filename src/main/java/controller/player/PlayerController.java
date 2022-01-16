@@ -2,19 +2,21 @@ package controller.player;
 
 import controller.ManagerController;
 import controller.command.Command;
-import controller.command.ModelCommand;
+import controller.command.CommandBuilderDispatcher;
+import controller.player.command.DiceRollCommandBuilder;
 import manager.player.PlayerManager;
 import model.PropertyOwnerMapper;
 import model.player.PlayerModel;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerController extends ManagerController<PlayerModel, PlayerManager> {
 
-    public PlayerController(List<PlayerModel> players, PropertyOwnerMapper ownerMapper) {
+    private final CommandBuilderDispatcher commandBuilderDispatcher;
+
+    public PlayerController(List<PlayerModel> players, PropertyOwnerMapper ownerMapper, CommandBuilderDispatcher commandBuilderDispatcher) {
+        this.commandBuilderDispatcher = commandBuilderDispatcher;
         this.models = players;
         for (PlayerModel player : players) {
             addPlayer(player, 1000, ownerMapper); //TODO Connect to game configuration
@@ -33,7 +35,9 @@ public class PlayerController extends ManagerController<PlayerModel, PlayerManag
     }
 
     @Override
-    public List<Command> getCommands(PlayerModel model) {
-        return Collections.emptyList();
+    public List<Command> getCommands(PlayerModel player) {
+        ArrayList<Command> commands = new ArrayList<>();
+        commands.add(commandBuilderDispatcher.createCommandBuilder(DiceRollCommandBuilder.class).setPlayer(player).build());
+        return commands;
     }
 }
