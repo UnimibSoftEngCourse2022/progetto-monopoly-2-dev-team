@@ -1,5 +1,6 @@
 package manager.player;
 
+import manager.Manager;
 import model.PropertyOwnerMapper;
 import model.player.PlayerModel;
 import model.player.PlayerState;
@@ -9,8 +10,7 @@ import util.Pair;
 
 import java.util.List;
 
-public class PlayerManager {
-    private final PlayerModel player;
+public class PlayerManager extends Manager<PlayerModel> {
     private int funds;
     private PlayerState state;
     private Position position;
@@ -19,7 +19,7 @@ public class PlayerManager {
     private int getOutOfJailTries = 0;
 
     public PlayerManager(PlayerModel player, int funds, PropertyOwnerMapper ownerMapper) {
-        this.player = player;
+        super(player);
         this.funds = funds;
         this.state = PlayerState.FREE;
         this.position = new Position();
@@ -58,7 +58,7 @@ public class PlayerManager {
         if (PlayerState.IN_JAIL.equals(state)) {
             getOutOfJailTries++;
             boolean succeeded = getOutOfJailTries == 3;
-            if(succeeded) {
+            if (succeeded) {
                 getOutOfJail();
             }
             return succeeded;
@@ -80,7 +80,7 @@ public class PlayerManager {
     }
 
     public List<PropertyModel> getProperties() {
-        return ownerMapper.getPlayerProperties(player);
+        return ownerMapper.getPlayerProperties(model);
     }
 
     public boolean canMove() {
