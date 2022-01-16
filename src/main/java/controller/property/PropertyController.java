@@ -15,30 +15,20 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PropertyController extends ManagerController<PropertyModel, PropertyManager> {
-    private final List<PropertyModel> properties;
     private final CommandBuilderDispatcher commandBuilderDispatcher;
-    private final Map<PropertyModel, PropertyManager> propertyManagerMap = new ConcurrentHashMap<>();
 
     public PropertyController(List<PropertyModel> properties,
                               PropertyOwnerMapper ownerMapper,
                               PropertyCategoryMapper categoryMapper,
                               CommandBuilderDispatcher commandBuilderDispatcher) {
-        this.properties = properties;
+        this.models = properties;
         this.commandBuilderDispatcher = commandBuilderDispatcher;
         for (PropertyModel property : properties) {
-            propertyManagerMap.put(
+            modelToManagerMap.put(
                     property,
                     new PropertyManager(property, ownerMapper, categoryMapper)
             );
         }
-    }
-
-    public PropertyManager getManager(PropertyModel property) {
-        return propertyManagerMap.getOrDefault(property, null);
-    }
-
-    public List<PropertyModel> getModels() {
-        return properties;
     }
 
     @Override
