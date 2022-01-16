@@ -8,7 +8,7 @@ import java.util.List;
 
 public class PayCommand implements Command {
     private final TradeController tradeController;
-    private int money;
+    private final int money;
     private final List<PlayerModel> creditors;
     private final List<PlayerModel> debtors;
 

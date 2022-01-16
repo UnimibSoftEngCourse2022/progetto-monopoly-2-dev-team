@@ -1,10 +1,9 @@
 package controller.property;
 
-import controller.command.ModelCommand;
 import controller.ManagerController;
-import controller.property.command.BuildHotelCommand;
-import controller.property.command.BuildHouseCommand;
-import controller.property.command.MortgageCommand;
+import controller.command.Command;
+import controller.command.CommandBuilderDispatcher;
+import controller.property.command.PropertyCommandBuilder;
 import manager.property.PropertyManager;
 import model.PropertyCategoryMapper;
 import model.PropertyOwnerMapper;
@@ -17,12 +16,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PropertyController extends ManagerController<PropertyModel, PropertyManager> {
     private final List<PropertyModel> properties;
+    private final CommandBuilderDispatcher commandBuilderDispatcher;
     private final Map<PropertyModel, PropertyManager> propertyManagerMap = new ConcurrentHashMap<>();
 
     public PropertyController(List<PropertyModel> properties,
                               PropertyOwnerMapper ownerMapper,
-                              PropertyCategoryMapper categoryMapper) {
+                              PropertyCategoryMapper categoryMapper,
+                              CommandBuilderDispatcher commandBuilderDispatcher) {
         this.properties = properties;
+        this.commandBuilderDispatcher = commandBuilderDispatcher;
         for (PropertyModel property : properties) {
             propertyManagerMap.put(
                     property,
@@ -40,13 +42,16 @@ public class PropertyController extends ManagerController<PropertyModel, Propert
     }
 
     @Override
-    public List<ModelCommand<PropertyModel>> getCommands(PropertyModel model) {
-        List<ModelCommand<PropertyModel>> modelCommands = new ArrayList<>();
+    public List<Command> getCommands(PropertyModel model) {
+        List<Command> modelCommands = new ArrayList<>();
+        PropertyCommandBuilder builder = commandBuilderDispatcher.createCommandBuilder(PropertyCommandBuilder.class).setProperty(model);
+        modelCommands.add(builder.setType(PropertyCommandBuilder.Type.MORTGAGE).build());
         if (model.isImprovable()) {
-            modelCommands.add(new BuildHouseCommand(this));
-            modelCommands.add(new BuildHotelCommand(this));
+            modelCommands.add(builder.setType(PropertyCommandBuilder.Type.BUILD_HOTEL).build());
+            modelCommands.add(builder.setType(PropertyCommandBuilder.Type.BUILD_HOUSE).build());
+            modelCommands.add(builder.setType(PropertyCommandBuilder.Type.SELL_HOUSE).build());
+            modelCommands.add(builder.setType(PropertyCommandBuilder.Type.SELL_HOTEL).build());
         }
-        modelCommands.add(new MortgageCommand(this));
         return modelCommands;
     }
 }

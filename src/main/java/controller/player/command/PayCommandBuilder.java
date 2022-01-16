@@ -1,12 +1,13 @@
 package controller.player.command;
 
 import controller.TradeController;
+import controller.command.CommandBuilder;
 import model.player.PlayerModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PayCommandBuilder {
+public class PayCommandBuilder implements CommandBuilder {
     private final TradeController tradeController;
     private int money;
     private final List<PlayerModel> creditors = new ArrayList<>();

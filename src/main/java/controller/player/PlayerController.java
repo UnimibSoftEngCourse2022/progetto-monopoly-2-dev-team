@@ -1,6 +1,7 @@
 package controller.player;
 
 import controller.ManagerController;
+import controller.command.Command;
 import controller.command.ModelCommand;
 import manager.player.PlayerManager;
 import model.PropertyOwnerMapper;
@@ -42,7 +43,7 @@ public class PlayerController extends ManagerController<PlayerModel, PlayerManag
     }
 
     @Override
-    public List<ModelCommand<PlayerModel>> getCommands(PlayerModel model) {
+    public List<Command> getCommands(PlayerModel model) {
         return Collections.emptyList();
     }
 }

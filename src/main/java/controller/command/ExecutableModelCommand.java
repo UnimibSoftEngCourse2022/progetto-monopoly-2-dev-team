@@ -1,7 +1,7 @@
 package controller.command;
 
 public abstract class ExecutableModelCommand<T> implements ModelCommand<T>, Command {
-    private T model;
+    private final T model;
 
     public ExecutableModelCommand(T model) {
         this.model = model;
