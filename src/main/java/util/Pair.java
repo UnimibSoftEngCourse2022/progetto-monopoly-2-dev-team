@@ -1,5 +1,7 @@
 package util;
 
+import java.util.Objects;
+
 public class Pair<T, R> {
     private final T first;
     private final R second;
@@ -24,6 +26,11 @@ public class Pair<T, R> {
             return pair.first.equals(first) && pair.second.equals(second);
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(first, second);
     }
 
     @Override
