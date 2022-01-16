@@ -1,3 +1,6 @@
+package manager;
+
+import model.PropertyRandomizeModel;
 import model.property.PropertyModel;
 
 import java.util.List;
@@ -8,7 +11,7 @@ public class PropertyRandomizerManager implements Randomizer {
 
     private List<PropertyModel> properties;
     private float randomnessIndex;
-    private Map<PropertyModel, PropertyRandomize> randomizeMap = new ConcurrentHashMap<>();
+    private Map<PropertyModel, PropertyRandomizeModel> randomizeMap = new ConcurrentHashMap<>();
 
     public PropertyRandomizerManager(List<PropertyModel> properties, float randomnessIndex) {
         this.properties = properties;
@@ -20,7 +23,7 @@ public class PropertyRandomizerManager implements Randomizer {
         randomizeMap.clear();
         for (PropertyModel property : properties) {
             if (Math.random() < randomnessIndex) {
-                randomizeMap.put(property, new PropertyRandomize(randomValue(),
+                randomizeMap.put(property, new PropertyRandomizeModel(randomValue(),
                         randomValue(),
                         randomValue(),
                         randomValue(),
@@ -29,12 +32,16 @@ public class PropertyRandomizerManager implements Randomizer {
         }
     }
 
-    public PropertyRandomize getPropertyRandomize(PropertyModel propertyModel) {
+    public PropertyRandomizeModel getPropertyRandomize(PropertyModel propertyModel) {
         return randomizeMap.getOrDefault(propertyModel, null);
     }
 
     private float randomValue() {
         float random = (float) Math.random();
         return (random - (random / 2)) * randomnessIndex;
+    }
+
+    public Map<PropertyModel, PropertyRandomizeModel> getRandomizeMap() {
+        return randomizeMap;
     }
 }

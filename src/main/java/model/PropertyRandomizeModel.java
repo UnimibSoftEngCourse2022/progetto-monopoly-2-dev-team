@@ -1,4 +1,6 @@
-public class PropertyRandomize {
+package model;
+
+public class PropertyRandomizeModel {
 
     private final float pricePercentage;
     private final float mortgagePercentage;
@@ -6,11 +8,11 @@ public class PropertyRandomize {
     private final float hotelPricePercentage;
     private final float rentPercentage;
 
-    public PropertyRandomize(float pricePercentage,
-                             float mortgagePercentage,
-                             float housePricePercentage,
-                             float hotelPricePercentage,
-                             float rentPercentage) {
+    public PropertyRandomizeModel(float pricePercentage,
+                                  float mortgagePercentage,
+                                  float housePricePercentage,
+                                  float hotelPricePercentage,
+                                  float rentPercentage) {
         this.pricePercentage = pricePercentage;
         this.mortgagePercentage = mortgagePercentage;
         this.housePricePercentage = housePricePercentage;

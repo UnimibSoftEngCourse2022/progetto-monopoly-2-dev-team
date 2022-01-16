@@ -1,6 +1,8 @@
-public class TaxRandomizerManager implements Randomizer{
+package manager;
 
-    private float taxesPercentage;
+public class TaxRandomizerManager implements Randomizer {
+
+    private float taxesPercentage = 0F;
     private float randomnessIndex;
 
     public TaxRandomizerManager(float randomnessIndex) {
