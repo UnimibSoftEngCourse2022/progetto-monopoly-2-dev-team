@@ -4,6 +4,7 @@ import controller.TradeController;
 import controller.command.Command;
 import controller.command.CommandBuilder;
 import controller.command.ComposableCommand;
+import controller.player.command.PayCommand;
 import controller.player.command.PayCommandBuilder;
 import controller.property.PropertyController;
 import manager.property.PropertyManager;
@@ -63,10 +64,14 @@ public class PropertyCommandBuilder implements CommandBuilder {
             return new MortgageCommand(propertyController, property);
         }
 
-        Command transactionCommand = new PayCommandBuilder(tradeController)
-                .addDebtor(propertyManager.getOwner())
-                .setMoney(price)
-                .build();
+        PayCommandBuilder payCommandBuilder = new PayCommandBuilder(tradeController);
+        if (Type.SELL_HOTEL.equals(type) || Type.SELL_HOUSE.equals(type)) {
+            payCommandBuilder.addCreditor(propertyManager.getOwner());
+        } else {
+            payCommandBuilder.addDebtor(propertyManager.getOwner());
+        }
+
+        PayCommand transactionCommand = payCommandBuilder.setMoney(price).build();
 
         ComposableCommand command = new ComposableCommand() {
             @Override

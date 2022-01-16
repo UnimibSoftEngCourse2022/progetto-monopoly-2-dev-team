@@ -20,12 +20,12 @@ public class MoveCommand implements Command {
 
     @Override
     public String getCommandName() {
-        return null;
+        return "Move";
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return playerController.getManager(player).canMove();
     }
 
     @Override
