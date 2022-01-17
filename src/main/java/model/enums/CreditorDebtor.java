@@ -1,6 +1,6 @@
 package model.enums;
 
-public enum Debtor {
+public enum CreditorDebtor {
     PLAYER,
     ALL
 }

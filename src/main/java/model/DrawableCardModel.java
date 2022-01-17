@@ -19,8 +19,8 @@ public class DrawableCardModel {
     private int hotelFee;
 
     // payments commands
-    private Creditor creditor;
-    private Debtor debtor;
+    private CreditorDebtor creditor;
+    private CreditorDebtor creditorDebtor;
 
     // out of jail free commands
     private boolean keep;
@@ -62,12 +62,12 @@ public class DrawableCardModel {
         return hotelFee;
     }
 
-    public Creditor getCreditor() {
+    public CreditorDebtor getCreditor() {
         return creditor;
     }
 
-    public Debtor getDebtor() {
-        return debtor;
+    public CreditorDebtor getDebtor() {
+        return creditorDebtor;
     }
 
     public boolean isKeep() {
