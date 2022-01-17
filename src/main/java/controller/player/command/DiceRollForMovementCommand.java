@@ -4,6 +4,7 @@ import controller.command.Command;
 import controller.event.EventDispatcher;
 import controller.player.PlayerController;
 import model.player.PlayerModel;
+import util.Pair;
 
 public class DiceRollForMovementCommand implements Command {
     private final PlayerController playerController;
@@ -35,7 +36,8 @@ public class DiceRollForMovementCommand implements Command {
     @Override
     public void execute() {
         do {
-            eventDispatcher.diceRollEvent(dice -> count(dice.getFirst(), dice.getSecond()));
+            Pair<Integer, Integer> pair = eventDispatcher.diceRollEvent().rollDice();
+            count(pair.getFirst(), pair.getSecond());
         } while (didDouble && doubleCount < 3);
         moveCommandBuilder
                 .setGoToJail(doubleCount == 3)

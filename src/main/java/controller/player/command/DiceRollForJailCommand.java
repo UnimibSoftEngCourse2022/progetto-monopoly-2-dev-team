@@ -4,6 +4,7 @@ import controller.command.Command;
 import controller.event.EventDispatcher;
 import controller.player.PlayerController;
 import model.player.PlayerModel;
+import util.Pair;
 
 public class DiceRollForJailCommand implements Command {
     private final PlayerController playerController;
@@ -33,7 +34,8 @@ public class DiceRollForJailCommand implements Command {
 
     @Override
     public void execute() {
-        eventDispatcher.diceRollEvent(dice -> count(dice.getFirst(), dice.getSecond()));
+        Pair<Integer, Integer> pair = eventDispatcher.diceRollEvent().rollDice();
+        count(pair.getFirst(), pair.getSecond());
     }
 
     private void count(int first, int second) {
@@ -45,7 +47,7 @@ public class DiceRollForJailCommand implements Command {
         } else {
             succeeded = playerController.getManager(player).tryToGetOutOfJail();
         }
-        if(succeeded) {
+        if (succeeded) {
             moveCommandBuilder
                     .setSpace(MoveCommand.Type.MOVE_OF, result)
                     .setPlayer(player)
