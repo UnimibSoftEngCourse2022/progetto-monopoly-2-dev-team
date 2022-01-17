@@ -61,11 +61,12 @@ public class PropertyCommandBuilder implements CommandBuilder {
             propertyCommand = new SellHouseCommand(propertyController, property);
             price = propertyManager.getPriceManager().getHotelPrice(property) / 2;
         } else {//(Type.MORTGAGE.equals(type))
-            return new MortgageCommand(propertyController, property);
+            propertyCommand = new MortgageCommand(propertyController, property);
+            price = propertyManager.getPriceManager().getMortgageValue(property);
         }
 
         PayCommandBuilder payCommandBuilder = new PayCommandBuilder(tradeController);
-        if (Type.SELL_HOTEL.equals(type) || Type.SELL_HOUSE.equals(type)) {
+        if (Type.SELL_HOTEL.equals(type) || Type.SELL_HOUSE.equals(type) || Type.MORTGAGE.equals(type)) {
             payCommandBuilder.addCreditor(propertyManager.getOwner());
         } else {
             payCommandBuilder.addDebtor(propertyManager.getOwner());
