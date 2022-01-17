@@ -7,6 +7,7 @@ import model.PropertyMapper;
 import model.PropertyOwnerMapper;
 import model.player.PlayerModel;
 import model.property.PropertyModel;
+import org.junit.Before;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,12 +17,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TestUtils {
-    private static PropertyMapper propertyMapper;
-    private static List<PropertyModel> properties;
+public abstract class BaseTest {
+    protected static PropertyOwnerMapper ownerMapper;
+    protected static PropertyCategoryMapper categoryMapper;
 
+    protected static List<PropertyModel> properties;
+    protected static List<PlayerModel> players;
 
-    private static void init() {
+    @Before
+    protected void init() {
         ObjectMapper jacksonMapper = new ObjectMapper();
         URL jsonURL = PropertyMapperTest.class.getClassLoader().getResource("properties-test.json");
         if (jsonURL != null) {
@@ -32,37 +36,24 @@ public class TestUtils {
                 e.printStackTrace();
                 properties = Collections.emptyList();
             }
-            propertyMapper = new PropertyMapper(properties);
+            PropertyMapper propertyMapper = new PropertyMapper(properties);
+            ownerMapper = propertyMapper;
+            categoryMapper = propertyMapper;
+        }
+        if(players == null) {
+            resetPlayers();
         }
     }
 
-    public static PropertyOwnerMapper getPropertyOwnerMapper() {
-        if (propertyMapper == null) {
-            init();
-        }
-        return propertyMapper;
+    public void resetProperties() {
+        init();
     }
 
-    public static PropertyCategoryMapper getPropertyCategoryMapper() {
-        if (propertyMapper == null) {
-            init();
-        }
-        return propertyMapper;
-    }
-
-    public static List<PropertyModel> getProperties() {
-        if (properties == null) {
-            init();
-        }
-        return properties;
-    }
-
-    public static List<PlayerModel> getPlayers() {
-        List<PlayerModel> players = new ArrayList<>();
+    public static void resetPlayers() {
+        players = new ArrayList<>();
         players.add(new PlayerModel("1", "name1"));
         players.add(new PlayerModel("2", "name2"));
         players.add(new PlayerModel("3", "name3"));
         players.add(new PlayerModel("4", "name4"));
-        return players;
     }
 }
