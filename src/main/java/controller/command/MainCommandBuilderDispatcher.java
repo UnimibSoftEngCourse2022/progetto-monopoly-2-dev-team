@@ -3,9 +3,7 @@ package controller.command;
 import controller.TradeController;
 import controller.event.EventDispatcher;
 import controller.player.PlayerController;
-import controller.player.command.DiceRollCommandBuilder;
-import controller.player.command.MoveCommandBuilder;
-import controller.player.command.PayCommandBuilder;
+import controller.player.command.*;
 import controller.property.PropertyController;
 import controller.property.command.PropertyCommandBuilder;
 
@@ -33,6 +31,8 @@ public class MainCommandBuilderDispatcher implements CommandBuilderDispatcher {
             return className.cast(new PropertyCommandBuilder(propertyController, tradeController));
         } else if (PayCommandBuilder.class.equals(className)) {
             return className.cast(new PayCommandBuilder(tradeController));
+        } else if (PayRentCommandBuilder.class.equals(className)) {
+            return className.cast(new PayRentCommandBuilder(propertyController, new PayCommandBuilder(tradeController)));
         } else if (MoveCommandBuilder.class.equals(className)) {
             return className.cast(new MoveCommandBuilder(playerController));
         } else if (DiceRollCommandBuilder.class.equals(className)) {
