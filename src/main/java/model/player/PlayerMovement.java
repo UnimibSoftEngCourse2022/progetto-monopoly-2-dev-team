@@ -2,11 +2,11 @@ package model.player;
 
 import util.Pair;
 
-public class Movement {
+public class PlayerMovement {
     private final Pair<Integer, Integer> positionPair;
     private final boolean direct;
 
-    public Movement(int previousPosition, int newPosition, boolean direct) {
+    public PlayerMovement(int previousPosition, int newPosition, boolean direct) {
         this.positionPair = new Pair<>(previousPosition, newPosition);
         this.direct = direct;
     }

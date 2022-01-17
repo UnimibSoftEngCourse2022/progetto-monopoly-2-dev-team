@@ -2,19 +2,19 @@ package model.player;
 
 public class Position {
     private int intPosition;
-    private Movement lastMovement;
+    private PlayerMovement lastPlayerMovement;
 
     public Position() {
         this.intPosition = 0;
-        lastMovement = new Movement(0, 0, false);
+        lastPlayerMovement = new PlayerMovement(0, 0, false);
     }
 
     public int getIntPosition() {
         return intPosition;
     }
 
-    public Movement getLastMovement() {
-        return lastMovement;
+    public PlayerMovement getLastMovement() {
+        return lastPlayerMovement;
     }
 
     public void setPosition(int newPosition) {
@@ -22,7 +22,7 @@ public class Position {
     }
 
     public void setPosition(int newPosition, boolean direct) {
-        lastMovement = new Movement(this.intPosition, newPosition, direct);
+        lastPlayerMovement = new PlayerMovement(this.intPosition, newPosition, direct);
         this.intPosition = newPosition;
     }
 }

@@ -1,6 +1,6 @@
-package model;
+package model.enums;
 
 public enum DrawableCardCategory {
     CHANCE,
-    COMMUNITY_CHEST
+    COMMUNITY_CHEST;
 }
