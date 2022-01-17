@@ -1,22 +1,17 @@
 package controller.property.command;
 
 import controller.ManagerController;
-import controller.TradeController;
-import controller.command.ExecutableModelCommand;
+import controller.command.Command;
 import manager.property.PropertyManager;
-import model.player.PlayerModel;
 import model.property.PropertyModel;
 
-public class SellHotelCommand extends ExecutableModelCommand<PropertyModel> {
+public class SellHotelCommand implements Command {
     private final ManagerController<PropertyModel, PropertyManager> controller;
-
-    public SellHotelCommand(ManagerController<PropertyModel, PropertyManager> controller) {
-        this(controller, null);
-    }
+    private final PropertyModel property;
 
     public SellHotelCommand(ManagerController<PropertyModel, PropertyManager> controller, PropertyModel property) {
-        super(property);
         this.controller = controller;
+        this.property = property;
     }
 
     @Override
@@ -25,13 +20,13 @@ public class SellHotelCommand extends ExecutableModelCommand<PropertyModel> {
     }
 
     @Override
-    public boolean isEnabled(PropertyModel property) {
+    public boolean isEnabled() {
         PropertyManager manager = controller.getManager(property);
         return manager.canRemoveHotel();
     }
 
     @Override
-    public void executableMethod(PropertyModel property) {
+    public void execute() {
         PropertyManager manager = controller.getManager(property);
         manager.removeHotel();
     }

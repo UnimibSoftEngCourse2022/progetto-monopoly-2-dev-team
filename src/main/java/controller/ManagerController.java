@@ -1,8 +1,6 @@
 package controller;
 
 import controller.command.Command;
-import controller.command.ModelCommand;
-import controller.ModelController;
 import manager.Manager;
 
 import java.util.List;
@@ -15,6 +13,4 @@ public abstract class ManagerController<T, R extends Manager<T>> extends ModelCo
     public R getManager(T model) {
         return modelToManagerMap.getOrDefault(model, null);
     }
-
-    public abstract List<Command> getCommands(T model);
 }

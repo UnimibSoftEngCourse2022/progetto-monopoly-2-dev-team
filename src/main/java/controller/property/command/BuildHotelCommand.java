@@ -1,20 +1,17 @@
 package controller.property.command;
 
-import controller.command.ExecutableModelCommand;
 import controller.ManagerController;
+import controller.command.Command;
 import manager.property.PropertyManager;
 import model.property.PropertyModel;
 
-public class BuildHotelCommand extends ExecutableModelCommand<PropertyModel> {
+public class BuildHotelCommand implements Command {
     private final ManagerController<PropertyModel, PropertyManager> controller;
-
-    public BuildHotelCommand(ManagerController<PropertyModel, PropertyManager> controller) {
-        this(controller, null);
-    }
+    private final PropertyModel property;
 
     public BuildHotelCommand(ManagerController<PropertyModel, PropertyManager> controller, PropertyModel property) {
-        super(property);
         this.controller = controller;
+        this.property = property;
     }
 
     @Override
@@ -23,13 +20,13 @@ public class BuildHotelCommand extends ExecutableModelCommand<PropertyModel> {
     }
 
     @Override
-    public boolean isEnabled(PropertyModel property) {
+    public boolean isEnabled() {
         PropertyManager manager = controller.getManager(property);
         return manager.canImproveHotel();
     }
 
     @Override
-    public void executableMethod(PropertyModel property) {
+    public void execute() {
         PropertyManager manager = controller.getManager(property);
         manager.buildHotel();
     }
