@@ -22,7 +22,7 @@ public class Pair<T, R> {
     @Override
     public boolean equals(Object obj) {
         if(obj instanceof Pair) {
-            Pair pair = (Pair) obj;
+            Pair<?, ?> pair = (Pair<?, ?>) obj;
             return pair.first.equals(first) && pair.second.equals(second);
         }
         return false;

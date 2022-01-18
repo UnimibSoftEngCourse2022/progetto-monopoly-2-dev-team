@@ -35,11 +35,11 @@ public class PayCommand implements Command {
 
     @Override
     public void execute() {
-        if (creditors.size() == 0) {
+        if (creditors.isEmpty()) {
             for (PlayerModel debtor : debtors) {
                 tradeController.spendTransaction(debtor, money);
             }
-        } else if (debtors.size() == 0) {
+        } else if (debtors.isEmpty()) {
             for (PlayerModel creditor : creditors) {
                 tradeController.earnTransaction(creditor, money);
             }

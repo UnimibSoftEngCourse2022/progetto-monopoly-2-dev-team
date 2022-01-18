@@ -1,17 +1,16 @@
 package controller.player.command;
 
 import controller.command.Command;
-import controller.player.PlayerController;
 import controller.property.PropertyController;
 import manager.property.PropertyManager;
 import model.player.PlayerModel;
 import model.property.PropertyModel;
 
 public class PayRentCommand implements Command {
-    private PropertyController propertyController;
-    private PlayerModel player;
-    private PropertyModel property;
-    private PayCommandBuilder payCommandBuilder;
+    private final PropertyController propertyController;
+    private final PlayerModel player;
+    private final PropertyModel property;
+    private final PayCommandBuilder payCommandBuilder;
 
     public PayRentCommand(
             PropertyController propertyController,

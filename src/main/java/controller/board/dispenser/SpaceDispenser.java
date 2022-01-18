@@ -1,6 +1,5 @@
 package controller.board.dispenser;
 
-import controller.board.space.ChanceSpace;
 import controller.board.space.Space;
 
 import java.util.stream.IntStream;
@@ -17,7 +16,7 @@ public abstract class SpaceDispenser {
         return successor.processSpace(spaceIndex);
     }
 
-    public SpaceDispenser(int... spaceIndex) {
+    protected SpaceDispenser(int... spaceIndex) {
         this.spaceIndex = spaceIndex;
     }
 

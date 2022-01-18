@@ -15,7 +15,7 @@ public class PlayerManager extends Manager<PlayerModel> {
     private PlayerState state;
     private Position position;
     private PropertyOwnerMapper ownerMapper;
-    private final int EARN_ON_GO = 200; //TODO Check configuration
+    private static final int EARN_ON_GO = 200; //TODO Check configuration
     private int getOutOfJailTries = 0;
 
     public PlayerManager(PlayerModel player, int funds, PropertyOwnerMapper ownerMapper) {

@@ -44,10 +44,13 @@ public class ColoredPriceManager extends PriceManager {
         return rent;
     }
 
+
+    @Override
     public int getHousePrice(PropertyModel property) {
         return property.getHousePrice();
     }
 
+    @Override
     public int getHotelPrice(PropertyModel property) {
         return property.getHotelPrice();
     }

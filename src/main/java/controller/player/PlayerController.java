@@ -1,14 +1,10 @@
 package controller.player;
 
 import controller.ManagerController;
-import controller.command.Command;
-import controller.command.CommandBuilderDispatcher;
-import controller.player.command.DiceRollCommandBuilder;
 import manager.player.PlayerManager;
 import model.PropertyOwnerMapper;
 import model.player.PlayerModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerController extends ManagerController<PlayerModel, PlayerManager> {
