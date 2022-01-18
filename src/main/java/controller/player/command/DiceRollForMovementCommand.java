@@ -45,7 +45,13 @@ public class DiceRollForMovementCommand implements Command {
                 .setPlayer(player)
                 .build()
                 .execute();
+        if (doubleCount == 3) {
+            playerController.getManager(player).goToJail();
+        }
+        doubleCount = 0;
+        result = 0;
     }
+
 
     private void count(int first, int second) {
         didDouble = first == second;

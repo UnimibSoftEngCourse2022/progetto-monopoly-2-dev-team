@@ -11,20 +11,17 @@ public class PayRentCommand implements Command {
     private PropertyController propertyController;
     private PlayerModel player;
     private PropertyModel property;
-    private int money;
     private PayCommandBuilder payCommandBuilder;
 
     public PayRentCommand(
             PropertyController propertyController,
             PlayerModel player,
             PropertyModel property,
-            int money,
             PayCommandBuilder payCommandBuilder
     ) {
         this.propertyController = propertyController;
         this.player = player;
         this.property = property;
-        this.money = money;
         this.payCommandBuilder = payCommandBuilder;
     }
 

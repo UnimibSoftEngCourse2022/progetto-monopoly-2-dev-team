@@ -8,18 +8,12 @@ import model.property.PropertyModel;
 public class PayRentCommandBuilder implements CommandBuilder {
     private final PropertyController propertyController;
     private final PayCommandBuilder payCommandBuilder;
-    private int money;
     private PlayerModel player;
     private PropertyModel property;
 
     public PayRentCommandBuilder(PropertyController propertyController, PayCommandBuilder payCommandBuilder) {
         this.propertyController = propertyController;
         this.payCommandBuilder = payCommandBuilder;
-    }
-
-    public PayRentCommandBuilder setMoney(int money) {
-        this.money = money;
-        return this;
     }
 
     public PayRentCommandBuilder setPlayer(PlayerModel player) {
@@ -33,6 +27,6 @@ public class PayRentCommandBuilder implements CommandBuilder {
     }
 
     public PayRentCommand build() {
-        return new PayRentCommand(propertyController, player, property, money, payCommandBuilder);
+        return new PayRentCommand(propertyController, player, property, payCommandBuilder);
     }
 }

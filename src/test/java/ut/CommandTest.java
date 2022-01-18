@@ -4,22 +4,35 @@ import controller.TradeController;
 import controller.command.Command;
 import controller.command.CommandBuilderDispatcher;
 import controller.command.MainCommandBuilderDispatcher;
+import controller.event.DiceRollEventCallback;
+import controller.event.DiceRoller;
 import controller.event.EventDispatcher;
 import controller.player.PlayerController;
+import controller.player.command.DiceRollCommandBuilder;
+import controller.player.command.PayCommandBuilder;
+import controller.player.command.PayRentCommandBuilder;
 import controller.property.PropertyController;
 import controller.property.command.PropertyCommandBuilder;
 import manager.player.PlayerManager;
+import manager.pricemanager.PriceManager;
 import model.player.PlayerModel;
+import model.player.Position;
 import model.property.PropertyCategory;
 import model.property.PropertyModel;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import util.Pair;
+
+import java.net.PasswordAuthentication;
+
+import static model.player.PlayerState.*;
 
 public class CommandTest extends BaseTest {
     public static PlayerController playerController;
     public static PropertyController propertyController;
     public static CommandBuilderDispatcher commandBuilderDispatcher;
+    public static DiceRoller diceRoller;
 
     @Before
     public void init() {
@@ -30,7 +43,17 @@ public class CommandTest extends BaseTest {
                 propertyController,
                 playerController,
                 new TradeController(playerController, propertyController),
-                new EventDispatcher()
+                new EventDispatcher() {
+                    @Override
+                    public DiceRoller diceRollEvent() {
+                        return diceRoller;
+                    }
+
+                    @Override
+                    public DiceRoller diceRollEvent(DiceRollEventCallback callback) {
+                        return diceRoller;
+                    }
+                }
         );
     }
 
@@ -150,6 +173,207 @@ public class CommandTest extends BaseTest {
 
         Assert.assertEquals(funds + 30, playerManager.getFunds());
         Assert.assertEquals(player, propertyController.getManager(categoryMapper.getCategoryProperties(PropertyCategory.BROWN).get(0)).getOwner());
+
+    }
+
+    @Test
+    public void diceRollCommandsTest() {
+        PlayerModel player = players.get(0);
+        PlayerManager playerManager = playerController.getManager(player);
+
+        Assert.assertEquals(FREE, playerManager.getState());
+        Assert.assertTrue(playerManager.canTakeTurn());
+        Assert.assertTrue(playerManager.canMove());
+        Assert.assertEquals(0, playerManager.getPosition().getIntPosition());
+
+        Command rollCommand = commandBuilderDispatcher
+                .createCommandBuilder(DiceRollCommandBuilder.class)
+                .setPlayer(player)
+                .build();
+
+        Assert.assertTrue(rollCommand.isEnabled());
+
+
+        diceRoller = () -> new Pair<>(5, 6);
+        rollCommand.execute();
+
+        // THROW case
+        Assert.assertEquals(11, playerManager.getPosition().getIntPosition());
+
+        diceRoller = () -> {
+            diceRoller = () -> new Pair<>(2, 3);
+            return new Pair<>(6, 6);
+        };
+        rollCommand.execute();
+
+        // DOUBLEs case
+        Assert.assertEquals(28, playerManager.getPosition().getIntPosition());
+        Assert.assertEquals(FREE, playerManager.getState());
+        Assert.assertTrue(playerManager.canTakeTurn());
+        Assert.assertTrue(playerManager.canMove());
+
+        diceRoller = () -> new Pair<>(1, 1);
+        rollCommand.execute();
+
+        // IN JAIL case
+        //Assert.assertEquals(10, playerManager.getPosition().getIntPosition());
+        Assert.assertEquals(IN_JAIL, playerManager.getState());
+        Assert.assertTrue(playerManager.canTakeTurn());
+        Assert.assertFalse(playerManager.canMove());
+
+        rollCommand = commandBuilderDispatcher
+                .createCommandBuilder(DiceRollCommandBuilder.class)
+                .setPlayer(player)
+                .build();
+
+        int funds = playerManager.getFunds();
+        int position = playerManager.getPosition().getIntPosition();
+        diceRoller = () -> new Pair<>(1, 2);
+
+        // TRIPLE THROW IN JAIL
+        for (int i = 0; i < 3; i++) {
+            rollCommand.execute();
+        }
+
+        Assert.assertEquals(funds - 50, playerManager.getFunds());
+        Assert.assertEquals(FREE, playerManager.getState());
+        Assert.assertTrue(playerManager.canTakeTurn());
+        Assert.assertTrue(playerManager.canMove());
+        Assert.assertEquals(position + 3, playerManager.getPosition().getIntPosition());
+
+        // DOUBLE throw in JAIL
+        playerManager.setState(IN_JAIL);
+
+        rollCommand = commandBuilderDispatcher
+                .createCommandBuilder(DiceRollCommandBuilder.class)
+                .setPlayer(player)
+                .build();
+
+        funds = playerManager.getFunds();
+        position = playerManager.getPosition().getIntPosition();
+        diceRoller = () -> new Pair<>(1, 1);
+
+        rollCommand.execute();
+
+        Assert.assertEquals(funds, playerManager.getFunds());
+        Assert.assertEquals(FREE, playerManager.getState());
+        Assert.assertTrue(playerManager.canTakeTurn());
+        Assert.assertTrue(playerManager.canMove());
+        Assert.assertEquals(position + 2, playerManager.getPosition().getIntPosition());
+
+        // Player FINED
+        playerManager.setState(FINED);
+
+        rollCommand = commandBuilderDispatcher
+                .createCommandBuilder(DiceRollCommandBuilder.class)
+                .setPlayer(player)
+                .build();
+
+        funds = playerManager.getFunds();
+        playerManager.getPosition().setPosition(0);
+        diceRoller = () -> new Pair<>(1, 2);
+
+        rollCommand.execute();
+
+        Assert.assertEquals(funds - 50, playerManager.getFunds());
+        Assert.assertEquals(FINED, playerManager.getState());
+        Assert.assertTrue(playerManager.canTakeTurn());
+        Assert.assertTrue(playerManager.canMove());
+        Assert.assertEquals(3, playerManager.getPosition().getIntPosition());
+
+        /*
+        rollCommand = commandBuilderDispatcher
+                .createCommandBuilder(DiceRollCommandBuilder.class)
+                .setPlayer(player)
+                .build();
+
+        funds = playerManager.getFunds();
+        position = playerManager.getPosition().getIntPosition();
+        diceRoller = () -> new Pair<>(1, 2);
+
+        rollCommand.execute();
+
+        Assert.assertEquals(funds - 50, playerManager.getFunds());
+        Assert.assertEquals(FREE, playerManager.getState());
+        Assert.assertTrue(playerManager.canTakeTurn());
+        Assert.assertTrue(playerManager.canMove());
+        Assert.assertEquals(position + 3, playerManager.getPosition().getIntPosition());
+        */
+
+
+    }
+
+    @Test
+    public void paymentsCommandsTest() {
+
+        resetPlayers();
+
+        PlayerManager playerManager1 = playerController.getManager(players.get(0));
+        PlayerManager playerManager2 = playerController.getManager(players.get(1));
+
+        // Player payments
+        int funds1 = playerManager1.getFunds();
+        int funds2 = playerManager2.getFunds();
+
+        Command payCommand = commandBuilderDispatcher
+                .createCommandBuilder(PayCommandBuilder.class)
+                .addCreditor(playerManager1.getModel())
+                .addDebtor(playerManager2.getModel())
+                .setMoney(50)
+                .build();
+
+        payCommand.execute();
+
+        Assert.assertEquals(funds1 + 50, playerManager1.getFunds());
+        Assert.assertEquals(funds2 - 50, playerManager2.getFunds());
+
+    }
+
+    @Test
+    public void payRentCommandTest() {
+        PlayerModel player = players.get(0);
+        PlayerManager playerManager = playerController.getManager(player);
+        PropertyModel firstBrownProperty = categoryMapper.getCategoryProperties(PropertyCategory.BROWN).get(0);
+
+        Command payRentCommand = commandBuilderDispatcher
+                .createCommandBuilder(PayRentCommandBuilder.class)
+                .setProperty(firstBrownProperty)
+                .setPlayer(player)
+                .build();
+
+        payRentCommand.execute();
+
+        // Property not selled yet
+        Assert.assertFalse(payRentCommand.isEnabled());
+
+        payRentCommand = commandBuilderDispatcher
+                .createCommandBuilder(PayRentCommandBuilder.class)
+                .setProperty(firstBrownProperty)
+                .setPlayer(player)
+                .build();
+
+        // Property rented
+        propertyController.getManager(firstBrownProperty).setOwner(players.get(2));
+        int funds = playerManager.getFunds();
+
+        Assert.assertTrue(payRentCommand.isEnabled());
+
+        payRentCommand.execute();
+
+        Assert.assertEquals(funds - 2, playerManager.getFunds());
+
+        // Property mortgaged
+        propertyController.getManager(firstBrownProperty).mortgage();
+
+        payRentCommand = commandBuilderDispatcher
+                .createCommandBuilder(PayRentCommandBuilder.class)
+                .setProperty(firstBrownProperty)
+                .setPlayer(player)
+                .build();
+
+        Assert.assertFalse(payRentCommand.isEnabled());
+
+        payRentCommand.execute();
 
     }
 }

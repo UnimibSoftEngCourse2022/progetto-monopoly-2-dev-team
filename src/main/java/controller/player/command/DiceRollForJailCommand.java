@@ -11,15 +11,18 @@ public class DiceRollForJailCommand implements Command {
     private final EventDispatcher eventDispatcher;
     private final PlayerModel player;
     private final MoveCommandBuilder moveCommandBuilder;
+    private PayCommandBuilder payCommandBuilder;
 
     public DiceRollForJailCommand(PlayerController playerController,
                                   EventDispatcher eventDispatcher,
                                   PlayerModel player,
-                                  MoveCommandBuilder moveCommandBuilder) {
+                                  MoveCommandBuilder moveCommandBuilder,
+                                  PayCommandBuilder payCommandBuilder) {
         this.playerController = playerController;
         this.eventDispatcher = eventDispatcher;
         this.player = player;
         this.moveCommandBuilder = moveCommandBuilder;
+        this.payCommandBuilder = payCommandBuilder;
     }
 
     @Override
@@ -46,6 +49,12 @@ public class DiceRollForJailCommand implements Command {
             succeeded = true;
         } else {
             succeeded = playerController.getManager(player).tryToGetOutOfJail();
+            if (succeeded) {
+                payCommandBuilder.addDebtor(player)
+                        .setMoney(50)
+                        .build()
+                        .execute();
+            }
         }
         if (succeeded) {
             moveCommandBuilder

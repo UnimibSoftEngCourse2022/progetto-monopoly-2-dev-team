@@ -104,6 +104,14 @@ public class PlayerManager extends Manager<PlayerModel> {
         return state;
     }
 
+    public void setState(PlayerState state) {
+        this.state = state;
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
     //PRIVATE METHODS
 
     private void checkBankrupt() {
