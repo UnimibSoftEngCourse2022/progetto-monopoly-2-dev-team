@@ -1,6 +1,5 @@
 package controller.board;
 
-import controller.DiceRoller;
 import controller.board.dispenser.*;
 import controller.board.space.Space;
 import model.property.PropertyModel;
