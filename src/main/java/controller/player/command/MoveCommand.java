@@ -8,14 +8,15 @@ import model.player.PlayerModel;
 public class MoveCommand implements Command {
     private final PlayerController playerController;
     private final PlayerModel player;
-    private final int space;
+    private int space;
     private final boolean directMovement;
     private final boolean goToJail;
     private final Type type;
 
     public enum Type {
         MOVE_OF,
-        MOVE_TO
+        MOVE_TO,
+        MOVE_NEAR
     }
 
     public MoveCommand(PlayerController playerController, PlayerModel player, Type type, int space, boolean directMovement, boolean goToJail) {
@@ -42,12 +43,14 @@ public class MoveCommand implements Command {
         if (player != null && playerController != null) {
             PlayerManager manager = playerController.getManager(player);
             if(goToJail) {
-                //space = //TODO set jail space
+                space = 10;
             }
-            if(Type.MOVE_TO.equals(type)) {
+            if(Type.MOVE_TO.equals(type) || goToJail) {
                 manager.moveTo(space, goToJail || directMovement);
+            } else if (Type.MOVE_OF.equals(type)){
+                manager.move(space, directMovement);
             } else {
-                manager.move(space, goToJail || directMovement);
+                // TODO: MOVE_NEAR
             }
         }
     }

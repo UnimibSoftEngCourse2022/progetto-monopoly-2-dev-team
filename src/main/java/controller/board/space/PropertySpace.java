@@ -1,6 +1,7 @@
 package controller.board.space;
 
 import controller.command.CommandBuilderDispatcher;
+import controller.player.command.PayRentCommandBuilder;
 import model.player.PlayerModel;
 import model.property.PropertyModel;
 
@@ -19,6 +20,10 @@ public class PropertySpace extends AbstractSpace {
 
     @Override
     public void applyEffect(PlayerModel player) {
-
+        commandBuilderDispatcher.createCommandBuilder(PayRentCommandBuilder.class)
+                .setProperty(property)
+                .setPlayer(player)
+                .build()
+                .execute();
     }
 }
