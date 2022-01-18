@@ -9,11 +9,11 @@ import java.util.List;
 
 public class BoardTest {
 
-    private static Board board = new Board(TestUtils.getProperties());
+    private static Board board = new Board(null, TestUtils.getProperties());
 
     @Test
     public void chainOfResponsabilityTest() {
-        List<Space> boardSpaces = board.getGameboard();
+        List<Space> boardSpaces = board.getSpaces();
 
         Assert.assertNotNull(boardSpaces);
 
