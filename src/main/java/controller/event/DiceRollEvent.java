@@ -22,9 +22,8 @@ public class DiceRollEvent implements DiceRoller {
     }
 
     public Pair<Integer, Integer> rollDice() {
-        Random random = new Random();
-        int first = random.nextInt(6) + 1;
-        int second = random.nextInt(6) + 1;
+        int first = new Random().nextInt(6) + 1;
+        int second = new Random().nextInt(6) + 1;
         Pair<Integer, Integer> result = new Pair<>(first, second);
         for (DiceRollEventCallback callback : callbacks) {
             callback.diceRolled(result);
