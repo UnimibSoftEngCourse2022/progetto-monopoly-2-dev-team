@@ -3,39 +3,72 @@ package controller;
 import controller.player.PlayerController;
 import controller.property.PropertyController;
 import manager.player.PlayerManager;
+import manager.property.PropertyManager;
 import model.player.PlayerModel;
 import model.property.PropertyModel;
 
 public class TradeController {
-    private final PlayerController playerController;
-    private final PropertyController propertyController;
+    private final ManagerController<PlayerModel, PlayerManager> playerController;
+    private final ManagerController<PropertyModel, PropertyManager> propertyController;
 
     public TradeController(PlayerController playerController, PropertyController propertyController) {
         this.playerController = playerController;
         this.propertyController = propertyController;
     }
 
-    public void changeOwner(PlayerModel buyer, PlayerModel seller, PropertyModel property, int money) {
-        //TODO Checks with property manager
-        makeTransaction(seller, buyer, money);
-        changeOwner(buyer, seller, property);
+    public boolean buyProperty(PlayerModel buyer, PropertyModel propertyWithoutOwner) {
+        PropertyManager propertyManager = propertyController.getManager(propertyWithoutOwner);
+        int price = propertyManager.getPriceManager().getPrice(propertyWithoutOwner);
+        return buyPropertyWithoutOwner(buyer, propertyWithoutOwner, price);
     }
 
-    public void changeOwner(PlayerModel seller, PlayerModel buyer, PropertyModel property) {
-        if (seller == null || buyer == null) {
-            return;
-        }
-        //TODO Change owner with propertyManager
+    public boolean buyPropertyAfterAuction(PlayerModel buyer, PropertyModel propertyWithoutOwner, int price) {
+        return buyPropertyWithoutOwner(buyer, propertyWithoutOwner, price);
     }
 
-    public void makeTransaction(PlayerModel creditor, PlayerModel debtor, int money) {
-        if (creditor == null || debtor == null) {
+    public boolean buyPropertyFromPlayer(PlayerModel buyer, PlayerModel seller, PropertyModel property, int price) {
+        PropertyManager propertyManager = propertyController.getManager(property);
+        boolean canSell = propertyManager.canSell() && propertyManager.getOwner().equals(seller);
+        if (canSell) {
+            makeTransaction(seller, buyer, price);
+            setNewOwner(buyer, property);
+        }
+        return canSell;
+    }
+
+    public void spendTransaction(PlayerModel debtor, int price) {
+        makeTransaction(null, debtor, price);
+    }
+
+    public void earnTransaction(PlayerModel creditor, int price) {
+        makeTransaction(creditor, null, price);
+    }
+
+    public void makeTransaction(PlayerModel creditor, PlayerModel debtor, int price) {
+        if (debtor != null) {
+            PlayerManager debtorManager = playerController.getManager(debtor);
+            debtorManager.spend(price);
+        }
+        if (creditor != null) {
+            PlayerManager creditorManager = playerController.getManager(creditor);
+            creditorManager.earn(price);
+        }
+    }
+
+    private boolean buyPropertyWithoutOwner(PlayerModel buyer, PropertyModel propertyWithoutOwner, int price) {
+        boolean hasNoOwner = propertyController.getManager(propertyWithoutOwner).getOwner() == null;
+        if (hasNoOwner) {
+            spendTransaction(buyer, price);
+            setNewOwner(buyer, propertyWithoutOwner);
+        }
+        return hasNoOwner;
+    }
+
+    private void setNewOwner(PlayerModel buyer, PropertyModel property) {
+        if (buyer == null) {
             return;
         }
-        PlayerManager creditorManager = playerController.getManager(creditor);
-        PlayerManager debtorManager = playerController.getManager(debtor);
-        debtorManager.spend(money);
-        creditorManager.earn(money);
+        propertyController.getManager(property).setOwner(buyer);
     }
 
 }

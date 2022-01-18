@@ -1,6 +1,6 @@
 package manager.pricemanager;
 
-import controller.DiceRoller;
+import controller.event.DiceRoller;
 import model.PropertyCategoryMapper;
 import model.PropertyOwnerMapper;
 import model.player.PlayerModel;

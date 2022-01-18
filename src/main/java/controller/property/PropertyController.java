@@ -1,29 +1,25 @@
 package controller.property;
 
+import controller.ManagerController;
 import manager.property.PropertyManager;
 import model.PropertyCategoryMapper;
 import model.PropertyOwnerMapper;
 import model.property.PropertyModel;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class PropertyController {
-    private Map<PropertyModel, PropertyManager> propertyManagerMap = new ConcurrentHashMap<>();
+public class PropertyController extends ManagerController<PropertyModel, PropertyManager> {
 
     public PropertyController(List<PropertyModel> properties,
                               PropertyOwnerMapper ownerMapper,
                               PropertyCategoryMapper categoryMapper) {
+        this.models = properties;
         for (PropertyModel property : properties) {
-            propertyManagerMap.put(
+            modelToManagerMap.put(
                     property,
                     new PropertyManager(property, ownerMapper, categoryMapper)
             );
         }
     }
 
-    public PropertyManager getManager(PropertyModel property) {
-        return propertyManagerMap.getOrDefault(property, null);
-    }
 }

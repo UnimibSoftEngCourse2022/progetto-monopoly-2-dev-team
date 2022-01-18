@@ -1,0 +1,50 @@
+package controller.player.command;
+
+import controller.command.CommandBuilder;
+import controller.player.PlayerController;
+import model.player.PlayerModel;
+
+public class MoveCommandBuilder implements CommandBuilder {
+    private final PlayerController playerController;
+    private PlayerModel player;
+    private int space;
+    private boolean directMovement = false;
+    private boolean goToJail = false;
+    private MoveCommand.Type type;
+
+    public MoveCommandBuilder(PlayerController playerController) {
+        this.playerController = playerController;
+    }
+
+    public MoveCommandBuilder setPlayer(PlayerModel player) {
+        this.player = player;
+        return this;
+    }
+
+    public MoveCommandBuilder setSpace(MoveCommand.Type type, int space) {
+        this.type = type;
+        this.space = space;
+        return this;
+    }
+
+    public MoveCommandBuilder setDirectMovement(boolean directMovement) {
+        this.directMovement = directMovement;
+        return this;
+    }
+
+    public MoveCommandBuilder setGoToJail(boolean goToJail) {
+        this.goToJail = goToJail;
+        return this;
+    }
+
+    public MoveCommand build() {
+        return new MoveCommand(
+                playerController,
+                player,
+                type,
+                space,
+                directMovement,
+                goToJail
+        );
+    }
+}
