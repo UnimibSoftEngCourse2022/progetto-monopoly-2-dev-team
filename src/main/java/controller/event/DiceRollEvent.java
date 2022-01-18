@@ -2,6 +2,8 @@ package controller.event;
 
 import util.Pair;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -22,8 +24,14 @@ public class DiceRollEvent implements DiceRoller {
     }
 
     public Pair<Integer, Integer> rollDice() {
-        int first = new Random().nextInt(6) + 1;
-        int second = new Random().nextInt(6) + 1;
+        Random random;
+        try {
+            random = SecureRandom.getInstanceStrong();
+        } catch (NoSuchAlgorithmException e) {
+            random = new Random();
+        }
+        int first = random.nextInt(6) + 1;
+        int second = random.nextInt(6) + 1;
         Pair<Integer, Integer> result = new Pair<>(first, second);
         for (DiceRollEventCallback callback : callbacks) {
             callback.diceRolled(result);
