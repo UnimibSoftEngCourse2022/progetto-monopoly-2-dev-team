@@ -32,6 +32,21 @@
     ]
   },
   {
+    "name": "Reading Railroad",
+    "category": "RAILROAD",
+    "price": 200,
+    "housePrice": 0,
+    "hotelPrice": 0,
+    "mortgageValue": 100,
+    "rentValue": [
+      25,
+      25,
+      50,
+      100,
+      200
+    ]
+  },
+  {
     "name": "Oriental Avenue",
     "category": "LIGHTBLUE",
     "price": 100,
@@ -96,6 +111,19 @@
     ]
   },
   {
+    "name": "Electric Company",
+    "category": "UTILITY",
+    "price": 150,
+    "housePrice": 0,
+    "hotelPrice": 0,
+    "mortgageValue": 75,
+    "rentValue": [
+      0,
+      4,
+      10
+    ]
+  },
+  {
     "name": "States Avenue",
     "category": "PINK",
     "price": 140,
@@ -125,6 +153,21 @@
       500,
       700,
       900
+    ]
+  },
+  {
+    "name": "Pennsylvania Railroad",
+    "category": "RAILROAD",
+    "price": 200,
+    "housePrice": 0,
+    "hotelPrice": 0,
+    "mortgageValue": 100,
+    "rentValue": [
+      25,
+      25,
+      50,
+      100,
+      200
     ]
   },
   {
@@ -160,7 +203,7 @@
     ]
   },
   {
-    "name": "Virginia Avenue",
+    "name": "New York Avenue",
     "category": "ORANGE",
     "price": 200,
     "housePrice": 100,
@@ -224,6 +267,21 @@
     ]
   },
   {
+    "name": "B. & O. Railroad",
+    "category": "RAILROAD",
+    "price": 200,
+    "housePrice": 0,
+    "hotelPrice": 0,
+    "mortgageValue": 100,
+    "rentValue": [
+      25,
+      25,
+      50,
+      100,
+      200
+    ]
+  },
+  {
     "name": "Atlantic Avenue",
     "category": "YELLOW",
     "price": 260,
@@ -253,6 +311,19 @@
       800,
       975,
       1150
+    ]
+  },
+  {
+    "name": "Water Works",
+    "category": "UTILITY",
+    "price": 150,
+    "housePrice": 0,
+    "hotelPrice": 0,
+    "mortgageValue": 75,
+    "rentValue": [
+      0,
+      4,
+      10
     ]
   },
   {
@@ -320,6 +391,21 @@
     ]
   },
   {
+    "name": "Short Line",
+    "category": "RAILROAD",
+    "price": 200,
+    "housePrice": 0,
+    "hotelPrice": 0,
+    "mortgageValue": 100,
+    "rentValue": [
+      25,
+      25,
+      50,
+      100,
+      200
+    ]
+  },
+  {
     "name": "Park Place",
     "category": "DARKBLUE",
     "price": 350,
@@ -349,86 +435,6 @@
       1400,
       1700,
       2000
-    ]
-  },
-  {
-    "name": "Reading Railroad",
-    "category": "RAILROAD",
-    "price": 200,
-    "housePrice": 0,
-    "hotelPrice": 0,
-    "mortgageValue": 100,
-    "rentValue": [
-      25,
-      50,
-      100,
-      200
-    ]
-  },
-  {
-    "name": "Pennsylvania Railroad",
-    "category": "RAILROAD",
-    "price": 200,
-    "housePrice": 0,
-    "hotelPrice": 0,
-    "mortgageValue": 100,
-    "rentValue": [
-      25,
-      50,
-      100,
-      200
-    ]
-  },
-  {
-    "name": "B. & O. Railroad",
-    "category": "RAILROAD",
-    "price": 200,
-    "housePrice": 0,
-    "hotelPrice": 0,
-    "mortgageValue": 100,
-    "rentValue": [
-      25,
-      50,
-      100,
-      200
-    ]
-  },
-  {
-    "name": "Short Line",
-    "category": "RAILROAD",
-    "price": 200,
-    "housePrice": 0,
-    "hotelPrice": 0,
-    "mortgageValue": 100,
-    "rentValue": [
-      25,
-      50,
-      100,
-      200
-    ]
-  },
-  {
-    "name": "Electric Company",
-    "category": "UTILITY",
-    "price": 150,
-    "housePrice": 0,
-    "hotelPrice": 0,
-    "mortgageValue": 75,
-    "rentValue": [
-      4,
-      10
-    ]
-  },
-  {
-    "name": "Water Works",
-    "category": "UTILITY",
-    "price": 150,
-    "housePrice": 0,
-    "hotelPrice": 0,
-    "mortgageValue": 75,
-    "rentValue": [
-      4,
-      10
     ]
   }
 ]
