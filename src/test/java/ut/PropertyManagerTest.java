@@ -1,11 +1,11 @@
 package ut;
 
-import manager.property.PropertyManager;
-import model.PropertyCategoryMapper;
-import model.PropertyOwnerMapper;
-import model.player.PlayerModel;
-import model.property.PropertyCategory;
-import model.property.PropertyModel;
+import it.monopoly.manager.property.PropertyManager;
+import it.monopoly.model.PropertyCategoryMapper;
+import it.monopoly.model.PropertyOwnerMapper;
+import it.monopoly.model.player.PlayerModel;
+import it.monopoly.model.property.PropertyCategory;
+import it.monopoly.model.property.PropertyModel;
 import org.junit.Assert;
 import org.junit.Test;
 

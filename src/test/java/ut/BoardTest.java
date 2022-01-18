@@ -1,7 +1,7 @@
 package ut;
 
-import controller.board.Board;
-import controller.board.space.*;
+import it.monopoly.controller.board.Board;
+import it.monopoly.controller.board.space.*;
 import org.junit.Assert;
 import org.junit.Test;
 

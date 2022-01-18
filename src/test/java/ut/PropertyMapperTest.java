@@ -1,9 +1,9 @@
 package ut;
 
-import model.PropertyCategoryMapper;
-import model.PropertyOwnerMapper;
-import model.property.PropertyCategory;
-import model.property.PropertyModel;
+import it.monopoly.model.PropertyCategoryMapper;
+import it.monopoly.model.PropertyOwnerMapper;
+import it.monopoly.model.property.PropertyCategory;
+import it.monopoly.model.property.PropertyModel;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -42,10 +42,10 @@ public class PropertyMapperTest {
         Assert.assertEquals(4, model.getHouseNumber());
         Assert.assertEquals(160, model.getHouseRent());
         /*
-        model.setHotelNumber(1);
-        Assert.assertEquals(0, model.getHouseNumber());
-        Assert.assertEquals(1, model.getHotelNumber());
-        Assert.assertEquals(250, model.getHotelNumber());
+        it.monopoly.model.setHotelNumber(1);
+        Assert.assertEquals(0, it.monopoly.model.getHouseNumber());
+        Assert.assertEquals(1, it.monopoly.model.getHotelNumber());
+        Assert.assertEquals(250, it.monopoly.model.getHotelNumber());
          */
     }
 

@@ -1,32 +1,28 @@
 package ut;
 
-import controller.TradeController;
-import controller.command.Command;
-import controller.command.CommandBuilderDispatcher;
-import controller.command.MainCommandBuilderDispatcher;
-import controller.event.DiceRollEventCallback;
-import controller.event.DiceRoller;
-import controller.event.EventDispatcher;
-import controller.player.PlayerController;
-import controller.player.command.DiceRollCommandBuilder;
-import controller.player.command.PayCommandBuilder;
-import controller.player.command.PayRentCommandBuilder;
-import controller.property.PropertyController;
-import controller.property.command.PropertyCommandBuilder;
-import manager.player.PlayerManager;
-import manager.pricemanager.PriceManager;
-import model.player.PlayerModel;
-import model.player.Position;
-import model.property.PropertyCategory;
-import model.property.PropertyModel;
+import it.monopoly.controller.TradeController;
+import it.monopoly.controller.command.Command;
+import it.monopoly.controller.command.CommandBuilderDispatcher;
+import it.monopoly.controller.command.MainCommandBuilderDispatcher;
+import it.monopoly.controller.event.DiceRollEventCallback;
+import it.monopoly.controller.event.DiceRoller;
+import it.monopoly.controller.event.EventDispatcher;
+import it.monopoly.controller.player.PlayerController;
+import it.monopoly.controller.player.command.DiceRollCommandBuilder;
+import it.monopoly.controller.player.command.PayCommandBuilder;
+import it.monopoly.controller.player.command.PayRentCommandBuilder;
+import it.monopoly.controller.property.PropertyController;
+import it.monopoly.controller.property.command.PropertyCommandBuilder;
+import it.monopoly.manager.player.PlayerManager;
+import it.monopoly.model.player.PlayerModel;
+import it.monopoly.model.property.PropertyCategory;
+import it.monopoly.model.property.PropertyModel;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import util.Pair;
+import it.monopoly.util.Pair;
 
-import java.net.PasswordAuthentication;
-
-import static model.player.PlayerState.*;
+import static it.monopoly.model.player.PlayerState.*;
 
 public class CommandTest extends BaseTest {
     public static PlayerController playerController;

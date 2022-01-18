@@ -2,11 +2,11 @@ package ut;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import model.PropertyCategoryMapper;
-import model.PropertyMapper;
-import model.PropertyOwnerMapper;
-import model.player.PlayerModel;
-import model.property.PropertyModel;
+import it.monopoly.model.PropertyCategoryMapper;
+import it.monopoly.model.PropertyMapper;
+import it.monopoly.model.PropertyOwnerMapper;
+import it.monopoly.model.player.PlayerModel;
+import it.monopoly.model.property.PropertyModel;
 import org.junit.Before;
 
 import java.io.File;

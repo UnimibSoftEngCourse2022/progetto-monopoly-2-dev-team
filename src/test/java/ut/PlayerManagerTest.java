@@ -1,12 +1,12 @@
 package ut;
 
-import manager.player.PlayerManager;
-import model.player.PlayerModel;
-import model.player.PlayerState;
-import model.player.Position;
+import it.monopoly.manager.player.PlayerManager;
+import it.monopoly.model.player.PlayerModel;
+import it.monopoly.model.player.PlayerState;
+import it.monopoly.model.player.Position;
 import org.junit.Assert;
 import org.junit.Test;
-import util.Pair;
+import it.monopoly.util.Pair;
 
 public class PlayerManagerTest {
 

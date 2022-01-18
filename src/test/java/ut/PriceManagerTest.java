@@ -1,14 +1,14 @@
 package ut;
 
-import manager.pricemanager.*;
-import model.PropertyCategoryMapper;
-import model.PropertyOwnerMapper;
-import model.player.PlayerModel;
-import model.property.PropertyCategory;
-import model.property.PropertyModel;
+import it.monopoly.manager.pricemanager.*;
+import it.monopoly.model.PropertyCategoryMapper;
+import it.monopoly.model.PropertyOwnerMapper;
+import it.monopoly.model.player.PlayerModel;
+import it.monopoly.model.property.PropertyCategory;
+import it.monopoly.model.property.PropertyModel;
 import org.junit.Assert;
 import org.junit.Test;
-import util.Pair;
+import it.monopoly.util.Pair;
 
 public class PriceManagerTest {
     private static PropertyCategoryMapper propertyCategoryMapper = TestUtils.getPropertyCategoryMapper();
