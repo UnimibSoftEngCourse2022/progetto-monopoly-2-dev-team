@@ -20,7 +20,7 @@ public class DrawableCardModel {
 
     // payments commands
     private CreditorDebtor creditor;
-    private CreditorDebtor creditorDebtor;
+    private CreditorDebtor debtor;
 
     // out of jail free commands
     private boolean keep;
@@ -67,7 +67,7 @@ public class DrawableCardModel {
     }
 
     public CreditorDebtor getDebtor() {
-        return creditorDebtor;
+        return debtor;
     }
 
     public boolean isKeep() {

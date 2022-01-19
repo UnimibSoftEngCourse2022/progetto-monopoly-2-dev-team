@@ -9,7 +9,7 @@ import java.util.List;
 
 public class BoardTest {
 
-    private static Board board = new Board(null, TestUtils.getProperties());
+    private static Board board = new Board(null, null, TestUtils.getProperties());
 
     @Test
     public void chainOfResponsabilityTest() {

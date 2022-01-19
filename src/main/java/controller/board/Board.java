@@ -4,6 +4,7 @@ import controller.board.dispenser.*;
 import controller.board.space.Space;
 import controller.command.CommandBuilderDispatcher;
 import controller.card.DrawableCardController;
+import controller.player.PlayerController;
 import model.property.PropertyModel;
 
 import java.util.ArrayList;
@@ -14,15 +15,17 @@ public class Board {
     private final List<Space> spaces;
 
     public Board(CommandBuilderDispatcher commandBuilderDispatcher,
+                 PlayerController playerController,
                  List<PropertyModel> properties) {
         this.spaces = new ArrayList<>();
 
         DrawableCardController drawableCardController = new DrawableCardController();
 
+
         SpaceDispenser chainOfResponsability = new TaxSpaceDispenser(commandBuilderDispatcher, 4, 38);
         chainOfResponsability
-                .setSuccessor(new ChanceSpaceDispenser(commandBuilderDispatcher, 7, 22, 36))
-                .setSuccessor(new CommunityChestSpaceDispenser(commandBuilderDispatcher, drawableCardController,2, 17, 33))
+                .setSuccessor(new ChanceSpaceDispenser(commandBuilderDispatcher, drawableCardController, playerController, 7, 22, 36))
+                .setSuccessor(new CommunityChestSpaceDispenser(commandBuilderDispatcher, drawableCardController, playerController, 2, 17, 33))
                 .setSuccessor(new GoToJailSpaceDispenser(commandBuilderDispatcher, 30))
                 .setSuccessor(new CornerSpaceDispenser(commandBuilderDispatcher, 0, 10, 20))
                 .setSuccessor(new PropertySpaceDispenser(commandBuilderDispatcher, properties));

@@ -23,12 +23,16 @@ public class PayCommandBuilder implements CommandBuilder {
     }
 
     public PayCommandBuilder addCreditor(PlayerModel player) {
-        creditors.add(player);
+        if (player != null) {
+            creditors.add(player);
+        }
         return this;
     }
 
     public PayCommandBuilder addDebtor(PlayerModel player) {
-        debtors.add(player);
+        if (player != null) {
+            debtors.add(player);
+        }
         return this;
     }
 
