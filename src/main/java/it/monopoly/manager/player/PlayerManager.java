@@ -160,12 +160,16 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
 
     @Override
     public void register(Observer<ReadablePlayerModel> observer) {
-        observers.add(observer);
+        if (observer != null) {
+            observers.add(observer);
+        }
     }
 
     @Override
     public void deregister(Observer<ReadablePlayerModel> observer) {
-        observers.remove(observer);
+        if (observer != null) {
+            observers.remove(observer);
+        }
     }
 
     @Override

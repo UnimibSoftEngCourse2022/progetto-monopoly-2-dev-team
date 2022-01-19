@@ -21,6 +21,7 @@ public class PropertyListView extends Div {
         grid.addColumn(PropertyModel::getName).setHeader("Street name");
         grid.addColumn(PropertyModel::getPrice).setHeader("Price");
         grid.addColumn(PropertyModel::getMortgageValue).setHeader("Mortgage");
+        grid.setWidthFull();
         add(grid);
     }
 

@@ -1,9 +1,10 @@
 package it.monopoly.view;
 
+import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.data.selection.SelectionListener;
@@ -28,34 +29,55 @@ public class MainView extends VerticalLayout implements Observer<ReadablePlayerM
     public MainView(@Autowired Controller controller) {
         this.controller = controller;
         player = controller.startPlayer(this);
+
+        String js = "window.addEventListener(\"beforeunload\", function () {" +
+                "element.$server.closeSession();" +
+                "});";
+
+        getElement().executeJs(js);
+
+        js = "window.addEventListener(\"unload\", function () {" +
+                "element.$server.closeSession();" +
+                "});";
+
+        getElement().executeJs(js);
+        getElement().executeJs("element = $0", getElement());
+
         propertyListView = new PropertyListView(
                 (SelectionListener<Grid<PropertyModel>, PropertyModel>) selectionEvent -> selectionEvent
                         .getFirstSelectedItem()
                         .ifPresent(MainView.this::displayCommands)
         );
-        propertyListView.setProperties(controller.getProperties());
 
         propertyCommandButtonView = new CommandButtonView();
 
-        Div div = new Div();
-        div.add(propertyListView, propertyCommandButtonView);
-        div.setWidth(30, Unit.PERCENTAGE);
-        div.setHeight(20, Unit.PERCENTAGE);
+        VerticalLayout propertiesVerticalLayout = new VerticalLayout();
+        propertiesVerticalLayout.add(propertyListView, propertyCommandButtonView);
+        propertiesVerticalLayout.setWidth(35, Unit.PERCENTAGE);
 
-        CommandButtonView playerCommandButtonView = new CommandButtonView(controller.getCommandController().generateCommands(player));
+        CommandButtonView playerCommandButtonView =
+                new CommandButtonView(controller.getCommandController().generateCommands(player));
 
-        controller.registerObservable(player, this);
         Button newPropertyButton = new Button("New Property");
         newPropertyButton.addClickListener(listener -> controller.addProperty(player));
 
         setSizeFull();
-        setAlignItems(Alignment.CENTER);
-        setJustifyContentMode(JustifyContentMode.EVENLY);
         setMargin(false);
         setSpacing(false);
         setPadding(false);
 
-        add(div, playerCommandButtonView, newPropertyButton);
+        expand(propertyListView);
+
+        HorizontalLayout footer = new HorizontalLayout();
+        footer.add(propertiesVerticalLayout, newPropertyButton, playerCommandButtonView);
+        footer.setWidthFull();
+        footer.setHeight(20, Unit.PERCENTAGE);
+        footer.setAlignItems(Alignment.END);
+//        footer.setJustifyContentMode(JustifyContentMode.AROUND);
+        footer.setAlignSelf(Alignment.START, propertiesVerticalLayout);
+        footer.setAlignSelf(Alignment.END, playerCommandButtonView);
+
+        add(footer);
     }
 
     private void displayCommands(PropertyModel property) {
@@ -66,5 +88,11 @@ public class MainView extends VerticalLayout implements Observer<ReadablePlayerM
     @Override
     public void notify(ReadablePlayerModel player) {
         propertyListView.setProperties(player.getProperties());
+        setJustifyContentMode(JustifyContentMode.EVENLY);
+    }
+
+    @ClientCallable
+    public void closeSession() {
+        controller.closePlayerSession(player);
     }
 }

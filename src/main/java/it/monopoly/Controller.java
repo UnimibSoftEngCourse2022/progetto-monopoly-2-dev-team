@@ -10,11 +10,9 @@ import it.monopoly.controller.player.PlayerController;
 import it.monopoly.controller.property.PropertyController;
 import it.monopoly.model.PropertyMapper;
 import it.monopoly.model.player.PlayerModel;
-import it.monopoly.model.player.ReadablePlayerModel;
 import it.monopoly.model.property.PropertyModel;
 import it.monopoly.view.MainView;
-import it.monopoly.view.Observable;
-import it.monopoly.view.Observer;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +34,7 @@ public class Controller {
 
     Controller() {
         List<PropertyModel> properties = Collections.emptyList();
-        List<PlayerModel> players = Collections.emptyList();
+        List<PlayerModel> players = new ArrayList<>();
         ObjectMapper jacksonMapper = new ObjectMapper();
         URL jsonURL = MainView.class.getClassLoader().getResource("properties.json");
         if (jsonURL != null) {
@@ -57,10 +55,12 @@ public class Controller {
     }
 
     public PlayerModel startPlayer(MainView view) {
-        PlayerModel player = new PlayerModel(UUID.randomUUID().toString(), "nome");
+        PlayerModel player = new PlayerModel(RandomStringUtils.randomAlphanumeric(6), "nome");
         playerViewMap.put(player, view);
         playerController.addPlayer(player, 1000);
         mapper.register(playerController.getManager(player));
+        playerController.getManager(player).register(view);
+        LogManager.getLogger(getClass()).info("Adding new player {}#{}", player.getName(), player.getId());
         return player;
     }
 
@@ -84,15 +84,17 @@ public class Controller {
         return commandController;
     }
 
-    public void registerObservable(PlayerModel player, Observer<ReadablePlayerModel> observer) {
-        playerController.getManager(player).register(observer);
-    }
-
     public void addProperty(PlayerModel player) {
         List<PropertyModel> models = propertyController.getModels();
         int random = new Random().nextInt(models.size());
         PropertyModel property = models.get(random);
         LogManager.getLogger(getClass()).info("New property ({}) {}", random, property);
         propertyController.getManager(property).setOwner(player);
+    }
+
+    public void closePlayerSession(PlayerModel player) {
+        LogManager.getLogger(getClass()).info("Removing player {}#{}", player.getName(), player.getId());
+        playerController.getManager(player).deregister(playerViewMap.get(player));
+        playerController.removePlayer(player);
     }
 }
