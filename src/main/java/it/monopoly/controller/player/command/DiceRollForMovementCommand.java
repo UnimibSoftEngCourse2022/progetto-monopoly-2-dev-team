@@ -5,8 +5,11 @@ import it.monopoly.controller.event.EventDispatcher;
 import it.monopoly.controller.player.PlayerController;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.util.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DiceRollForMovementCommand implements Command {
+    private final Logger logger = LogManager.getLogger(getClass());
     private final PlayerController playerController;
     private final EventDispatcher eventDispatcher;
     private final PlayerModel player;
@@ -30,11 +33,13 @@ public class DiceRollForMovementCommand implements Command {
 
     @Override
     public boolean isEnabled() {
+
         return playerController.getManager(player).canTakeTurn();
     }
 
     @Override
     public void execute() {
+        logger.info("Executing DiceRollForMovementCommand");
         do {
             Pair<Integer, Integer> pair = eventDispatcher.diceRollEvent().rollDice();
             count(pair.getFirst(), pair.getSecond());
@@ -54,9 +59,11 @@ public class DiceRollForMovementCommand implements Command {
 
 
     private void count(int first, int second) {
+        logger.info("Dice rolled {} and {}", first, second);
         didDouble = first == second;
         if (didDouble) {
             doubleCount++;
+            logger.info("Dice rolled double, re-rolling dice");
         }
         result += first + second;
     }

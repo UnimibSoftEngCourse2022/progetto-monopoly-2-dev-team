@@ -10,16 +10,20 @@ import it.monopoly.controller.player.PlayerController;
 import it.monopoly.controller.property.PropertyController;
 import it.monopoly.model.PropertyMapper;
 import it.monopoly.model.player.PlayerModel;
+import it.monopoly.model.player.ReadablePlayerModel;
 import it.monopoly.model.property.PropertyModel;
 import it.monopoly.view.MainView;
+import it.monopoly.view.Observable;
+import it.monopoly.view.Observer;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class Controller {
@@ -28,6 +32,7 @@ public class Controller {
     private final PropertyController propertyController;
     private final PropertyMapper mapper;
     private final MainCommandController commandController;
+    private final Map<PlayerModel, MainView> playerViewMap = new ConcurrentHashMap<>();
 
     Controller() {
         List<PropertyModel> properties = Collections.emptyList();
@@ -51,6 +56,14 @@ public class Controller {
         commandController = new MainCommandController(builderDispatcher);
     }
 
+    public PlayerModel startPlayer(MainView view) {
+        PlayerModel player = new PlayerModel(UUID.randomUUID().toString(), "nome");
+        playerViewMap.put(player, view);
+        playerController.addPlayer(player, 1000);
+        mapper.register(playerController.getManager(player));
+        return player;
+    }
+
     public List<PropertyModel> getProperties() {
         return propertyController.getModels();
     }
@@ -69,5 +82,17 @@ public class Controller {
 
     public MainCommandController getCommandController() {
         return commandController;
+    }
+
+    public void registerObservable(PlayerModel player, Observer<ReadablePlayerModel> observer) {
+        playerController.getManager(player).register(observer);
+    }
+
+    public void addProperty(PlayerModel player) {
+        List<PropertyModel> models = propertyController.getModels();
+        int random = new Random().nextInt(models.size());
+        PropertyModel property = models.get(random);
+        LogManager.getLogger(getClass()).info("New property ({}) {}", random, property);
+        propertyController.getManager(property).setOwner(player);
     }
 }

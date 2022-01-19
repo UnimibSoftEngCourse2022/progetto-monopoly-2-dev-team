@@ -1,8 +1,11 @@
 package it.monopoly.model;
 
+import it.monopoly.manager.player.PlayerManager;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.property.PropertyCategory;
 import it.monopoly.model.property.PropertyModel;
+import it.monopoly.view.Observable;
+import it.monopoly.view.Observer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,7 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class PropertyMapper implements PropertyOwnerMapper, PropertyCategoryMapper {
+public class PropertyMapper implements PropertyOwnerMapper, PropertyCategoryMapper, Observable<List<PropertyModel>> {
+
+    private final List<Observer<List<PropertyModel>>> observers = new ArrayList<>();
+
     private final Map<PlayerModel, List<PropertyModel>> playerProperties = new ConcurrentHashMap<>();
     private final Map<PropertyModel, PlayerModel> propertyOwner = new ConcurrentHashMap<>();
     private final Map<PropertyCategory, List<PropertyModel>> propertyCategory = new ConcurrentHashMap<>();
@@ -31,7 +37,12 @@ public class PropertyMapper implements PropertyOwnerMapper, PropertyCategoryMapp
 
     public void setOwner(final PropertyModel property, final PlayerModel player) {
         if (player != null && property != null) {
-            playerProperties.computeIfAbsent(player, k -> new ArrayList<>()).add(property);
+            playerProperties.computeIfAbsent(player, k -> new ArrayList<>());
+            List<PropertyModel> list = playerProperties.get(player);
+            if (!list.contains(property)) {
+                list.add(property);
+                notify(player);
+            }
             propertyOwner.put(property, player);
         } else if (property != null) {
             removeOwner(property);
@@ -49,10 +60,27 @@ public class PropertyMapper implements PropertyOwnerMapper, PropertyCategoryMapp
                 return propertyModels;
             });
         }
+        notify(player);
         return player;
     }
 
     public List<PropertyModel> getCategoryProperties(PropertyCategory category) {
         return propertyCategory.get(category);
+    }
+
+    private void notify(PlayerModel player) {
+        for (Observer<List<PropertyModel>> observer : observers) {
+            observer.notify(getPlayerProperties(player));
+        }
+    }
+
+    @Override
+    public void register(Observer<List<PropertyModel>> observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void deregister(Observer<List<PropertyModel>> observer) {
+        observers.remove(observer);
     }
 }

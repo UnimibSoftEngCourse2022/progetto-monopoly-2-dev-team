@@ -1,20 +1,26 @@
 package it.monopoly.manager.player;
 
 import it.monopoly.manager.Manager;
+import it.monopoly.model.PropertyMapper;
 import it.monopoly.model.PropertyOwnerMapper;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.PlayerState;
 import it.monopoly.model.player.Position;
+import it.monopoly.model.player.ReadablePlayerModel;
 import it.monopoly.model.property.PropertyModel;
 import it.monopoly.util.Pair;
+import it.monopoly.view.Observable;
+import it.monopoly.view.Observer;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerManager extends Manager<PlayerModel> {
+public class PlayerManager extends Manager<PlayerModel> implements Observable<ReadablePlayerModel>, Observer<List<PropertyModel>> {
+    private final List<Observer<ReadablePlayerModel>> observers = new ArrayList<>();
     private int funds;
     private PlayerState state;
-    private Position position;
-    private PropertyOwnerMapper ownerMapper;
+    private final Position position;
+    private final PropertyOwnerMapper ownerMapper;
     private static final int EARN_ON_GO = 200; //TODO Check configuration
     private int getOutOfJailTries = 0;
 
@@ -26,13 +32,20 @@ public class PlayerManager extends Manager<PlayerModel> {
         this.ownerMapper = ownerMapper;
     }
 
+    public ReadablePlayerModel getReadable() {
+        return new ReadablePlayerModel(model.getName(), funds, state, position, getProperties());
+    }
+
     public void earn(int money) {
         funds += money;
+        checkBankrupt();
+        notifyReadable();
     }
 
     public void spend(int money) {
         funds -= money;
         checkBankrupt();
+        notifyReadable();
     }
 
     public Position move(int movement, boolean direct) {
@@ -47,6 +60,7 @@ public class PlayerManager extends Manager<PlayerModel> {
         if (!direct && movement.getFirst() > movement.getSecond()) {
             earn(EARN_ON_GO);
         }
+        notifyReadable();
         return position;
     }
 
@@ -69,13 +83,13 @@ public class PlayerManager extends Manager<PlayerModel> {
     public void getOutOfJail() {
         if (PlayerState.IN_JAIL.equals(state) || PlayerState.FINED.equals(state)) {
             getOutOfJailTries = 0;
-            state = PlayerState.FREE;
+            setState(PlayerState.FREE);
         }
     }
 
     public void getOutOfJailWithFine() {
         if (PlayerState.IN_JAIL.equals(state)) {
-            state = PlayerState.FINED;
+            setState(PlayerState.FINED);
         }
     }
 
@@ -105,6 +119,9 @@ public class PlayerManager extends Manager<PlayerModel> {
     }
 
     public void setState(PlayerState state) {
+        if (this.state != state) {
+            notifyReadable();
+        }
         this.state = state;
     }
 
@@ -116,9 +133,33 @@ public class PlayerManager extends Manager<PlayerModel> {
 
     private void checkBankrupt() {
         if (funds <= 0) {
-            state = PlayerState.BANKRUPT;
+            setState(PlayerState.BANKRUPT);
         } else if (PlayerState.BANKRUPT.equals(state)) {
-            state = PlayerState.FREE;
+            setState(PlayerState.FREE);
         }
+    }
+
+    public void notifyReadable() {
+        if (!observers.isEmpty()) {
+            ReadablePlayerModel readable = getReadable();
+            for (Observer<ReadablePlayerModel> observer : observers) {
+                observer.notify(readable);
+            }
+        }
+    }
+
+    @Override
+    public void register(Observer<ReadablePlayerModel> observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void deregister(Observer<ReadablePlayerModel> observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notify(List<PropertyModel> obj) {
+        notifyReadable();
     }
 }

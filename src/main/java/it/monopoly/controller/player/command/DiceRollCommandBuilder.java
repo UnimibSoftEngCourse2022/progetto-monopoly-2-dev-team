@@ -8,8 +8,11 @@ import it.monopoly.controller.player.PlayerController;
 import it.monopoly.manager.player.PlayerManager;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.PlayerState;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DiceRollCommandBuilder implements CommandBuilder {
+    private final Logger logger = LogManager.getLogger(getClass());
     private final PlayerController playerController;
     private final EventDispatcher eventDispatcher;
     private PlayerModel player;
@@ -33,6 +36,7 @@ public class DiceRollCommandBuilder implements CommandBuilder {
 
     @Override
     public Command build() {
+        logger.info("Building DiceRollCommand with configuration " + this);
         PlayerManager manager = playerController.getManager(player);
         if (PlayerState.IN_JAIL.equals(manager.getState())) {
             return new DiceRollForJailCommand(playerController, eventDispatcher, player, moveCommandBuilder, payCommandBuilder);
