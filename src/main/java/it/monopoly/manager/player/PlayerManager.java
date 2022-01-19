@@ -18,6 +18,7 @@ import java.util.List;
 
 public class PlayerManager extends Manager<PlayerModel> implements Observable<ReadablePlayerModel>, Observer<List<PropertyModel>> {
     private final Logger logger = LogManager.getLogger(getClass());
+    private boolean isTurn = false;
     private final List<Observer<ReadablePlayerModel>> observers = new ArrayList<>();
     private int funds;
     private PlayerState state;
@@ -32,6 +33,15 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
         this.state = PlayerState.FREE;
         this.position = new Position();
         this.ownerMapper = ownerMapper;
+    }
+
+    public boolean startTurn() {
+        isTurn = canTakeTurn();
+        return isTurn;
+    }
+
+    public void endTurn() {
+        isTurn = false;
     }
 
     public ReadablePlayerModel getReadable() {
