@@ -3,11 +3,14 @@ package it.monopoly.controller.player.command;
 import it.monopoly.controller.TradeController;
 import it.monopoly.controller.command.CommandBuilder;
 import it.monopoly.model.player.PlayerModel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PayCommandBuilder implements CommandBuilder {
+    private final Logger logger = LogManager.getLogger(getClass());
     private final TradeController tradeController;
     private int money;
     private final List<PlayerModel> creditors = new ArrayList<>();
@@ -33,6 +36,11 @@ public class PayCommandBuilder implements CommandBuilder {
     }
 
     public PayCommand build() {
+        logger.info(
+                "Building payment command for\ndebtors: {}\ncreditors:{}",
+                debtors.stream().map(PlayerModel::getId),
+                creditors.stream().map(PlayerModel::getId)
+        );
         return new PayCommand(tradeController, creditors, debtors, money);
     }
 }

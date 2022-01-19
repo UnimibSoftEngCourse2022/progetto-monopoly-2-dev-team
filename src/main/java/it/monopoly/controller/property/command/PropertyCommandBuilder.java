@@ -9,8 +9,11 @@ import it.monopoly.controller.player.command.PayCommandBuilder;
 import it.monopoly.controller.property.PropertyController;
 import it.monopoly.manager.property.PropertyManager;
 import it.monopoly.model.property.PropertyModel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class PropertyCommandBuilder implements CommandBuilder {
+    private final Logger logger = LogManager.getLogger(getClass());
     private final PropertyController propertyController;
     private final TradeController tradeController;
     private PropertyModel property;
@@ -47,6 +50,8 @@ public class PropertyCommandBuilder implements CommandBuilder {
         PropertyManager propertyManager = propertyController.getManager(property);
         Command propertyCommand;
         int price;
+
+        logger.info("Building {} property command for property {}", type, property.getName());
 
         if (Type.BUILD_HOTEL.equals(type)) {
             propertyCommand = new BuildHotelCommand(propertyController, property);

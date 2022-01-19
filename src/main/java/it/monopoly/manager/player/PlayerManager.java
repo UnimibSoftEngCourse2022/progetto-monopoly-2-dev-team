@@ -1,7 +1,6 @@
 package it.monopoly.manager.player;
 
 import it.monopoly.manager.Manager;
-import it.monopoly.model.PropertyMapper;
 import it.monopoly.model.PropertyOwnerMapper;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.PlayerState;
@@ -11,11 +10,14 @@ import it.monopoly.model.property.PropertyModel;
 import it.monopoly.util.Pair;
 import it.monopoly.view.Observable;
 import it.monopoly.view.Observer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerManager extends Manager<PlayerModel> implements Observable<ReadablePlayerModel>, Observer<List<PropertyModel>> {
+    private final Logger logger = LogManager.getLogger(getClass());
     private final List<Observer<ReadablePlayerModel>> observers = new ArrayList<>();
     private int funds;
     private PlayerState state;
@@ -38,12 +40,14 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
 
     public void earn(int money) {
         funds += money;
+        logger.info("Player {} earned {}: new funds {}", model.getId(), money, funds);
         checkBankrupt();
         notifyReadable();
     }
 
     public void spend(int money) {
         funds -= money;
+        logger.info("Player {} spent {}: new funds {}", model.getId(), money, funds);
         checkBankrupt();
         notifyReadable();
     }
@@ -55,6 +59,7 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     public Position moveTo(int space, boolean direct) {
         if (canMove()) {
             position.setPosition(space, direct);
+            logger.info("Player {} moved to space {}", model.getId(), space);
         }
         Pair<Integer, Integer> movement = position.getLastMovement().getMovement();
         if (!direct && movement.getFirst() > movement.getSecond()) {
@@ -71,6 +76,7 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     public boolean tryToGetOutOfJail() {
         if (PlayerState.IN_JAIL.equals(state)) {
             getOutOfJailTries++;
+            logger.info("Player {} tried to get out of jail", model.getId());
             boolean succeeded = getOutOfJailTries == 3;
             if (succeeded) {
                 getOutOfJail();
@@ -84,12 +90,14 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
         if (PlayerState.IN_JAIL.equals(state) || PlayerState.FINED.equals(state)) {
             getOutOfJailTries = 0;
             setState(PlayerState.FREE);
+            logger.info("Player {} got out of jail", model.getId());
         }
     }
 
     public void getOutOfJailWithFine() {
         if (PlayerState.IN_JAIL.equals(state)) {
             setState(PlayerState.FINED);
+            logger.info("Player {} got out of jail with fine", model.getId());
         }
     }
 
@@ -119,10 +127,12 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     }
 
     public void setState(PlayerState state) {
-        if (this.state != state) {
+        boolean changed = this.state != state;
+        this.state = state;
+        if (changed) {
+            logger.info("Player {} changed its state from {} to {}", model.getId(), this.state, state);
             notifyReadable();
         }
-        this.state = state;
     }
 
     public Position getPosition() {

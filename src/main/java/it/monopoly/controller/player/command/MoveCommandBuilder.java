@@ -3,8 +3,11 @@ package it.monopoly.controller.player.command;
 import it.monopoly.controller.command.CommandBuilder;
 import it.monopoly.controller.player.PlayerController;
 import it.monopoly.model.player.PlayerModel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class MoveCommandBuilder implements CommandBuilder {
+    private final Logger logger = LogManager.getLogger(getClass());
     private final PlayerController playerController;
     private PlayerModel player;
     private int space;
@@ -38,6 +41,7 @@ public class MoveCommandBuilder implements CommandBuilder {
     }
 
     public MoveCommand build() {
+        logger.info("Building movement command for player {}", player.getId());
         return new MoveCommand(
                 playerController,
                 player,

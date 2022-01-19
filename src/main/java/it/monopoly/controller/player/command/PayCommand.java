@@ -3,10 +3,13 @@ package it.monopoly.controller.player.command;
 import it.monopoly.controller.TradeController;
 import it.monopoly.controller.command.Command;
 import it.monopoly.model.player.PlayerModel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
 public class PayCommand implements Command {
+    private final Logger logger = LogManager.getLogger(getClass());
     private final TradeController tradeController;
     private final int money;
     private final List<PlayerModel> creditors;
@@ -35,6 +38,7 @@ public class PayCommand implements Command {
 
     @Override
     public void execute() {
+        logger.info("Executing PayCommand");
         if (creditors.isEmpty()) {
             for (PlayerModel debtor : debtors) {
                 tradeController.spendTransaction(debtor, money);

@@ -5,8 +5,11 @@ import it.monopoly.controller.property.PropertyController;
 import it.monopoly.manager.property.PropertyManager;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.property.PropertyModel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class PayRentCommand implements Command {
+    private final Logger logger = LogManager.getLogger(getClass());
     private final PropertyController propertyController;
     private final PlayerModel player;
     private final PropertyModel property;
@@ -36,6 +39,7 @@ public class PayRentCommand implements Command {
 
     @Override
     public void execute() {
+        logger.info("Executing PayRentCommand for player {} on property {}", player.getId(), property.getName());
         PropertyManager propertyManager = propertyController.getManager(property);
         payCommandBuilder
                 .addDebtor(player)

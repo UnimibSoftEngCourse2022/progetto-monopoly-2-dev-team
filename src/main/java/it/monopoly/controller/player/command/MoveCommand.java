@@ -4,8 +4,11 @@ import it.monopoly.controller.command.Command;
 import it.monopoly.controller.player.PlayerController;
 import it.monopoly.manager.player.PlayerManager;
 import it.monopoly.model.player.PlayerModel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class MoveCommand implements Command {
+    private final Logger logger = LogManager.getLogger(getClass());
     private final PlayerController playerController;
     private final PlayerModel player;
     private final int space;
@@ -41,12 +44,14 @@ public class MoveCommand implements Command {
     public void execute() {
         if (player != null && playerController != null) {
             PlayerManager manager = playerController.getManager(player);
-            if(goToJail) {
+            if (goToJail) {
                 //space = //TODO set jail space
             }
-            if(Type.MOVE_TO.equals(type)) {
+            if (Type.MOVE_TO.equals(type)) {
+                logger.info("Executing movement to space {}", space);
                 manager.moveTo(space, goToJail || directMovement);
             } else {
+                logger.info("Executing movement of {} spaces", space);
                 manager.move(space, goToJail || directMovement);
             }
         }
