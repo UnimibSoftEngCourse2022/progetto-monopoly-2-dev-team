@@ -119,7 +119,7 @@ public class ChanceSpace extends AbstractSpace {
         } else if (MOVE_TO.equals(movement)) {
             commandBuilder.setSpace(MoveCommand.Type.MOVE_TO, where).setGoToJail(where == 10);
         } else {
-            // TODO: commandBuilder.setSpace(MoveCommand.Type.MOVE_NEAR, where);
+            commandBuilder.setNearSpaces(card.getNear());
         }
 
         return commandBuilder;

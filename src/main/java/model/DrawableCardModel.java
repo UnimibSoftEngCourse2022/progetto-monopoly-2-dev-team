@@ -11,6 +11,7 @@ public class DrawableCardModel {
     private Movement movement;
     private int where;
     private boolean direct;
+    private int[] near;
 
     // pay commands
     private Pay pay;
@@ -44,6 +45,10 @@ public class DrawableCardModel {
 
     public boolean isDirect() {
         return direct;
+    }
+
+    public int[] getNear() {
+        return near;
     }
 
     public Pay getPay() {

@@ -8,6 +8,7 @@ public class MoveCommandBuilder implements CommandBuilder {
     private final PlayerController playerController;
     private PlayerModel player;
     private int space;
+    private int[] nearSpaces;
     private boolean directMovement = false;
     private boolean goToJail = false;
     private MoveCommand.Type type;
@@ -27,6 +28,11 @@ public class MoveCommandBuilder implements CommandBuilder {
         return this;
     }
 
+    public MoveCommandBuilder setNearSpaces(int... nearSpaces) {
+        this.nearSpaces = nearSpaces;
+        return this;
+    }
+
     public MoveCommandBuilder setDirectMovement(boolean directMovement) {
         this.directMovement = directMovement;
         return this;
@@ -43,6 +49,7 @@ public class MoveCommandBuilder implements CommandBuilder {
                 player,
                 type,
                 space,
+                nearSpaces,
                 directMovement,
                 goToJail
         );

@@ -115,8 +115,6 @@ public class CommunityChestSpace extends AbstractSpace {
             commandBuilder.setSpace(MoveCommand.Type.MOVE_OF, where);
         } else if (MOVE_TO.equals(movement)) {
             commandBuilder.setSpace(MoveCommand.Type.MOVE_TO, where).setGoToJail(where == 10);
-        } else {
-            // TODO: commandBuilder.setSpace(MoveCommand.Type.MOVE_NEAR, where);
         }
 
         return commandBuilder;

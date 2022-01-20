@@ -43,7 +43,7 @@ public class BoardTest extends BaseTest {
 
         Assert.assertTrue(boardSpaces.get(3) instanceof PropertySpace);
         propertySpace = (PropertySpace) board.getSpace(3);
-        Assert.assertEquals("Baltic Avenue", ((PropertySpace) board.getSpace(3)).getProperty().getName());
+        Assert.assertEquals("Baltic Avenue", propertySpace.getProperty().getName());
     }
 
     @Test
@@ -128,6 +128,13 @@ public class BoardTest extends BaseTest {
 
         Assert.assertEquals(position - 3, playerManager.getPosition().getIntPosition());
 
+        // move_near card
+        playerManager.getPosition().setPosition(7);
+
+        chanceSpace.applyEffect(player);
+
+        Assert.assertEquals(15, playerManager.getPosition().getIntPosition());
+
         // pay - player creditor
         funds = playerManager.getFunds();
 
@@ -155,7 +162,7 @@ public class BoardTest extends BaseTest {
 
         chanceSpace.applyEffect(player);
 
-        Assert.assertEquals(funds - 50 * (players.size() - 1), playerManager.getFunds());
+        Assert.assertEquals(funds - 150, playerManager.getFunds());
         Assert.assertEquals(funds2 + 50, playerController.getManager(player2).getFunds());
         Assert.assertEquals(funds3 + 50, playerController.getManager(player3).getFunds());
         Assert.assertEquals(funds4 + 50, playerController.getManager(player4).getFunds());
@@ -172,7 +179,7 @@ public class BoardTest extends BaseTest {
 
         chanceSpace.applyEffect(player);
 
-        Assert.assertEquals(funds - 4 * 25 - 1 * 100, playerManager.getFunds());
+        Assert.assertEquals(funds - 4 * 25 - 100, playerManager.getFunds());
     }
 
     @Test
@@ -247,7 +254,7 @@ public class BoardTest extends BaseTest {
 
         communityChestSpace.applyEffect(player);
 
-        Assert.assertEquals(funds - 4 * 40 - 1 * 115, playerManager.getFunds());
+        Assert.assertEquals(funds - 4 * 40 - 115, playerManager.getFunds());
     }
 
     @Test
