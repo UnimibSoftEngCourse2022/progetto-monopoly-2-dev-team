@@ -23,10 +23,8 @@ public class MainCommandController {
         PropertyCommandBuilder builder = commandBuilderDispatcher.createCommandBuilder(PropertyCommandBuilder.class).setProperty(property);
         commands.add(builder.setType(PropertyCommandBuilder.Type.MORTGAGE).build());
         if (property.isImprovable()) {
-            commands.add(builder.setType(PropertyCommandBuilder.Type.BUILD_HOTEL).build());
-            commands.add(builder.setType(PropertyCommandBuilder.Type.BUILD_HOUSE).build());
-            commands.add(builder.setType(PropertyCommandBuilder.Type.SELL_HOUSE).build());
-            commands.add(builder.setType(PropertyCommandBuilder.Type.SELL_HOTEL).build());
+            commands.add(builder.setType(PropertyCommandBuilder.Type.BUILD).build());
+            commands.add(builder.setType(PropertyCommandBuilder.Type.SELL).build());
         }
         return commands;
     }

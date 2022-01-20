@@ -61,7 +61,7 @@ public class CommandTest extends BaseTest {
         Command buildCommand = commandBuilderDispatcher
                 .createCommandBuilder(PropertyCommandBuilder.class)
                 .setProperty(firstBrownProperty)
-                .setType(PropertyCommandBuilder.Type.BUILD_HOUSE)
+                .setType(PropertyCommandBuilder.Type.BUILD)
                 .build();
 
         Assert.assertFalse(buildCommand.isEnabled());
@@ -73,7 +73,7 @@ public class CommandTest extends BaseTest {
         buildCommand = commandBuilderDispatcher
                 .createCommandBuilder(PropertyCommandBuilder.class)
                 .setProperty(firstBrownProperty)
-                .setType(PropertyCommandBuilder.Type.BUILD_HOUSE)
+                .setType(PropertyCommandBuilder.Type.BUILD)
                 .build();
 
         Assert.assertTrue(buildCommand.isEnabled());
@@ -92,7 +92,7 @@ public class CommandTest extends BaseTest {
         buildCommand = commandBuilderDispatcher
                 .createCommandBuilder(PropertyCommandBuilder.class)
                 .setProperty(firstBrownProperty)
-                .setType(PropertyCommandBuilder.Type.BUILD_HOTEL)
+                .setType(PropertyCommandBuilder.Type.BUILD)
                 .build();
 
         Assert.assertTrue(buildCommand.isEnabled());
@@ -107,7 +107,7 @@ public class CommandTest extends BaseTest {
         buildCommand = commandBuilderDispatcher
                 .createCommandBuilder(PropertyCommandBuilder.class)
                 .setProperty(firstBrownProperty)
-                .setType(PropertyCommandBuilder.Type.SELL_HOTEL)
+                .setType(PropertyCommandBuilder.Type.SELL)
                 .build();
 
         Assert.assertTrue(buildCommand.isEnabled());
@@ -122,7 +122,7 @@ public class CommandTest extends BaseTest {
         buildCommand = commandBuilderDispatcher
                 .createCommandBuilder(PropertyCommandBuilder.class)
                 .setProperty(firstBrownProperty)
-                .setType(PropertyCommandBuilder.Type.SELL_HOUSE)
+                .setType(PropertyCommandBuilder.Type.SELL)
                 .build();
 
         Assert.assertTrue(buildCommand.isEnabled());

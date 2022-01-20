@@ -14,13 +14,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class PlayerManager extends Manager<PlayerModel> implements Observable<ReadablePlayerModel>, Observer<List<PropertyModel>> {
     private final Logger logger = LogManager.getLogger(getClass());
     private boolean isTurn = false;
     private boolean hasRolledDice = false;
-    private final List<Observer<ReadablePlayerModel>> observers = new ArrayList<>();
+    private final List<Observer<ReadablePlayerModel>> observers = new LinkedList<>();
     private int funds;
     private PlayerState state;
     private final Position position;

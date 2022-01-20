@@ -23,15 +23,15 @@ public class CommandButtonView extends HorizontalLayout {
 
     public void newCommands(List<Command> commands) {
         this.commands = commands;
-        refresh();
+        refreshButtons();
     }
 
     public void setActive(boolean active) {
         this.active = active;
-        refresh();
+        getUI().ifPresent(ui -> ui.access((com.vaadin.flow.server.Command) this::refreshButtons));
     }
 
-    public void refresh() {
+    public void refreshButtons() {
         if (commands != null) {
             removeAll();
             for (Command command : commands) {

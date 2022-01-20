@@ -17,8 +17,8 @@ public class PropertyManager extends Manager<PropertyModel> {
     private PriceManager priceManager;
     private static final int MAX_NUMBER_OF_HOUSES_IN_GAME = 32; //TODO Implement max number of houses/hotel in game
     private static final int MAX_NUMBER_OF_HOTEL_IN_GAME = 12;
-    private static final int MAX_NUMBER_OF_HOUSES = 4;
-    private static final int MAX_NUMBER_OF_HOTEL = 1;
+    public static final int MAX_NUMBER_OF_HOUSES = 4;
+    public static final int MAX_NUMBER_OF_HOTEL = 1;
 
     public PropertyManager(PropertyModel property, PropertyOwnerMapper ownerMapper, PropertyCategoryMapper categoryMapper) {
         super(property);

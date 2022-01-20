@@ -1,21 +1,17 @@
 package it.monopoly.model;
 
-import it.monopoly.manager.player.PlayerManager;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.property.PropertyCategory;
 import it.monopoly.model.property.PropertyModel;
 import it.monopoly.view.Observable;
 import it.monopoly.view.Observer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PropertyMapper implements PropertyOwnerMapper, PropertyCategoryMapper, Observable<List<PropertyModel>> {
 
-    private final List<Observer<List<PropertyModel>>> observers = new ArrayList<>();
+    private final List<Observer<List<PropertyModel>>> observers = new LinkedList<>();
 
     private final Map<PlayerModel, List<PropertyModel>> playerProperties = new ConcurrentHashMap<>();
     private final Map<PropertyModel, PlayerModel> propertyOwner = new ConcurrentHashMap<>();
@@ -62,6 +58,17 @@ public class PropertyMapper implements PropertyOwnerMapper, PropertyCategoryMapp
         }
         notify(player);
         return player;
+    }
+
+    public List<PropertyModel> removeAllPlayerProperties(PlayerModel player) {
+        List<PropertyModel> removedProperties = playerProperties.remove(player);
+        if (removedProperties != null) {
+            for (PropertyModel property : removedProperties) {
+                propertyOwner.remove(property);
+            }
+        }
+        notify(player);
+        return removedProperties;
     }
 
     public List<PropertyModel> getCategoryProperties(PropertyCategory category) {

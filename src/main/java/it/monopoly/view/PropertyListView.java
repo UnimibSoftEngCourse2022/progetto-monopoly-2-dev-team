@@ -3,6 +3,7 @@ package it.monopoly.view;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.data.selection.SelectionListener;
+import com.vaadin.flow.server.Command;
 import it.monopoly.model.property.PropertyModel;
 
 import java.util.List;
@@ -29,6 +30,6 @@ public class PropertyListView extends Div {
     }
 
     public void setProperties(List<PropertyModel> properties) {
-        grid.setItems(properties);
+        getUI().ifPresent(ui -> ui.access((Command) () -> grid.setItems(properties)));
     }
 }

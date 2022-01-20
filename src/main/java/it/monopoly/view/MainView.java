@@ -11,16 +11,17 @@ import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.router.Route;
 import it.monopoly.Controller;
 import it.monopoly.controller.command.Command;
+import it.monopoly.manager.AuctionManager;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.ReadablePlayerModel;
 import it.monopoly.model.property.PropertyModel;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
+import java.util.*;
 
 @Push
 @Route("")
-public class MainView extends VerticalLayout implements Observer<ReadablePlayerModel> {
+public class MainView extends VerticalLayout {
     private final Controller controller;
     private final CommandButtonView propertyCommandButtonView;
     private final PropertyListView propertyListView;
@@ -29,13 +30,13 @@ public class MainView extends VerticalLayout implements Observer<ReadablePlayerM
     private final HorizontalLayout footer;
     private Button startGameButton;
 
+    private final Map<Class<?>, Observer<?>> observers = new HashMap<>();
+
     public MainView(@Autowired Controller controller) {
         this.controller = controller;
         player = controller.setupPlayer(this);
 
-//        String js = "window.addEventListener(\"beforeunload\", function () {" +
-//                "element.$server.closeSession();" +
-//                "});";
+        //controller.getBroadcaster().registerPlayerListener(MainView.this::notify);
 
         String js = "window.onbeforeunload = function () {" +
                 "element.$server.closeSession();" +
@@ -44,6 +45,10 @@ public class MainView extends VerticalLayout implements Observer<ReadablePlayerM
         getElement().executeJs(js);
 
         getElement().executeJs("element = $0", getElement());
+
+        AuctionManager auctionManager = controller.getAuctionManager();
+        AuctionView auctionView = new AuctionView(player, controller.getReadablePlayer(player), auctionManager);
+        add(auctionView);
 
         propertyListView = new PropertyListView(
                 (SelectionListener<Grid<PropertyModel>, PropertyModel>) selectionEvent -> selectionEvent
@@ -92,6 +97,39 @@ public class MainView extends VerticalLayout implements Observer<ReadablePlayerM
         add(footer);
     }
 
+    @SuppressWarnings(value = "unchecked")
+    public <T> Observer<T> getObserver(Class<T> className) {
+        if (observers.containsKey(className)) {
+            return (Observer<T>) observers.get(className);
+        }
+
+        Observer<T> observer = null;
+        if (ReadablePlayerModel.class.equals(className)) {
+            observer = obj -> updateReadable((ReadablePlayerModel) obj);
+        }
+
+        if (observer != null) {
+            observers.put(className, observer);
+        }
+        return observer;
+    }
+
+    public void updateReadable(ReadablePlayerModel player) {
+        propertyListView.setProperties(player.getProperties());
+        playerCommandButtonView.setActive(player.isTurn());
+        propertyCommandButtonView.setActive(player.isTurn());
+        setJustifyContentMode(JustifyContentMode.END);
+    }
+
+    public void updateAllPlayers(List<ReadablePlayerModel> players) {
+
+    }
+
+    @ClientCallable
+    public void closeSession() {
+        controller.closePlayerSession(player);
+    }
+
     private void startGame() {
         controller.startGame();
         footer.remove(startGameButton);
@@ -100,18 +138,5 @@ public class MainView extends VerticalLayout implements Observer<ReadablePlayerM
     private void displayCommands(PropertyModel property) {
         List<Command> commands = controller.getCommandController().generateCommands(property);
         propertyCommandButtonView.newCommands(commands);
-    }
-
-    @Override
-    public void notify(ReadablePlayerModel player) {
-        propertyListView.setProperties(player.getProperties());
-        playerCommandButtonView.setActive(player.isTurn());
-        propertyCommandButtonView.setActive(player.isTurn());
-        setJustifyContentMode(JustifyContentMode.END);
-    }
-
-    @ClientCallable
-    public void closeSession() {
-        controller.closePlayerSession(player);
     }
 }

@@ -9,9 +9,11 @@ import it.monopoly.controller.command.MainCommandBuilderDispatcher;
 import it.monopoly.controller.event.MainEventDispatcher;
 import it.monopoly.controller.player.PlayerController;
 import it.monopoly.controller.property.PropertyController;
+import it.monopoly.manager.AuctionManager;
 import it.monopoly.manager.player.PlayerManager;
 import it.monopoly.model.PropertyMapper;
 import it.monopoly.model.player.PlayerModel;
+import it.monopoly.model.player.ReadablePlayerModel;
 import it.monopoly.model.property.PropertyModel;
 import it.monopoly.view.MainView;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -25,18 +27,22 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 @Component
 public class Controller {
-
+    private final Executor executor = Executors.newSingleThreadExecutor();
     private final PlayerController playerController;
     private final PropertyController propertyController;
     private final PropertyMapper mapper;
     private final MainCommandController commandController;
     private final Map<PlayerModel, MainView> playerViewMap = new ConcurrentHashMap<>();
     private final TurnController turnController;
+    private final Broadcaster broadcaster;
     private boolean gameStarted = false;
     private final Logger logger = LogManager.getLogger(getClass());
+    private AuctionManager auctionManager;
 
     Controller() {
         List<PropertyModel> properties = Collections.emptyList();
@@ -59,15 +65,18 @@ public class Controller {
         MainCommandBuilderDispatcher builderDispatcher = new MainCommandBuilderDispatcher(propertyController, playerController, tradeController, eventDispatcher);
         commandController = new MainCommandController(builderDispatcher);
         turnController = new TurnController(playerController);
+        broadcaster = new Broadcaster(playerController);
     }
 
-    public PlayerModel setupPlayer(MainView view) {
+    public synchronized PlayerModel setupPlayer(MainView view) {
         PlayerModel player = new PlayerModel(RandomStringUtils.randomAlphanumeric(6), "nome");
         playerViewMap.put(player, view);
-        playerController.addPlayer(player, 1000);
+        synchronized (propertyController.getModels()) {
+            playerController.addPlayer(player, 1000);
+        }
         PlayerManager manager = playerController.getManager(player);
         mapper.register(manager);
-        manager.register(view);
+        manager.register(view.getObserver(ReadablePlayerModel.class));
         manager.register(turnController);
         LogManager.getLogger(getClass()).info("Adding new player {}#{}", player.getName(), player.getId());
         return player;
@@ -93,6 +102,10 @@ public class Controller {
         return playerController.getModels();
     }
 
+    public ReadablePlayerModel getReadablePlayer(PlayerModel playerModel) {
+        return playerController.getManager(playerModel).getReadable();
+    }
+
     public PropertyController getPropertyController() {
         return propertyController;
     }
@@ -105,6 +118,18 @@ public class Controller {
         return commandController;
     }
 
+    public Broadcaster getBroadcaster() {
+        return broadcaster;
+    }
+
+    //TEST
+    public AuctionManager getAuctionManager() {
+        if (auctionManager == null) {
+            this.auctionManager = new AuctionManager();
+        }
+        return auctionManager;
+    }
+
     public void addProperty(PlayerModel player) {
         List<PropertyModel> models = propertyController.getModels();
         int random = new Random().nextInt(models.size());
@@ -114,19 +139,23 @@ public class Controller {
     }
 
     public void closePlayerSession(PlayerModel player) {
-        logger.info("Removing player {}#{}", player.getName(), player.getId());
+        synchronized (playerController.getModels()) {
 
-        PlayerManager manager = playerController.getManager(player);
-        manager.setDiceRolled();
-        manager.endTurn();
-        mapper.deregister(manager);
-        manager.deregister(playerViewMap.get(player));
-        playerController.removePlayer(player);
-        manager.deregister(turnController);
-        playerViewMap.remove(player);
+            logger.info("Removing player {}#{}", player.getName(), player.getId());
 
-        if (playerController.getModels().isEmpty()) {
-            stopGame();
+            PlayerManager manager = playerController.getManager(player);
+            manager.setDiceRolled();
+            manager.endTurn();
+            mapper.deregister(manager);
+            mapper.removeAllPlayerProperties(player);
+            manager.deregister(playerViewMap.get(player).getObserver(ReadablePlayerModel.class));
+            playerController.removePlayer(player);
+            manager.deregister(turnController);
+            playerViewMap.remove(player);
+
+            if (playerController.getModels().isEmpty()) {
+                stopGame();
+            }
         }
     }
 

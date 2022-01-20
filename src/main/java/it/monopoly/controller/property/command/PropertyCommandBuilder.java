@@ -20,10 +20,8 @@ public class PropertyCommandBuilder implements CommandBuilder {
     private Type type;
 
     public enum Type {
-        BUILD_HOUSE,
-        SELL_HOUSE,
-        BUILD_HOTEL,
-        SELL_HOTEL,
+        BUILD,
+        SELL,
         MORTGAGE
     }
 
@@ -53,25 +51,29 @@ public class PropertyCommandBuilder implements CommandBuilder {
 
         logger.info("Building {} property command for property {}", type, property.getName());
 
-        if (Type.BUILD_HOTEL.equals(type)) {
-            propertyCommand = new BuildHotelCommand(propertyController, property);
-            price = propertyManager.getPriceManager().getHotelPrice(property);
-        } else if (Type.BUILD_HOUSE.equals(type)) {
-            propertyCommand = new BuildHouseCommand(propertyController, property);
-            price = propertyManager.getPriceManager().getHousePrice(property);
-        } else if (Type.SELL_HOTEL.equals(type)) {
-            propertyCommand = new SellHotelCommand(propertyController, property);
-            price = propertyManager.getPriceManager().getHotelPrice(property) / 2;
-        } else if (Type.SELL_HOUSE.equals(type)) {
-            propertyCommand = new SellHouseCommand(propertyController, property);
-            price = propertyManager.getPriceManager().getHotelPrice(property) / 2;
+        if (Type.BUILD.equals(type)) {
+            if (property.getHouseNumber() < PropertyManager.MAX_NUMBER_OF_HOUSES) {
+                propertyCommand = new BuildHouseCommand(propertyController, property);
+                price = propertyManager.getPriceManager().getHousePrice(property);
+            } else {
+                propertyCommand = new BuildHotelCommand(propertyController, property);
+                price = propertyManager.getPriceManager().getHotelPrice(property);
+            }
+        } else if (Type.SELL.equals(type)) {
+            if (property.getHotelNumber() > 0) {
+                propertyCommand = new SellHotelCommand(propertyController, property);
+                price = propertyManager.getPriceManager().getHotelPrice(property) / 2;
+            } else {
+                propertyCommand = new SellHouseCommand(propertyController, property);
+                price = propertyManager.getPriceManager().getHousePrice(property) / 2;
+            }
         } else {//(Type.MORTGAGE.equals(type))
             propertyCommand = new MortgageCommand(propertyController, property);
             price = propertyManager.getPriceManager().getMortgageValue(property);
         }
 
         PayCommandBuilder payCommandBuilder = new PayCommandBuilder(tradeController);
-        if (Type.BUILD_HOTEL.equals(type) || Type.BUILD_HOUSE.equals(type)) {
+        if (Type.BUILD.equals(type)) {
             payCommandBuilder.addDebtor(propertyManager.getOwner());
         } else {
             payCommandBuilder.addCreditor(propertyManager.getOwner());

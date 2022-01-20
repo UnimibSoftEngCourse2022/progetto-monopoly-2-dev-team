@@ -37,7 +37,7 @@ public class DiceRollForJailCommand implements Command {
     @Override
     public boolean isEnabled() {
         PlayerManager manager = playerController.getManager(player);
-        return manager.canTakeTurn() && !manager.hasRolledDice();
+        return manager != null && manager.canTakeTurn() && !manager.hasRolledDice();
     }
 
     @Override
