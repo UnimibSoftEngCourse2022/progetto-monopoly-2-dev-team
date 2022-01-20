@@ -35,6 +35,8 @@ public class MainCommandBuilderDispatcher implements CommandBuilderDispatcher {
             return className.cast(new PayRentCommandBuilder(propertyController, new PayCommandBuilder(tradeController)));
         } else if (MoveCommandBuilder.class.equals(className)) {
             return className.cast(new MoveCommandBuilder(playerController));
+        } else if (EndTurnCommandBuilder.class.equals(className)) {
+            return className.cast(new EndTurnCommandBuilder(playerController));
         } else if (DiceRollCommandBuilder.class.equals(className)) {
             return className.cast(new DiceRollCommandBuilder(
                     playerController,

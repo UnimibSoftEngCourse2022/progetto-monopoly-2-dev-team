@@ -4,13 +4,14 @@ package it.monopoly.view;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import it.monopoly.controller.command.Command;
 
 import java.util.List;
 
 public class CommandButtonView extends HorizontalLayout {
+    private List<Command> commands = null;
+    private boolean active = false;
 
     public CommandButtonView() {
         this(null);
@@ -21,11 +22,21 @@ public class CommandButtonView extends HorizontalLayout {
     }
 
     public void newCommands(List<Command> commands) {
+        this.commands = commands;
+        refresh();
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+        refresh();
+    }
+
+    public void refresh() {
         if (commands != null) {
             removeAll();
             for (Command command : commands) {
                 Button button = new Button(command.getCommandName());
-                button.setEnabled(command.isEnabled());
+                button.setEnabled(active && command.isEnabled());
                 button.addClickListener(
                         (ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> command.execute()
                 );

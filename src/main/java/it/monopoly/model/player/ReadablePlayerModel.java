@@ -9,12 +9,14 @@ public class ReadablePlayerModel {
     private final int funds;
     private final PlayerState state;
     private final Position position;
+    private final boolean isTurn;
     private final List<PropertyModel> properties;
 
-    public ReadablePlayerModel(String name, int funds, PlayerState state, Position position, List<PropertyModel> properties) {
+    public ReadablePlayerModel(String name, int funds, PlayerState state, Position position, boolean isTurn, List<PropertyModel> properties) {
         this.name = name;
         this.funds = funds;
         this.state = state;
+        this.isTurn = isTurn;
         this.properties = properties;
         this.position = new Position();
         this.position.setPosition(position.getLastMovement().getMovement().getFirst());
@@ -47,5 +49,9 @@ public class ReadablePlayerModel {
 
     public Position getPosition() {
         return position;
+    }
+
+    public boolean isTurn() {
+        return isTurn;
     }
 }

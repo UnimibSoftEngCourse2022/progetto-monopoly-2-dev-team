@@ -25,22 +25,24 @@ public class MainView extends VerticalLayout implements Observer<ReadablePlayerM
     private final CommandButtonView propertyCommandButtonView;
     private final PropertyListView propertyListView;
     private final PlayerModel player;
+    private final CommandButtonView playerCommandButtonView;
+    private final HorizontalLayout footer;
+    private Button startGameButton;
 
     public MainView(@Autowired Controller controller) {
         this.controller = controller;
-        player = controller.startPlayer(this);
+        player = controller.setupPlayer(this);
 
-        String js = "window.addEventListener(\"beforeunload\", function () {" +
+//        String js = "window.addEventListener(\"beforeunload\", function () {" +
+//                "element.$server.closeSession();" +
+//                "});";
+
+        String js = "window.onbeforeunload = function () {" +
                 "element.$server.closeSession();" +
-                "});";
+                "};";
 
         getElement().executeJs(js);
 
-        js = "window.addEventListener(\"unload\", function () {" +
-                "element.$server.closeSession();" +
-                "});";
-
-        getElement().executeJs(js);
         getElement().executeJs("element = $0", getElement());
 
         propertyListView = new PropertyListView(
@@ -53,13 +55,19 @@ public class MainView extends VerticalLayout implements Observer<ReadablePlayerM
 
         VerticalLayout propertiesVerticalLayout = new VerticalLayout();
         propertiesVerticalLayout.add(propertyListView, propertyCommandButtonView);
-        propertiesVerticalLayout.setWidth(35, Unit.PERCENTAGE);
+        propertiesVerticalLayout.setWidth(40, Unit.PERCENTAGE);
+        propertiesVerticalLayout.setHeightFull();
 
-        CommandButtonView playerCommandButtonView =
-                new CommandButtonView(controller.getCommandController().generateCommands(player));
+        playerCommandButtonView = new CommandButtonView(controller.getCommandController().generateCommands(player));
 
         Button newPropertyButton = new Button("New Property");
         newPropertyButton.addClickListener(listener -> controller.addProperty(player));
+
+        startGameButton = null;
+        if (!controller.isGameStarted()) {
+            startGameButton = new Button("Start Game");
+            startGameButton.addClickListener(listener -> startGame());
+        }
 
         setSizeFull();
         setMargin(false);
@@ -68,16 +76,25 @@ public class MainView extends VerticalLayout implements Observer<ReadablePlayerM
 
         expand(propertyListView);
 
-        HorizontalLayout footer = new HorizontalLayout();
-        footer.add(propertiesVerticalLayout, newPropertyButton, playerCommandButtonView);
+        footer = new HorizontalLayout();
+        footer.add(propertiesVerticalLayout, newPropertyButton);
+        if (startGameButton != null) {
+            footer.add(startGameButton);
+        }
+        footer.add(playerCommandButtonView);
         footer.setWidthFull();
-        footer.setHeight(20, Unit.PERCENTAGE);
+        footer.setHeight(45, Unit.PERCENTAGE);
         footer.setAlignItems(Alignment.END);
-//        footer.setJustifyContentMode(JustifyContentMode.AROUND);
+        setJustifyContentMode(JustifyContentMode.END);
         footer.setAlignSelf(Alignment.START, propertiesVerticalLayout);
         footer.setAlignSelf(Alignment.END, playerCommandButtonView);
 
         add(footer);
+    }
+
+    private void startGame() {
+        controller.startGame();
+        footer.remove(startGameButton);
     }
 
     private void displayCommands(PropertyModel property) {
@@ -88,7 +105,9 @@ public class MainView extends VerticalLayout implements Observer<ReadablePlayerM
     @Override
     public void notify(ReadablePlayerModel player) {
         propertyListView.setProperties(player.getProperties());
-        setJustifyContentMode(JustifyContentMode.EVENLY);
+        playerCommandButtonView.setActive(player.isTurn());
+        propertyCommandButtonView.setActive(player.isTurn());
+        setJustifyContentMode(JustifyContentMode.END);
     }
 
     @ClientCallable

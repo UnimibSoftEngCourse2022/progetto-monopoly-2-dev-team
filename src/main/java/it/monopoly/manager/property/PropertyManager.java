@@ -189,7 +189,8 @@ public class PropertyManager extends Manager<PropertyModel> {
                 .getCategoryProperties(model.getCategory());
         for (PropertyModel categoryProperty : categoryProperties) {
             if (removing) {
-                valid &= model.getHouseNumber() >= categoryProperty.getHouseNumber();
+                valid &= model.getHouseNumber() >= categoryProperty.getHouseNumber() &&
+                        categoryProperty.getHotelNumber() == 0;
             } else {
                 valid &= model.getHouseNumber() <= categoryProperty.getHouseNumber();
             }
@@ -223,7 +224,8 @@ public class PropertyManager extends Manager<PropertyModel> {
                         model.getHotelNumber() == categoryProperty.getHotelNumber();
             } else {
                 valid &= categoryProperty.getHouseNumber() == MAX_NUMBER_OF_HOUSES ||
-                        model.getHotelNumber() <= categoryProperty.getHotelNumber();
+                        (categoryProperty.getHotelNumber() > 0 &&
+                                model.getHotelNumber() <= categoryProperty.getHotelNumber());
             }
         }
         return valid;

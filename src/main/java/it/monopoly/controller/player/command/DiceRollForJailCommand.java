@@ -3,6 +3,7 @@ package it.monopoly.controller.player.command;
 import it.monopoly.controller.command.Command;
 import it.monopoly.controller.event.EventDispatcher;
 import it.monopoly.controller.player.PlayerController;
+import it.monopoly.manager.player.PlayerManager;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.util.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -35,7 +36,8 @@ public class DiceRollForJailCommand implements Command {
 
     @Override
     public boolean isEnabled() {
-        return playerController.getManager(player).canTakeTurn();
+        PlayerManager manager = playerController.getManager(player);
+        return manager.canTakeTurn() && !manager.hasRolledDice();
     }
 
     @Override
@@ -43,6 +45,7 @@ public class DiceRollForJailCommand implements Command {
         logger.info("Executing DiceRollForMovementCommand");
         Pair<Integer, Integer> pair = eventDispatcher.diceRollEvent().rollDice();
         count(pair.getFirst(), pair.getSecond());
+        playerController.getManager(player).setDiceRolled();
     }
 
     private void count(int first, int second) {

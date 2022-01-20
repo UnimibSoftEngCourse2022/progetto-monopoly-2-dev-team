@@ -19,6 +19,7 @@ import java.util.List;
 public class PlayerManager extends Manager<PlayerModel> implements Observable<ReadablePlayerModel>, Observer<List<PropertyModel>> {
     private final Logger logger = LogManager.getLogger(getClass());
     private boolean isTurn = false;
+    private boolean hasRolledDice = false;
     private final List<Observer<ReadablePlayerModel>> observers = new ArrayList<>();
     private int funds;
     private PlayerState state;
@@ -37,15 +38,33 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
 
     public boolean startTurn() {
         isTurn = canTakeTurn();
+        if (isTurn) {
+            logger.info("Player {} turn", model.getId());
+            hasRolledDice = false;
+            notifyReadable();
+        }
         return isTurn;
     }
 
     public void endTurn() {
-        isTurn = false;
+        if (canEndTurn()) {
+            isTurn = false;
+            logger.info("Player {} ended turn", model.getId());
+            notifyReadable();
+        }
+    }
+
+    public boolean isTakingTurn() {
+        return isTurn;
+    }
+
+    public void setDiceRolled() {
+        hasRolledDice = true;
+        notifyReadable();
     }
 
     public ReadablePlayerModel getReadable() {
-        return new ReadablePlayerModel(model.getName(), funds, state, position, getProperties());
+        return new ReadablePlayerModel(model.getName(), funds, state, position, isTurn, getProperties());
     }
 
     public void earn(int money) {
@@ -122,6 +141,14 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     public boolean canTakeTurn() {
         PlayerState playerState = state;
         return !PlayerState.BANKRUPT.equals(playerState);
+    }
+
+    public boolean canEndTurn() {
+        return hasRolledDice();
+    }
+
+    public boolean hasRolledDice() {
+        return hasRolledDice;
     }
 
     public boolean isInJail() {
