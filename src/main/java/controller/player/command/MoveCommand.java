@@ -52,6 +52,9 @@ public class MoveCommand implements Command {
             } else {
                 // TODO: MOVE_NEAR
             }
+            if (goToJail) {
+                manager.goToJail();
+            }
         }
     }
 }

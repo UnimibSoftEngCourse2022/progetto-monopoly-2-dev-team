@@ -63,7 +63,7 @@
   {
     "text": "It is your birthday. Collect $10 from every player.",
     "category": "COMMUNITY_CHEST",
-    "pay": true,
+    "pay": "AMOUNT",
     "amount": 10,
     "creditor": "PLAYER",
     "debtor": "ALL"

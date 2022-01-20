@@ -17,13 +17,14 @@ public class DrawableCardController {
 
     private Queue<DrawableCardModel> chances = new ConcurrentLinkedQueue<>();
     private Queue<DrawableCardModel> communities = new ConcurrentLinkedQueue<>();
+    private boolean shuffle = true;
 
     public enum Type {
         CHANCE,
         COMMUNITY_CHEST;
     }
 
-    public DrawableCardController() {
+    public DrawableCardController(boolean shuffle) {
 
         List<DrawableCardModel> chances = Collections.emptyList();
         List<DrawableCardModel> communities = Collections.emptyList();
@@ -42,9 +43,10 @@ public class DrawableCardController {
             }
         }
 
-        Collections.shuffle(chances);
-        Collections.shuffle(communities);
-
+        if (shuffle) {
+            Collections.shuffle(chances);
+            Collections.shuffle(communities);
+        }
         this.chances.addAll(chances);
         this.communities.addAll(communities);
 
@@ -64,6 +66,14 @@ public class DrawableCardController {
             }
         }
         return card;
+    }
+
+    public Queue<DrawableCardModel> getChances() {
+        return chances;
+    }
+
+    public Queue<DrawableCardModel> getCommunities() {
+        return communities;
     }
 
 }

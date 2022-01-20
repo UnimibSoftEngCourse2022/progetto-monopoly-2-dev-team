@@ -2,14 +2,26 @@ package ut;
 
 import controller.board.Board;
 import controller.board.space.*;
+import controller.card.DrawableCardController;
+import controller.event.DiceRoller;
+import controller.player.command.MoveCommand;
+import manager.player.PlayerManager;
+import model.player.PlayerModel;
+import model.player.PlayerState;
+import model.property.PropertyCategory;
+import model.property.PropertyModel;
 import org.junit.Assert;
 import org.junit.Test;
+import util.Pair;
 
+import javax.swing.text.ChangedCharSetException;
 import java.util.List;
 
-public class BoardTest {
+import static model.player.PlayerState.IN_JAIL;
 
-    private static Board board = new Board(null, null, TestUtils.getProperties());
+public class BoardTest extends BaseTest {
+
+    private static Board board = new Board(commandBuilderDispatcher, playerController, TestUtils.getProperties());
 
     @Test
     public void chainOfResponsabilityTest() {
@@ -32,5 +44,257 @@ public class BoardTest {
         Assert.assertTrue(boardSpaces.get(3) instanceof PropertySpace);
         propertySpace = (PropertySpace) board.getSpace(3);
         Assert.assertEquals("Baltic Avenue", ((PropertySpace) board.getSpace(3)).getProperty().getName());
+    }
+
+    @Test
+    public void taxSpacesTest() {
+        resetPlayers();
+        PlayerModel player = players.get(0);
+
+        TaxSpace taxSpace = new TaxSpace(commandBuilderDispatcher, 100);
+
+        int funds = playerController.getManager(player).getFunds();
+
+        taxSpace.applyEffect(player);
+
+        Assert.assertEquals(funds - 100, playerController.getManager(player).getFunds());
+    }
+
+    @Test
+    public void cornerSpaceTest() {
+        resetPlayers();
+        PlayerModel player = players.get(0);
+
+        CornerSpace cornerSpace = new CornerSpace(commandBuilderDispatcher);
+
+        cornerSpace.applyEffect(player);
+
+        Assert.assertEquals(player, players.get(0));
+    }
+
+    @Test
+    public void goToJailSpaceTest() {
+        resetPlayers();
+        PlayerModel player = players.get(0);
+        PlayerState state = playerController.getManager(player).getState();
+
+        Assert.assertEquals(PlayerState.FREE, state);
+
+        GoToJailSpace goToJailSpace = new GoToJailSpace(commandBuilderDispatcher, playerController);
+
+        goToJailSpace.applyEffect(player);
+
+        state = playerController.getManager(player).getState();
+
+        Assert.assertEquals(IN_JAIL, state);
+    }
+
+    @Test
+    public void chanceSpaceTest() {
+        resetPlayers();
+        PlayerModel player = players.get(0);
+
+        DrawableCardController drawableCardController = new DrawableCardController(false);
+
+        ChanceSpace chanceSpace = new ChanceSpace(commandBuilderDispatcher, drawableCardController, playerController);
+
+        PlayerManager playerManager = playerController.getManager(player);
+
+        playerManager.getPosition().setPosition(7);
+
+        int funds = playerManager.getFunds();
+        int position;
+
+        // move_to card
+        chanceSpace.applyEffect(player);
+
+        Assert.assertEquals(0, playerManager.getPosition().getIntPosition());
+        Assert.assertEquals(funds + 200, playerManager.getFunds());
+
+        // goToJail card
+        funds = playerManager.getFunds();
+
+        chanceSpace.applyEffect(player);
+
+        Assert.assertEquals(IN_JAIL, playerManager.getState());
+        Assert.assertEquals(10, playerManager.getPosition().getIntPosition());
+        Assert.assertEquals(funds, playerManager.getFunds());
+
+        // move_of card
+        playerManager.getOutOfJail();
+        position = playerManager.getPosition().getIntPosition();
+
+        chanceSpace.applyEffect(player);
+
+        Assert.assertEquals(position - 3, playerManager.getPosition().getIntPosition());
+
+        // pay - player creditor
+        funds = playerManager.getFunds();
+
+        chanceSpace.applyEffect(player);
+
+        Assert.assertEquals(funds + 50, playerManager.getFunds());
+
+        // pay - player debtor
+        funds = playerManager.getFunds();
+
+        chanceSpace.applyEffect(player);
+
+        Assert.assertEquals(funds - 15, playerManager.getFunds());
+
+        // pay - player debtor - others creditor
+        PlayerModel player2 = players.get(1);
+        PlayerModel player3 = players.get(2);
+        PlayerModel player4 = players.get(3);
+
+        int funds2 = playerController.getManager(player2).getFunds();
+        int funds3 = playerController.getManager(player3).getFunds();
+        int funds4 = playerController.getManager(player4).getFunds();
+
+        funds = playerManager.getFunds();
+
+        chanceSpace.applyEffect(player);
+
+        Assert.assertEquals(funds - 50 * (players.size() - 1), playerManager.getFunds());
+        Assert.assertEquals(funds2 + 50, playerController.getManager(player2).getFunds());
+        Assert.assertEquals(funds3 + 50, playerController.getManager(player3).getFunds());
+        Assert.assertEquals(funds4 + 50, playerController.getManager(player4).getFunds());
+
+        // pay - player's house and hotels
+        PropertyModel propertyModel1 = properties.get(0);
+        PropertyModel propertyModel2 = properties.get(1);
+        ownerMapper.setOwner(propertyModel1, player);
+        ownerMapper.setOwner(propertyModel2, player);
+        propertyModel1.setHouseNumber(4);
+        propertyModel2.setHotelNumber(1);
+
+        funds = playerManager.getFunds();
+
+        chanceSpace.applyEffect(player);
+
+        Assert.assertEquals(funds - 4 * 25 - 1 * 100, playerManager.getFunds());
+    }
+
+    @Test
+    public void communityChestSpaceTest() {
+        resetPlayers();
+        PlayerModel player = players.get(0);
+
+        DrawableCardController drawableCardController = new DrawableCardController(false);
+        PlayerManager playerManager = playerController.getManager(player);
+
+        CommunityChestSpace communityChestSpace = new CommunityChestSpace(commandBuilderDispatcher, drawableCardController, playerController);
+
+        playerManager.getPosition().setPosition(3);
+        int funds = playerManager.getFunds();
+
+        // move_to card
+        communityChestSpace.applyEffect(player);
+
+        Assert.assertEquals(0, playerManager.getPosition().getIntPosition());
+        Assert.assertEquals(funds + 200, playerManager.getFunds());
+
+        // goToJail card
+        funds = playerManager.getFunds();
+
+        communityChestSpace.applyEffect(player);
+
+        Assert.assertEquals(IN_JAIL, playerManager.getState());
+        Assert.assertEquals(10, playerManager.getPosition().getIntPosition());
+        Assert.assertEquals(funds, playerManager.getFunds());
+
+        // pay - player creditor
+        funds = playerManager.getFunds();
+
+        communityChestSpace.applyEffect(player);
+
+        Assert.assertEquals(funds + 200, playerManager.getFunds());
+
+        // pay - player debtor
+        funds = playerManager.getFunds();
+
+        communityChestSpace.applyEffect(player);
+
+        Assert.assertEquals(funds - 50, playerManager.getFunds());
+
+        // pay - player debtor - others creditor
+        PlayerModel player2 = players.get(1);
+        PlayerModel player3 = players.get(2);
+        PlayerModel player4 = players.get(3);
+
+        int funds2 = playerController.getManager(player2).getFunds();
+        int funds3 = playerController.getManager(player3).getFunds();
+        int funds4 = playerController.getManager(player4).getFunds();
+
+        funds = playerManager.getFunds();
+
+        communityChestSpace.applyEffect(player);
+
+        Assert.assertEquals(funds + 150, playerManager.getFunds());
+        Assert.assertEquals(funds2 - 50, playerController.getManager(player2).getFunds());
+        Assert.assertEquals(funds3 - 50, playerController.getManager(player3).getFunds());
+        Assert.assertEquals(funds4 - 50, playerController.getManager(player4).getFunds());
+
+        // pay - player's house and hotels
+        PropertyModel propertyModel1 = properties.get(0);
+        PropertyModel propertyModel2 = properties.get(1);
+        ownerMapper.setOwner(propertyModel1, player);
+        ownerMapper.setOwner(propertyModel2, player);
+        propertyModel1.setHouseNumber(4);
+        propertyModel2.setHotelNumber(1);
+
+        funds = playerManager.getFunds();
+
+        communityChestSpace.applyEffect(player);
+
+        Assert.assertEquals(funds - 4 * 40 - 1 * 115, playerManager.getFunds());
+    }
+
+    @Test
+    public void propertySpaceTest() {
+        resetPlayers();
+        PlayerModel player1 = players.get(0);
+        PlayerModel player2 = players.get(1);
+
+        PlayerManager playerManager1 = playerController.getManager(player1);
+        PlayerManager playerManager2 = playerController.getManager(player2);
+
+        int funds1;
+        int funds2;
+
+        PropertyModel property1 = categoryMapper.getCategoryProperties(PropertyCategory.BROWN).get(0);
+        PropertyModel property2 = categoryMapper.getCategoryProperties(PropertyCategory.BROWN).get(1);
+        PropertyModel property3 = categoryMapper.getCategoryProperties(PropertyCategory.ORANGE).get(0);
+
+        ownerMapper.setOwner(property1, player1);
+        ownerMapper.setOwner(property2, player2);
+
+
+        PropertySpace propertySpace1 = new PropertySpace(commandBuilderDispatcher, property1);
+        PropertySpace propertySpace2 = new PropertySpace(commandBuilderDispatcher, property2);
+        PropertySpace propertySpace3 = new PropertySpace(commandBuilderDispatcher, property3);
+
+        // player on his property
+        funds1 = playerManager1.getFunds();
+
+        propertySpace1.applyEffect(player1);
+
+        Assert.assertEquals(funds1, playerManager1.getFunds());
+
+        // player on others' property
+        funds1 = playerManager1.getFunds();
+        funds2 = playerManager2.getFunds();
+
+        propertySpace2.applyEffect(player1);
+
+        Assert.assertEquals(funds1 - 4, playerManager1.getFunds());
+        Assert.assertEquals(funds2 + 4, playerManager2.getFunds());
+
+        // player on no men's property
+        funds1 = playerManager1.getFunds();
+
+        propertySpace3.applyEffect(player1);
+
+        Assert.assertEquals(funds1, playerManager1.getFunds());
     }
 }

@@ -42,8 +42,10 @@ public class ChanceSpace extends AbstractSpace {
         if (card != null) {
             if (card.getMovement() != null) {
                 commandBuilder = movementEffect(player, card);
-            } else { // payment command
+            } else if (card.getPay() != null){
                 commandBuilder = payEffect(player, card);
+            } else {
+                //TODO: keep command
             }
         }
 
@@ -115,11 +117,12 @@ public class ChanceSpace extends AbstractSpace {
         if (MOVE_OF.equals(movement)) {
             commandBuilder.setSpace(MoveCommand.Type.MOVE_OF, where);
         } else if (MOVE_TO.equals(movement)) {
-            commandBuilder.setSpace(MoveCommand.Type.MOVE_TO, where);
+            commandBuilder.setSpace(MoveCommand.Type.MOVE_TO, where).setGoToJail(where == 10);
         } else {
             // TODO: commandBuilder.setSpace(MoveCommand.Type.MOVE_NEAR, where);
         }
 
         return commandBuilder;
     }
+
 }

@@ -2,6 +2,15 @@ package ut;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import controller.TradeController;
+import controller.command.CommandBuilderDispatcher;
+import controller.command.MainCommandBuilderDispatcher;
+import controller.event.DiceRollEventCallback;
+import controller.event.DiceRoller;
+import controller.event.EventDispatcher;
+import controller.player.PlayerController;
+import controller.property.PropertyController;
+import model.DrawableCardModel;
 import model.PropertyCategoryMapper;
 import model.PropertyMapper;
 import model.PropertyOwnerMapper;
@@ -21,16 +30,26 @@ public abstract class BaseTest {
     protected static PropertyOwnerMapper ownerMapper;
     protected static PropertyCategoryMapper categoryMapper;
 
+    protected static List<DrawableCardModel> chances;
+    protected static List<DrawableCardModel> communities;
     protected static List<PropertyModel> properties;
     protected static List<PlayerModel> players;
 
+    protected static PlayerController playerController;
+    protected static PropertyController propertyController;
+    protected static CommandBuilderDispatcher commandBuilderDispatcher;
+    protected static DiceRoller diceRoller;
+    protected static TradeController tradeController;
+    protected static EventDispatcher eventDispatcher;
+
     @Before
-    protected void init() {
+    public void init() {
         ObjectMapper jacksonMapper = new ObjectMapper();
-        URL jsonURL = PropertyMapperTest.class.getClassLoader().getResource("properties-test.json");
-        if (jsonURL != null) {
+
+        URL jsonPropertyURL = PropertyMapperTest.class.getClassLoader().getResource("properties-test.json");
+        if (jsonPropertyURL != null) {
             try {
-                properties = jacksonMapper.readValue(new File(jsonURL.toURI()), new TypeReference<>() {
+                properties = jacksonMapper.readValue(new File(jsonPropertyURL.toURI()), new TypeReference<>() {
                 });
             } catch (IOException | URISyntaxException e) {
                 e.printStackTrace();
@@ -40,9 +59,45 @@ public abstract class BaseTest {
             ownerMapper = propertyMapper;
             categoryMapper = propertyMapper;
         }
-        if(players == null) {
+        /*
+        URL jsonChancesURL = getClass().getClassLoader().getResource("chances.json");
+        URL jsonCommunityChestsURL = getClass().getClassLoader().getResource("communityChests.json");
+        if (jsonChancesURL != null && jsonCommunityChestsURL != null) {
+            try {
+                chances = jacksonMapper.readValue(new File(jsonChancesURL.toURI()), new TypeReference<>() {
+                });
+                communities = jacksonMapper.readValue(new File(jsonCommunityChestsURL.toURI()), new TypeReference<>() {
+                });
+            } catch (IOException | URISyntaxException e) {
+                e.printStackTrace();
+            }
+        }
+        */
+        if (players == null) {
             resetPlayers();
         }
+
+        playerController = new PlayerController(players, ownerMapper);
+        propertyController = new PropertyController(properties, ownerMapper, categoryMapper);
+        tradeController = new TradeController(playerController, propertyController);
+        eventDispatcher = new EventDispatcher() {
+            @Override
+            public DiceRoller diceRollEvent() {
+                return diceRoller;
+            }
+
+            @Override
+            public DiceRoller diceRollEvent(DiceRollEventCallback callback) {
+                return diceRoller;
+            }
+        };
+
+        commandBuilderDispatcher = new MainCommandBuilderDispatcher(
+                propertyController,
+                playerController,
+                tradeController,
+                eventDispatcher
+        );
     }
 
     public void resetProperties() {

@@ -1,0 +1,45 @@
+[
+  {
+    "text": "Advance to \"Go\".",
+    "category": "COMMUNITY_CHEST",
+    "movement": "MOVE_TO",
+    "where": 0
+  },
+  {
+    "text": "Go to Jail. Go directly to jail. Do not pass Go, Do not collect $200.",
+    "category": "COMMUNITY_CHEST",
+    "movement": "MOVE_TO",
+    "direct": true,
+    "where": 10
+  },
+  {
+    "text": "Bank error in your favor. Collect $200.",
+    "category": "COMMUNITY_CHEST",
+    "pay": "AMOUNT",
+    "amount": 200,
+    "creditor": "PLAYER"
+  },
+  {
+    "text": "Doctor's fees. Pay $50.",
+    "category": "COMMUNITY_CHEST",
+    "pay": "AMOUNT",
+    "amount": 50,
+    "debtor": "PLAYER"
+  },
+  {
+    "text": "Grand Opera Night. Collect $50 from every player for opening night seats.",
+    "category": "COMMUNITY_CHEST",
+    "pay": "AMOUNT",
+    "amount": 50,
+    "creditor": "PLAYER",
+    "debtor": "ALL"
+  },
+  {
+    "text": "You are assessed for street repairs: Pay $40 per house and $115 per hotel you own.",
+    "category": "COMMUNITY_CHEST",
+    "pay": "HOUSE_HOTEL_NUMBER",
+    "houseFee": 40,
+    "hotelFee": 115,
+    "debtor": "PLAYER"
+  }
+]

@@ -37,10 +37,17 @@ public class PayRentCommand implements Command {
     @Override
     public void execute() {
         PropertyManager propertyManager = propertyController.getManager(property);
+        if (player == null || propertyManager.getOwner() == null) {
+            return;
+        }
+        if (player.equals(propertyManager.getOwner())) {
+            return;
+        }
         payCommandBuilder
-                .addDebtor(player)
-                .setMoney(propertyManager.getPriceManager().getRent(property))
-                .build()
-                .execute();
+                    .addDebtor(player)
+                    .addCreditor(propertyManager.getOwner())
+                    .setMoney(propertyManager.getPriceManager().getRent(property))
+                    .build()
+                    .execute();
     }
 }

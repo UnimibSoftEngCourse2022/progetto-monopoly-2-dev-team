@@ -2,14 +2,19 @@ package controller.board.space;
 
 import controller.command.Command;
 import controller.command.CommandBuilderDispatcher;
+import controller.player.PlayerController;
 import controller.player.command.MoveCommand;
 import controller.player.command.MoveCommandBuilder;
 import model.player.PlayerModel;
 
 public class GoToJailSpace extends AbstractSpace {
 
-    public GoToJailSpace(CommandBuilderDispatcher commandBuilderDispatcher) {
+    private PlayerController playerController;
+
+    public GoToJailSpace(CommandBuilderDispatcher commandBuilderDispatcher,
+                         PlayerController playerController) {
         super(commandBuilderDispatcher);
+        this.playerController = playerController;
     }
 
     @Override
@@ -20,5 +25,6 @@ public class GoToJailSpace extends AbstractSpace {
                 .setGoToJail(true)
                 .build()
                 .execute();
+        playerController.getManager(player).goToJail();
     }
 }
