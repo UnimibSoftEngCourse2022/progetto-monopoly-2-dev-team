@@ -49,6 +49,12 @@ public class CommandTest extends BaseTest {
                     public DiceRoller diceRollEvent(DiceRollEventCallback callback) {
                         return diceRoller;
                     }
+
+                    @Override
+                    public void startAuction(PropertyModel property) {
+
+                    }
+
                 }
         );
     }

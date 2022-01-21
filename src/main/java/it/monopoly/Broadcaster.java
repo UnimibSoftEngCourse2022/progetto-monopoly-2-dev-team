@@ -1,6 +1,7 @@
 package it.monopoly;
 
 import it.monopoly.controller.player.PlayerController;
+import it.monopoly.manager.AuctionManager;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.ReadablePlayerModel;
 import it.monopoly.model.property.PropertyModel;
@@ -18,7 +19,8 @@ public class Broadcaster {
 
     private final List<Consumer<PropertyModel>> propertyListeners = new LinkedList<>();
     private final List<Consumer<ReadablePlayerModel>> playerListeners = new LinkedList<>();
-    private final List<Consumer<Runnable>> voidListeners = new LinkedList<>();
+    private final List<Consumer<AuctionManager>> auctionListeners = new LinkedList<>();
+    private AuctionManager auctionManager;
     private Observer<ReadablePlayerModel> playerObserver;
 
     public Broadcaster(PlayerController playerController) {
@@ -52,4 +54,32 @@ public class Broadcaster {
         }
     }
 
+    public void startAuction(AuctionManager auctionManager) {
+        this.auctionManager = auctionManager;
+        for (Consumer<AuctionManager> listener : auctionListeners) {
+            listener.accept(auctionManager);
+        }
+    }
+
+    public void endAuction(AuctionManager auctionManager) {
+        this.auctionManager = null;
+        for (Consumer<AuctionManager> auctionEndListener : auctionListeners) {
+            auctionEndListener.accept(auctionManager);
+        }
+    }
+
+    public void registerForAuction(Consumer<AuctionManager> auctionManagerConsumer) {
+        if (auctionManagerConsumer != null) {
+            auctionListeners.add(auctionManagerConsumer);
+            if(auctionManager != null) {
+                auctionManagerConsumer.accept(auctionManager);
+            }
+        }
+    }
+
+    public void deregisterForAuction(Consumer<AuctionManager> auctionManagerConsumer) {
+        if (auctionManagerConsumer != null) {
+            auctionListeners.remove(auctionManagerConsumer);
+        }
+    }
 }

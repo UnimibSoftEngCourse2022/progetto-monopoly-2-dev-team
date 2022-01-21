@@ -13,21 +13,25 @@ import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.ReadablePlayerModel;
 
 import java.util.Collection;
-import java.util.function.Consumer;
 
 public class AuctionView extends VerticalLayout implements Observer<Collection<AuctionModel>> {
 
-    private final Grid<AuctionModel> grid;
     private final PlayerModel player;
-    private final ReadablePlayerModel readablePlayer;
     private final AuctionManager manager;
+    private final ReadablePlayerModel readablePlayer;
+    private Grid<AuctionModel> grid;
+    private NumberField numberField;
+    private Button offerButton;
 
     public AuctionView(PlayerModel player, ReadablePlayerModel readablePlayer, AuctionManager manager) {
         this.player = player;
         this.readablePlayer = readablePlayer;
         this.manager = manager;
-        manager.register(this);
+    }
 
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        manager.register(this);
 
         grid = new Grid<>();
         grid.addColumn(AuctionModel::getPlayer).setHeader("Player");
@@ -38,23 +42,29 @@ public class AuctionView extends VerticalLayout implements Observer<Collection<A
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         horizontalLayout.setWidthFull();
         horizontalLayout.setHeight(30, Unit.PERCENTAGE);
+        horizontalLayout.setJustifyContentMode(JustifyContentMode.CENTER);
 
-        NumberField numberField = new NumberField();
+        numberField = new NumberField();
         numberField.setPlaceholder("Amount");
         numberField.setMax(readablePlayer.getFunds());
         numberField.setMin(0);
         numberField.setHeightFull();
 
-        Button offerButton = new Button("Send");
-        offerButton.setHeightFull();
-        offerButton.setWidth(20, Unit.PERCENTAGE);
+        offerButton = new Button("Send");
         offerButton.addClickListener(
                 (ComponentEventListener<ClickEvent<Button>>) buttonClickEvent
-                        -> makeOffer(numberField.getValue() != null ? numberField.getValue().intValue() : (int) numberField.getMin())
+                        -> {
+                    if (numberField.getValue() != null &&
+                            numberField.getValue() < numberField.getMax() &&
+                            numberField.getValue() > numberField.getMin()) {
+                        makeOffer(numberField.getValue().intValue());
+                        numberField.clear();
+                    }
+                }
         );
 
         numberField.addKeyDownListener(
-                Key.ACCEPT,
+                Key.ENTER,
                 (ComponentEventListener<KeyDownEvent>) keyDownEvent
                         -> offerButton.click()
         );
@@ -78,6 +88,11 @@ public class AuctionView extends VerticalLayout implements Observer<Collection<A
     @Override
     public void notify(Collection<AuctionModel> obj) {
         setAuctionModels(obj);
+        if (numberField.getMax() > manager.getBestOffer()) {
+            numberField.setMin(manager.getBestOffer());
+        } else {
+            offerButton.setEnabled(false);
+        }
     }
 
     @Override

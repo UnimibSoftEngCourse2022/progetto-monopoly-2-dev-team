@@ -2,6 +2,7 @@ package it.monopoly.controller.player.command;
 
 import it.monopoly.controller.command.Command;
 import it.monopoly.controller.player.PlayerController;
+import it.monopoly.manager.player.PlayerManager;
 import it.monopoly.model.player.PlayerModel;
 
 public class EndTurnCommand implements Command {
@@ -20,7 +21,8 @@ public class EndTurnCommand implements Command {
 
     @Override
     public boolean isEnabled() {
-        return playerController.getManager(player).canEndTurn();
+        PlayerManager manager = playerController.getManager(player);
+        return manager != null && manager.canEndTurn();
     }
 
     @Override

@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.monopoly.controller.MainCommandController;
 import it.monopoly.controller.TradeController;
 import it.monopoly.controller.TurnController;
+import it.monopoly.controller.command.CommandBuilderDispatcher;
 import it.monopoly.controller.command.MainCommandBuilderDispatcher;
+import it.monopoly.controller.event.EventDispatcher;
 import it.monopoly.controller.event.MainEventDispatcher;
 import it.monopoly.controller.player.PlayerController;
 import it.monopoly.controller.property.PropertyController;
@@ -32,7 +34,6 @@ import java.util.concurrent.Executors;
 
 @Component
 public class Controller {
-    private final Executor executor = Executors.newSingleThreadExecutor();
     private final PlayerController playerController;
     private final PropertyController propertyController;
     private final PropertyMapper mapper;
@@ -40,9 +41,9 @@ public class Controller {
     private final Map<PlayerModel, MainView> playerViewMap = new ConcurrentHashMap<>();
     private final TurnController turnController;
     private final Broadcaster broadcaster;
+    private final EventDispatcher eventDispatcher;
     private boolean gameStarted = false;
     private final Logger logger = LogManager.getLogger(getClass());
-    private AuctionManager auctionManager;
 
     Controller() {
         List<PropertyModel> properties = Collections.emptyList();
@@ -61,11 +62,11 @@ public class Controller {
         playerController = new PlayerController(players, mapper);
         propertyController = new PropertyController(properties, mapper, mapper);
         TradeController tradeController = new TradeController(playerController, propertyController);
-        MainEventDispatcher eventDispatcher = new MainEventDispatcher();
-        MainCommandBuilderDispatcher builderDispatcher = new MainCommandBuilderDispatcher(propertyController, playerController, tradeController, eventDispatcher);
+        broadcaster = new Broadcaster(playerController);
+        eventDispatcher = new MainEventDispatcher(broadcaster, tradeController);
+        CommandBuilderDispatcher builderDispatcher = new MainCommandBuilderDispatcher(propertyController, playerController, tradeController, eventDispatcher);
         commandController = new MainCommandController(builderDispatcher);
         turnController = new TurnController(playerController);
-        broadcaster = new Broadcaster(playerController);
     }
 
     public synchronized PlayerModel setupPlayer(MainView view) {
@@ -77,6 +78,7 @@ public class Controller {
         PlayerManager manager = playerController.getManager(player);
         mapper.register(manager);
         manager.register(view.getObserver(ReadablePlayerModel.class));
+        broadcaster.registerForAuction(view.getConsumer(AuctionManager.class));
         manager.register(turnController);
         LogManager.getLogger(getClass()).info("Adding new player {}#{}", player.getName(), player.getId());
         return player;
@@ -122,12 +124,8 @@ public class Controller {
         return broadcaster;
     }
 
-    //TEST
-    public AuctionManager getAuctionManager() {
-        if (auctionManager == null) {
-            this.auctionManager = new AuctionManager();
-        }
-        return auctionManager;
+    public EventDispatcher getEventDispatcher() {
+        return eventDispatcher;
     }
 
     public void addProperty(PlayerModel player) {
@@ -144,14 +142,19 @@ public class Controller {
             logger.info("Removing player {}#{}", player.getName(), player.getId());
 
             PlayerManager manager = playerController.getManager(player);
+            MainView view = playerViewMap.get(player);
+
+            manager.deregister(view.getObserver(ReadablePlayerModel.class));
+            broadcaster.deregisterForAuction(view.getConsumer(AuctionManager.class));
             manager.setDiceRolled();
             manager.endTurn();
             mapper.deregister(manager);
             mapper.removeAllPlayerProperties(player);
-            manager.deregister(playerViewMap.get(player).getObserver(ReadablePlayerModel.class));
+
             playerController.removePlayer(player);
             manager.deregister(turnController);
             playerViewMap.remove(player);
+
 
             if (playerController.getModels().isEmpty()) {
                 stopGame();

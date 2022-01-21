@@ -1,5 +1,6 @@
 package it.monopoly.view;
 
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
@@ -17,23 +18,33 @@ import it.monopoly.model.player.ReadablePlayerModel;
 import it.monopoly.model.property.PropertyModel;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 @Push
 @Route("")
 public class MainView extends VerticalLayout {
     private final Controller controller;
-    private final CommandButtonView propertyCommandButtonView;
-    private final PropertyListView propertyListView;
-    private final PlayerModel player;
-    private final CommandButtonView playerCommandButtonView;
-    private final HorizontalLayout footer;
+    private CommandButtonView propertyCommandButtonView;
+    private PropertyListView propertyListView;
+    private PlayerModel player;
+    private CommandButtonView playerCommandButtonView;
+    private HorizontalLayout footer;
     private Button startGameButton;
 
     private final Map<Class<?>, Observer<?>> observers = new HashMap<>();
+    private final Map<Class<?>, Consumer<?>> consumers = new HashMap<>();
+    private AuctionView auctionView;
 
     public MainView(@Autowired Controller controller) {
         this.controller = controller;
+    }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+
         player = controller.setupPlayer(this);
 
         //controller.getBroadcaster().registerPlayerListener(MainView.this::notify);
@@ -46,9 +57,7 @@ public class MainView extends VerticalLayout {
 
         getElement().executeJs("element = $0", getElement());
 
-        AuctionManager auctionManager = controller.getAuctionManager();
-        AuctionView auctionView = new AuctionView(player, controller.getReadablePlayer(player), auctionManager);
-        add(auctionView);
+//        startAuction(controller.getAuctionManager());
 
         propertyListView = new PropertyListView(
                 (SelectionListener<Grid<PropertyModel>, PropertyModel>) selectionEvent -> selectionEvent
@@ -74,6 +83,9 @@ public class MainView extends VerticalLayout {
             startGameButton.addClickListener(listener -> startGame());
         }
 
+        Button auctionButton = new Button("Auction");
+        auctionButton.addClickListener(event -> controller.getEventDispatcher().startAuction(controller.getProperties().get(0)));
+
         setSizeFull();
         setMargin(false);
         setSpacing(false);
@@ -86,6 +98,7 @@ public class MainView extends VerticalLayout {
         if (startGameButton != null) {
             footer.add(startGameButton);
         }
+        footer.add(auctionButton);
         footer.add(playerCommandButtonView);
         footer.setWidthFull();
         footer.setHeight(45, Unit.PERCENTAGE);
@@ -95,6 +108,23 @@ public class MainView extends VerticalLayout {
         footer.setAlignSelf(Alignment.END, playerCommandButtonView);
 
         add(footer);
+    }
+
+    private void notifyAuction(AuctionManager auctionManager) {
+        getUI().ifPresent(ui -> ui.access((com.vaadin.flow.server.Command) () -> {
+            if (auctionManager.hasEnded()) {
+                if (auctionView != null) {
+                    remove(auctionView);
+                    setButtonActive(true);
+                }
+            } else {
+                auctionView = new AuctionView(player, controller.getReadablePlayer(player), auctionManager);
+                auctionView.setAlignSelf(Alignment.CENTER);
+                auctionView.getStyle().set("position", "absolute");
+                setButtonActive(false);
+                add(auctionView);
+            }
+        }));
     }
 
     @SuppressWarnings(value = "unchecked")
@@ -114,11 +144,32 @@ public class MainView extends VerticalLayout {
         return observer;
     }
 
+    @SuppressWarnings(value = "unchecked")
+    public <T> Consumer<T> getConsumer(Class<T> className) {
+        if (consumers.containsKey(className)) {
+            return (Consumer<T>) consumers.get(className);
+        }
+
+        Consumer<T> consumer = null;
+        if (AuctionManager.class.equals(className)) {
+            consumer = auctionManager -> MainView.this.notifyAuction((AuctionManager) auctionManager);
+        }
+
+        if (consumer != null) {
+            consumers.put(className, consumer);
+        }
+        return consumer;
+    }
+
     public void updateReadable(ReadablePlayerModel player) {
         propertyListView.setProperties(player.getProperties());
-        playerCommandButtonView.setActive(player.isTurn());
-        propertyCommandButtonView.setActive(player.isTurn());
+        setButtonActive(player.isTurn());
         setJustifyContentMode(JustifyContentMode.END);
+    }
+
+    private void setButtonActive(boolean active) {
+        playerCommandButtonView.setActive(active);
+        propertyCommandButtonView.setActive(active);
     }
 
     public void updateAllPlayers(List<ReadablePlayerModel> players) {
