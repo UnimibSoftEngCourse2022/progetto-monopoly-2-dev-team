@@ -6,6 +6,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import it.monopoly.controller.command.Command;
+import it.monopoly.util.ViewUtil;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class CommandButtonView extends HorizontalLayout {
 
     public void setActive(boolean active) {
         this.active = active;
-        getUI().ifPresent(ui -> ui.access((com.vaadin.flow.server.Command) this::refreshButtons));
+        ViewUtil.runOnUiThread(getUI(), this::refreshButtons);
     }
 
     public void refreshButtons() {

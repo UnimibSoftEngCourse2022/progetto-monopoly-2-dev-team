@@ -6,11 +6,9 @@ import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.ReadablePlayerModel;
 import it.monopoly.view.Observer;
 
-import java.util.Iterator;
-
 public class TurnController implements Observer<ReadablePlayerModel> {
     private final PlayerController playerController;
-    private Iterator<PlayerModel> playerIterator;
+    private int currentPlayerIndex = -1;
     private PlayerModel currentPlayer;
 
     public TurnController(PlayerController playerController) {
@@ -18,21 +16,26 @@ public class TurnController implements Observer<ReadablePlayerModel> {
     }
 
     public void start() {
-        if (playerIterator == null) {
-            playerIterator = playerController.getModels().iterator();
-            nextTurn();
+        synchronized (playerController.getModels()) {
+            if (!playerController.getModels().isEmpty()) {
+                currentPlayerIndex = (currentPlayerIndex + 1) % playerController.getModels().size();
+                nextTurn();
+            }
         }
     }
 
     private synchronized void nextTurn() {
         synchronized (playerController.getModels()) {
-            if (playerIterator == null) {
-                return;
+            if (!playerController.getModels().isEmpty()) {
+                int index = playerController.getModels().indexOf(currentPlayer);
+                if (index == -1) {
+                    index = currentPlayerIndex + 1;
+                } else {
+                    index++;
+                }
+                currentPlayerIndex = index % playerController.getModels().size();
             }
-            if (!playerIterator.hasNext()) {
-                playerIterator = playerController.getModels().iterator();
-            }
-            currentPlayer = playerIterator.next();
+            currentPlayer = playerController.getModels().get(currentPlayerIndex);
             notifyPlayerTurn();
         }
     }
@@ -67,7 +70,7 @@ public class TurnController implements Observer<ReadablePlayerModel> {
     }
 
     public void stop() {
+        currentPlayerIndex = -1;
         currentPlayer = null;
-        playerIterator = null;
     }
 }

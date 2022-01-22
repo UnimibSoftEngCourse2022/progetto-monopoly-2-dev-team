@@ -16,6 +16,7 @@ import it.monopoly.manager.AuctionManager;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.ReadablePlayerModel;
 import it.monopoly.model.property.PropertyModel;
+import it.monopoly.util.ViewUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
@@ -30,6 +31,7 @@ public class MainView extends VerticalLayout {
     private CommandButtonView propertyCommandButtonView;
     private PropertyListView propertyListView;
     private PlayerModel player;
+    private ReadablePlayerModel readablePlayer;
     private CommandButtonView playerCommandButtonView;
     private HorizontalLayout footer;
     private Button startGameButton;
@@ -111,11 +113,11 @@ public class MainView extends VerticalLayout {
     }
 
     private void notifyAuction(AuctionManager auctionManager) {
-        getUI().ifPresent(ui -> ui.access((com.vaadin.flow.server.Command) () -> {
+        ViewUtil.runOnUiThread(getUI(), () -> {
             if (auctionManager.hasEnded()) {
                 if (auctionView != null) {
                     remove(auctionView);
-                    setButtonActive(true);
+                    setButtonActive(readablePlayer.isTurn());
                 }
             } else {
                 auctionView = new AuctionView(player, controller.getReadablePlayer(player), auctionManager);
@@ -124,7 +126,7 @@ public class MainView extends VerticalLayout {
                 setButtonActive(false);
                 add(auctionView);
             }
-        }));
+        });
     }
 
     @SuppressWarnings(value = "unchecked")
@@ -161,9 +163,10 @@ public class MainView extends VerticalLayout {
         return consumer;
     }
 
-    public void updateReadable(ReadablePlayerModel player) {
-        propertyListView.setProperties(player.getProperties());
-        setButtonActive(player.isTurn());
+    public void updateReadable(ReadablePlayerModel readablePlayer) {
+        this.readablePlayer = readablePlayer;
+        propertyListView.setProperties(readablePlayer.getProperties());
+        setButtonActive(readablePlayer.isTurn());
         setJustifyContentMode(JustifyContentMode.END);
     }
 

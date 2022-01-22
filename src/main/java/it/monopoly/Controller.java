@@ -29,8 +29,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 @Component
 public class Controller {
@@ -85,10 +83,12 @@ public class Controller {
     }
 
     public void startGame() {
-        if (!isGameStarted() && !playerController.getModels().isEmpty()) {
-            logger.info("Starting game");
-            turnController.start();
-            gameStarted = true;
+        synchronized (playerController.getModels()) {
+            if (!isGameStarted() && !playerController.getModels().isEmpty()) {
+                logger.info("Starting game");
+                turnController.start();
+                gameStarted = true;
+            }
         }
     }
 

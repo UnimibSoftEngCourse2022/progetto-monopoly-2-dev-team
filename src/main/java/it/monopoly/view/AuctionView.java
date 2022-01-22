@@ -11,6 +11,7 @@ import it.monopoly.manager.AuctionManager;
 import it.monopoly.model.AuctionModel;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.ReadablePlayerModel;
+import it.monopoly.util.ViewUtil;
 
 import java.util.Collection;
 
@@ -82,17 +83,19 @@ public class AuctionView extends VerticalLayout implements Observer<Collection<A
     }
 
     public void setAuctionModels(Collection<AuctionModel> auctionModels) {
-        getUI().ifPresent(ui -> ui.access((Command) () -> grid.setItems(auctionModels)));
+        ViewUtil.runOnUiThread(getUI(), () -> grid.setItems(auctionModels));
     }
 
     @Override
     public void notify(Collection<AuctionModel> obj) {
-        setAuctionModels(obj);
-        if (numberField.getMax() > manager.getBestOffer()) {
-            numberField.setMin(manager.getBestOffer());
-        } else {
-            offerButton.setEnabled(false);
-        }
+        ViewUtil.runOnUiThread(getUI(), () -> {
+            setAuctionModels(obj);
+            if (numberField.getMax() > manager.getBestOffer()) {
+                numberField.setMin(manager.getBestOffer());
+            } else {
+                offerButton.setEnabled(false);
+            }
+        });
     }
 
     @Override
