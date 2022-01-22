@@ -10,9 +10,9 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.router.Route;
-import it.monopoly.Controller;
+import it.monopoly.controller.Controller;
 import it.monopoly.controller.command.Command;
-import it.monopoly.manager.AuctionManager;
+import it.monopoly.manager.AbstractOfferManager;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.ReadablePlayerModel;
 import it.monopoly.model.property.PropertyModel;
@@ -38,7 +38,7 @@ public class MainView extends VerticalLayout {
 
     private final Map<Class<?>, Observer<?>> observers = new HashMap<>();
     private final Map<Class<?>, Consumer<?>> consumers = new HashMap<>();
-    private AuctionView auctionView;
+    private OffersView offersView;
 
     public MainView(@Autowired Controller controller) {
         this.controller = controller;
@@ -48,6 +48,7 @@ public class MainView extends VerticalLayout {
     protected void onAttach(AttachEvent attachEvent) {
 
         player = controller.setupPlayer(this);
+        readablePlayer = controller.getReadablePlayer(player);
 
         //controller.getBroadcaster().registerPlayerListener(MainView.this::notify);
 
@@ -86,7 +87,10 @@ public class MainView extends VerticalLayout {
         }
 
         Button auctionButton = new Button("Auction");
-        auctionButton.addClickListener(event -> controller.getEventDispatcher().startAuction(controller.getProperties().get(0)));
+        auctionButton.addClickListener(event -> controller.startAuction());
+
+        Button sellButton = new Button("Sell");
+        sellButton.addClickListener(event -> controller.startSell(player));
 
         setSizeFull();
         setMargin(false);
@@ -100,7 +104,7 @@ public class MainView extends VerticalLayout {
         if (startGameButton != null) {
             footer.add(startGameButton);
         }
-        footer.add(auctionButton);
+        footer.add(auctionButton, sellButton);
         footer.add(playerCommandButtonView);
         footer.setWidthFull();
         footer.setHeight(45, Unit.PERCENTAGE);
@@ -112,19 +116,19 @@ public class MainView extends VerticalLayout {
         add(footer);
     }
 
-    private void notifyAuction(AuctionManager auctionManager) {
+    private void notifyOffers(AbstractOfferManager offerManager) {
         ViewUtil.runOnUiThread(getUI(), () -> {
-            if (auctionManager.hasEnded()) {
-                if (auctionView != null) {
-                    remove(auctionView);
+            if (offerManager.hasEnded()) {
+                if (offersView != null) {
+                    remove(offersView);
                     setButtonActive(readablePlayer.isTurn());
                 }
             } else {
-                auctionView = new AuctionView(player, controller.getReadablePlayer(player), auctionManager);
-                auctionView.setAlignSelf(Alignment.CENTER);
-                auctionView.getStyle().set("position", "absolute");
+                offersView = new OffersView(player, controller.getReadablePlayer(player), offerManager);
+                offersView.setAlignSelf(Alignment.CENTER);
+                offersView.getStyle().set("position", "absolute");
                 setButtonActive(false);
-                add(auctionView);
+                add(offersView);
             }
         });
     }
@@ -153,8 +157,8 @@ public class MainView extends VerticalLayout {
         }
 
         Consumer<T> consumer = null;
-        if (AuctionManager.class.equals(className)) {
-            consumer = auctionManager -> MainView.this.notifyAuction((AuctionManager) auctionManager);
+        if (AbstractOfferManager.class.equals(className)) {
+            consumer = auctionManager -> MainView.this.notifyOffers((AbstractOfferManager) auctionManager);
         }
 
         if (consumer != null) {

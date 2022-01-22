@@ -117,7 +117,7 @@ public class PropertyManager extends Manager<PropertyModel> {
     }
 
     public boolean canSell() {
-        return zeroBuildingsInCategory();
+        return getOwner() != null && zeroBuildingsInCategory();
     }
 
     public boolean canCollectRent() {

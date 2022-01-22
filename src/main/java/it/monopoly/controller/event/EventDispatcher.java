@@ -1,5 +1,7 @@
 package it.monopoly.controller.event;
 
+import it.monopoly.manager.AbstractOfferManager;
+import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.property.PropertyModel;
 
 public interface EventDispatcher {
@@ -7,5 +9,5 @@ public interface EventDispatcher {
 
     DiceRoller diceRollEvent(DiceRollEventCallback callback);
 
-    void startAuction(PropertyModel property);
+    void startOffer(AbstractOfferManager offerManager);
 }

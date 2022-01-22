@@ -1,7 +1,7 @@
 package it.monopoly;
 
 import it.monopoly.controller.player.PlayerController;
-import it.monopoly.manager.AuctionManager;
+import it.monopoly.manager.AbstractOfferManager;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.ReadablePlayerModel;
 import it.monopoly.model.property.PropertyModel;
@@ -19,8 +19,8 @@ public class Broadcaster {
 
     private final List<Consumer<PropertyModel>> propertyListeners = new LinkedList<>();
     private final List<Consumer<ReadablePlayerModel>> playerListeners = new LinkedList<>();
-    private final List<Consumer<AuctionManager>> auctionListeners = new LinkedList<>();
-    private AuctionManager auctionManager;
+    private final List<Consumer<AbstractOfferManager>> offersListeners = new LinkedList<>();
+    private AbstractOfferManager offerManager;
     private Observer<ReadablePlayerModel> playerObserver;
 
     public Broadcaster(PlayerController playerController) {
@@ -54,32 +54,35 @@ public class Broadcaster {
         }
     }
 
-    public void startAuction(AuctionManager auctionManager) {
-        this.auctionManager = auctionManager;
-        for (Consumer<AuctionManager> listener : auctionListeners) {
-            listener.accept(auctionManager);
+    public void startOffers(AbstractOfferManager offerManager) {
+        if (this.offerManager != null) {
+            return;
+        }
+        this.offerManager = offerManager;
+        for (Consumer<AbstractOfferManager> listener : offersListeners) {
+            listener.accept(offerManager);
         }
     }
 
-    public void endAuction(AuctionManager auctionManager) {
-        this.auctionManager = null;
-        for (Consumer<AuctionManager> auctionEndListener : auctionListeners) {
-            auctionEndListener.accept(auctionManager);
+    public void endOffers(AbstractOfferManager offerManager) {
+        this.offerManager = null;
+        for (Consumer<AbstractOfferManager> auctionEndListener : offersListeners) {
+            auctionEndListener.accept(offerManager);
         }
     }
 
-    public void registerForAuction(Consumer<AuctionManager> auctionManagerConsumer) {
-        if (auctionManagerConsumer != null) {
-            auctionListeners.add(auctionManagerConsumer);
-            if(auctionManager != null) {
-                auctionManagerConsumer.accept(auctionManager);
+    public void registerForOffers(Consumer<AbstractOfferManager> offerManagerConsumer) {
+        if (offerManagerConsumer != null) {
+            offersListeners.add(offerManagerConsumer);
+            if (offerManager != null) {
+                offerManagerConsumer.accept(offerManager);
             }
         }
     }
 
-    public void deregisterForAuction(Consumer<AuctionManager> auctionManagerConsumer) {
-        if (auctionManagerConsumer != null) {
-            auctionListeners.remove(auctionManagerConsumer);
+    public void deregisterFromOffers(Consumer<AbstractOfferManager> offerManagerConsumer) {
+        if (offerManagerConsumer != null) {
+            offersListeners.remove(offerManagerConsumer);
         }
     }
 }

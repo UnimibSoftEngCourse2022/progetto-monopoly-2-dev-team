@@ -13,6 +13,7 @@ import it.monopoly.controller.player.command.PayCommandBuilder;
 import it.monopoly.controller.player.command.PayRentCommandBuilder;
 import it.monopoly.controller.property.PropertyController;
 import it.monopoly.controller.property.command.PropertyCommandBuilder;
+import it.monopoly.manager.AbstractOfferManager;
 import it.monopoly.manager.player.PlayerManager;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.property.PropertyCategory;
@@ -51,10 +52,9 @@ public class CommandTest extends BaseTest {
                     }
 
                     @Override
-                    public void startAuction(PropertyModel property) {
+                    public void startOffer(AbstractOfferManager offerManager) {
 
                     }
-
                 }
         );
     }

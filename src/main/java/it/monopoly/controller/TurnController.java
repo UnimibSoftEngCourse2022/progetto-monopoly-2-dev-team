@@ -18,7 +18,6 @@ public class TurnController implements Observer<ReadablePlayerModel> {
     public void start() {
         synchronized (playerController.getModels()) {
             if (!playerController.getModels().isEmpty()) {
-                currentPlayerIndex = (currentPlayerIndex + 1) % playerController.getModels().size();
                 nextTurn();
             }
         }
@@ -27,7 +26,7 @@ public class TurnController implements Observer<ReadablePlayerModel> {
     private synchronized void nextTurn() {
         synchronized (playerController.getModels()) {
             if (!playerController.getModels().isEmpty()) {
-                int index = playerController.getModels().indexOf(currentPlayer);
+                int index = currentPlayer == null ? -1 : playerController.getModels().indexOf(currentPlayer);
                 if (index == -1) {
                     index = currentPlayerIndex + 1;
                 } else {

@@ -2,6 +2,7 @@ package it.monopoly.controller;
 
 import it.monopoly.controller.command.Command;
 import it.monopoly.controller.command.CommandBuilderDispatcher;
+import it.monopoly.controller.command.SellPropertyCommandBuilder;
 import it.monopoly.controller.player.command.DiceRollCommandBuilder;
 import it.monopoly.controller.player.command.EndTurnCommandBuilder;
 import it.monopoly.controller.property.command.PropertyCommandBuilder;
@@ -20,12 +21,16 @@ public class MainCommandController {
 
     public List<Command> generateCommands(PropertyModel property) {
         List<Command> commands = new ArrayList<>();
-        PropertyCommandBuilder builder = commandBuilderDispatcher.createCommandBuilder(PropertyCommandBuilder.class).setProperty(property);
-        commands.add(builder.setType(PropertyCommandBuilder.Type.MORTGAGE).build());
+        PropertyCommandBuilder propertyCommandBuilder =
+                commandBuilderDispatcher.createCommandBuilder(PropertyCommandBuilder.class).setProperty(property);
+        commands.add(propertyCommandBuilder.setType(PropertyCommandBuilder.Type.MORTGAGE).build());
         if (property.isImprovable()) {
-            commands.add(builder.setType(PropertyCommandBuilder.Type.BUILD).build());
-            commands.add(builder.setType(PropertyCommandBuilder.Type.SELL).build());
+            commands.add(propertyCommandBuilder.setType(PropertyCommandBuilder.Type.BUILD).build());
+            commands.add(propertyCommandBuilder.setType(PropertyCommandBuilder.Type.SELL).build());
         }
+        SellPropertyCommandBuilder sellPropertyCommandBuilder =
+                commandBuilderDispatcher.createCommandBuilder(SellPropertyCommandBuilder.class).setProperty(property);
+        commands.add(sellPropertyCommandBuilder.setProperty(property).build());
         return commands;
     }
 

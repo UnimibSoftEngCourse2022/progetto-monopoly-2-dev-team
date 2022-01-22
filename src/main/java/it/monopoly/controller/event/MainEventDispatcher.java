@@ -2,20 +2,21 @@ package it.monopoly.controller.event;
 
 import it.monopoly.Broadcaster;
 import it.monopoly.controller.TradeController;
-import it.monopoly.manager.AuctionManager;
-import it.monopoly.model.AuctionModel;
-import it.monopoly.model.property.PropertyModel;
-import it.monopoly.view.Observer;
-
-import java.util.Collection;
+import it.monopoly.controller.ViewController;
+import it.monopoly.manager.AbstractOfferManager;
+import it.monopoly.manager.OfferManager;
 
 public class MainEventDispatcher implements EventDispatcher {
     private final Broadcaster broadcaster;
     private final TradeController tradeController;
+    private final ViewController viewController;
 
-    public MainEventDispatcher(Broadcaster broadcaster, TradeController tradeController) {
+    public MainEventDispatcher(Broadcaster broadcaster,
+                               TradeController tradeController, //TODO remove dependency by passing auction manager directly in startAuction method
+                               ViewController viewController) {
         this.broadcaster = broadcaster;
         this.tradeController = tradeController;
+        this.viewController = viewController;
     }
 
     public DiceRoller diceRollEvent() {
@@ -31,12 +32,11 @@ public class MainEventDispatcher implements EventDispatcher {
     }
 
     @Override
-    public void startAuction(PropertyModel property) {
-        AuctionManager auctionManager = new AuctionManager(property, tradeController);
-        broadcaster.startAuction(auctionManager);
-        auctionManager.register(obj -> {
-            if (auctionManager.hasEnded()) {
-                broadcaster.endAuction(auctionManager);
+    public void startOffer(AbstractOfferManager offerManager) {
+        broadcaster.startOffers(offerManager);
+        offerManager.register(obj -> {
+            if (offerManager.hasEnded()) {
+                broadcaster.endOffers(offerManager);
             }
         });
     }

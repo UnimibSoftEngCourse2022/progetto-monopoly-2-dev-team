@@ -13,7 +13,6 @@ import it.monopoly.view.Observer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -49,8 +48,10 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
 
     public void endTurn() {
         if (canEndTurn()) {
+            if (isTurn) {
+                logger.info("Player {} ended turn", model.getId());
+            }
             isTurn = false;
-            logger.info("Player {} ended turn", model.getId());
             notifyReadable();
         }
     }

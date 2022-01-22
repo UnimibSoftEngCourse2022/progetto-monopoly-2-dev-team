@@ -33,6 +33,7 @@ public class PropertyMapper implements PropertyOwnerMapper, PropertyCategoryMapp
 
     public void setOwner(final PropertyModel property, final PlayerModel player) {
         if (player != null && property != null) {
+            removeOwner(property);
             playerProperties.computeIfAbsent(player, k -> new ArrayList<>());
             List<PropertyModel> list = playerProperties.get(player);
             if (!list.contains(property)) {
@@ -55,8 +56,8 @@ public class PropertyMapper implements PropertyOwnerMapper, PropertyCategoryMapp
                 propertyModels.remove(property);
                 return propertyModels;
             });
+            notify(player);
         }
-        notify(player);
         return player;
     }
 

@@ -44,6 +44,8 @@ public class MainCommandBuilderDispatcher implements CommandBuilderDispatcher {
                     new MoveCommandBuilder(playerController),
                     new PayCommandBuilder(tradeController)
             ));
+        } else if (SellPropertyCommandBuilder.class.equals(className)) {
+            return className.cast(new SellPropertyCommandBuilder(propertyController, tradeController, eventDispatcher));
         }
         return null;
     }

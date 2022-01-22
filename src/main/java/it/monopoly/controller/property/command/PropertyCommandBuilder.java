@@ -49,7 +49,7 @@ public class PropertyCommandBuilder implements CommandBuilder {
         Command propertyCommand;
         int price;
 
-        logger.info("Building {} property command for property {}", type, property.getName());
+        logger.debug("Building {} property command for property {}", type, property.getName());
 
         if (Type.BUILD.equals(type)) {
             if (property.getHouseNumber() < PropertyManager.MAX_NUMBER_OF_HOUSES) {
