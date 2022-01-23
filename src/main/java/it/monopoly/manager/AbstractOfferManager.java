@@ -17,13 +17,15 @@ public abstract class AbstractOfferManager implements Observable<Collection<Offe
     protected final Logger logger = LogManager.getLogger(getClass());
     protected boolean hasEnded = false;
     private final OfferType type;
+    private final PlayerModel player;
     protected final PropertyModel property;
     protected final TradeController tradeController;
     private final List<Observer<Collection<OfferModel>>> observers = new LinkedList<>();
     protected final Map<PlayerModel, OfferModel> playerOfferMap = new ConcurrentHashMap<>();
 
-    public AbstractOfferManager(OfferType type, PropertyModel property, TradeController tradeController) {
+    public AbstractOfferManager(OfferType type, PlayerModel player, PropertyModel property, TradeController tradeController) {
         this.type = type;
+        this.player = player;
         this.property = property;
         this.tradeController = tradeController;
     }
@@ -61,6 +63,13 @@ public abstract class AbstractOfferManager implements Observable<Collection<Offe
         return false;
     }
 
+    public final PropertyModel getProperty() {
+        return property;
+    }
+
+    public final String getPlayerName() {
+        return player != null ? player.getName() : "Unknown";
+    }
 
     public final OfferType getType() {
         return type;

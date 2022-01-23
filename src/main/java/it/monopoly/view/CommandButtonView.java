@@ -34,9 +34,10 @@ public class CommandButtonView extends HorizontalLayout {
 
     public void refreshButtons() {
         if (commands != null) {
-            removeAll();
+            clear();
             for (Command command : commands) {
                 Button button = new Button(command.getCommandName());
+                button.getElement().getStyle().set("margin", "auto");
                 button.setEnabled(active && command.isEnabled());
                 button.addClickListener(
                         (ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> command.execute()
@@ -44,5 +45,10 @@ public class CommandButtonView extends HorizontalLayout {
                 add(button);
             }
         }
+    }
+
+    public void clear() {
+
+        removeAll();
     }
 }

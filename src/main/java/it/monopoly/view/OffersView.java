@@ -3,15 +3,18 @@ package it.monopoly.view;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.data.selection.SelectionListener;
+import com.vaadin.flow.dom.Style;
 import it.monopoly.manager.AbstractOfferManager;
 import it.monopoly.model.OfferModel;
 import it.monopoly.model.enums.OfferType;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.ReadablePlayerModel;
+import it.monopoly.model.property.PropertyModel;
 import it.monopoly.util.ViewUtil;
 
 import java.util.Collection;
@@ -26,6 +29,7 @@ public class OffersView extends VerticalLayout implements Observer<Collection<Of
     private NumberField numberField;
     private Button offerButton;
     private HorizontalLayout horizontalLayout;
+    private Button highestButton;
 
     public OffersView(PlayerModel player, ReadablePlayerModel readablePlayer, AbstractOfferManager manager) {
         this.player = player;
@@ -38,26 +42,53 @@ public class OffersView extends VerticalLayout implements Observer<Collection<Of
     protected void onAttach(AttachEvent attachEvent) {
         manager.register(this);
 
+        setHeight(50, Unit.PERCENTAGE);
+        setWidth(50, Unit.PERCENTAGE);
+        Style style = getElement().getStyle();
+        style.set("position", "absolute");
+        style.set("padding", "2%");
+        style.set("background", "white");
+        style.set("border", "solid");
+        style.set("border-radius", "10px");
+        style.set("border-color", "whitesmoke");
+        style.set("border-width", "2px");
+
+        style.set("top", "0");
+        style.set("left", "0");
+        style.set("right", "0");
+        style.set("bottom", "0");
+        style.set("margin", "auto");
+
+        String headerString = manager.getPlayerName();
+        if (OfferType.SELL.equals(type)) {
+            headerString += " wants to sell their property ";
+        } else {
+            headerString += " started an auction for property ";
+        }
+        PropertyModel property = manager.getProperty();
+        headerString += property.getName() +
+                " (" + property.getCategory() + ", base price of " +
+                property.getPrice() + ")";
+
+        Span header = new Span(headerString);
+        header.getElement().getStyle().set("font-weight", "600");
+        setAlignSelf(Alignment.CENTER, header);
+
         grid = new Grid<>();
         grid.addColumn(OfferModel::getPlayer).setHeader("Player");
         grid.addColumn(OfferModel::getAmount).setHeader("Amount");
-        grid.setWidthFull();
-        grid.setHeight(70, Unit.PERCENTAGE);
 
         horizontalLayout = new HorizontalLayout();
         horizontalLayout.setWidthFull();
-        horizontalLayout.setHeight(30, Unit.PERCENTAGE);
         horizontalLayout.setJustifyContentMode(JustifyContentMode.CENTER);
 
         if (OfferType.SELL.equals(manager.getType()) && manager.isSuperVisor(player)) {
             layoutForSupervisor();
-
         } else {
             layoutForOffers();
         }
 
-        add(grid, horizontalLayout);
-        setHeight(50, Unit.PERCENTAGE);
+        add(header, grid, horizontalLayout);
     }
 
     private void layoutForOffers() {
@@ -94,7 +125,8 @@ public class OffersView extends VerticalLayout implements Observer<Collection<Of
     }
 
     private void layoutForSupervisor() {
-        Button highestButton = new Button("Accept Highest");
+        highestButton = new Button("Accept Highest");
+        highestButton.setEnabled(false);
         highestButton.addClickListener(
                 (ComponentEventListener<ClickEvent<Button>>) buttonClickEvent
                         -> manager.endOffers()
@@ -144,6 +176,9 @@ public class OffersView extends VerticalLayout implements Observer<Collection<Of
                 } else {
                     offerButton.setEnabled(false);
                 }
+            }
+            if (highestButton != null) {
+                highestButton.setEnabled(true);
             }
         });
     }

@@ -19,8 +19,8 @@ public class AuctionManager extends AbstractOfferManager {
     private final ScheduledExecutorService executor;
     private ScheduledFuture<?> scheduledFuture;
 
-    public AuctionManager(PropertyModel property, TradeController tradeController) {
-        super(OfferType.AUCTION, property, tradeController);
+    public AuctionManager(PlayerModel player, PropertyModel property, TradeController tradeController) {
+        super(OfferType.AUCTION, player, property, tradeController);
         executor = Executors.newSingleThreadScheduledExecutor();
     }
 
@@ -45,7 +45,7 @@ public class AuctionManager extends AbstractOfferManager {
         } else {
             logger.info("Auction started for property {}", property.getName());
         }
-        scheduledFuture = executor.schedule((Runnable) this::endAuction, 10, TimeUnit.SECONDS);
+        scheduledFuture = executor.schedule(this::endAuction, 10, TimeUnit.SECONDS);
     }
 
     @Override
@@ -54,13 +54,15 @@ public class AuctionManager extends AbstractOfferManager {
     }
 
     private void endAuction() {
-        hasEnded = true;
-        OfferModel bestOffer = getBestOfferModel();
-        if (bestOffer != null) {
-            logger.info("Auction ended, player {} got property {} for {} money", bestOffer.getPlayer().toString(), property.getName(), bestOffer.getAmount());
-            tradeController.buyPropertyAfterAuction(bestOffer.getPlayer(), property, bestOffer.getAmount());
-        }
-        notifyObservers();
-        clearObservers();
+        Executors.newSingleThreadExecutor().execute(() -> {
+            hasEnded = true;
+            OfferModel bestOffer = getBestOfferModel();
+            if (bestOffer != null) {
+                logger.info("Auction ended, player {} got property {} for {} money", bestOffer.getPlayer().toString(), property.getName(), bestOffer.getAmount());
+                tradeController.buyPropertyAfterAuction(bestOffer.getPlayer(), property, bestOffer.getAmount());
+            }
+            notifyObservers();
+            clearObservers();
+        });
     }
 }

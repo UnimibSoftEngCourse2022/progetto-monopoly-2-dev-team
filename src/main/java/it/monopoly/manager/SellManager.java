@@ -11,7 +11,7 @@ public class SellManager extends AbstractOfferManager {
     private int maxOffer = -1;
 
     public SellManager(PlayerModel owner, PropertyModel property, TradeController tradeController) {
-        super(OfferType.SELL, property, tradeController);
+        super(OfferType.SELL, owner, property, tradeController);
         this.owner = owner;
     }
 

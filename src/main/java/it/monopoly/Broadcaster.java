@@ -65,10 +65,10 @@ public class Broadcaster {
     }
 
     public void endOffers(AbstractOfferManager offerManager) {
-        this.offerManager = null;
-        for (Consumer<AbstractOfferManager> auctionEndListener : offersListeners) {
-            auctionEndListener.accept(offerManager);
+        for (Consumer<AbstractOfferManager> offersEndListener : offersListeners) {
+            offersEndListener.accept(offerManager);
         }
+        this.offerManager = null;
     }
 
     public void registerForOffers(Consumer<AbstractOfferManager> offerManagerConsumer) {

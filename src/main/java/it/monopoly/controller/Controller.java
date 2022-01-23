@@ -26,7 +26,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 @Component
 public class Controller {
@@ -168,10 +171,10 @@ public class Controller {
         gameStarted = false;
     }
 
-    public void startAuction() {
+    public void startAuction(PlayerModel player) {
         List<PropertyModel> models = propertyController.getModels();
         int index = new Random().nextInt(models.size());
-        eventDispatcher.startOffer(new AuctionManager(models.get(index), tradeController));
+        eventDispatcher.startOffer(new AuctionManager(player, models.get(index), tradeController));
     }
 
     public void startSell(PlayerModel player) {

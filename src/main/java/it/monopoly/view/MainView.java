@@ -1,15 +1,19 @@
 package it.monopoly.view;
 
-import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.ClientCallable;
-import com.vaadin.flow.component.Unit;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.IFrame;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.data.selection.SelectionListener;
+import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.router.Route;
+import elemental.json.JsonValue;
 import it.monopoly.controller.Controller;
 import it.monopoly.controller.command.Command;
 import it.monopoly.manager.AbstractOfferManager;
@@ -26,14 +30,14 @@ import java.util.function.Consumer;
 
 @Push
 @Route("")
-public class MainView extends VerticalLayout {
+public class MainView extends HorizontalLayout {
     private final Controller controller;
     private CommandButtonView propertyCommandButtonView;
     private PropertyListView propertyListView;
     private PlayerModel player;
     private ReadablePlayerModel readablePlayer;
     private CommandButtonView playerCommandButtonView;
-    private HorizontalLayout footer;
+    private HorizontalLayout testCommandsLayout;
     private Button startGameButton;
 
     private final Map<Class<?>, Observer<?>> observers = new HashMap<>();
@@ -50,8 +54,6 @@ public class MainView extends VerticalLayout {
         player = controller.setupPlayer(this);
         readablePlayer = controller.getReadablePlayer(player);
 
-        //controller.getBroadcaster().registerPlayerListener(MainView.this::notify);
-
         String js = "window.onbeforeunload = function () {" +
                 "element.$server.closeSession();" +
                 "};";
@@ -60,60 +62,72 @@ public class MainView extends VerticalLayout {
 
         getElement().executeJs("element = $0", getElement());
 
-//        startAuction(controller.getAuctionManager());
+
+        VerticalLayout leftLayout = new VerticalLayout();
 
         propertyListView = new PropertyListView(
                 (SelectionListener<Grid<PropertyModel>, PropertyModel>) selectionEvent -> selectionEvent
                         .getFirstSelectedItem()
-                        .ifPresent(MainView.this::displayCommands)
+                        .ifPresentOrElse(MainView.this::displayCommands, () -> propertyCommandButtonView.clear())
         );
+
 
         propertyCommandButtonView = new CommandButtonView();
 
         VerticalLayout propertiesVerticalLayout = new VerticalLayout();
+        propertiesVerticalLayout.setMargin(false);
+        propertiesVerticalLayout.setHeight(50, Unit.PERCENTAGE);
         propertiesVerticalLayout.add(propertyListView, propertyCommandButtonView);
-        propertiesVerticalLayout.setWidth(40, Unit.PERCENTAGE);
-        propertiesVerticalLayout.setHeightFull();
+
+        leftLayout.add(propertiesVerticalLayout);
+
+        VerticalLayout rightLayout = new VerticalLayout();
+
+        BoardView boardView = new BoardView();
+        rightLayout.add(boardView);
 
         playerCommandButtonView = new CommandButtonView(controller.getCommandController().generateCommands(player));
-
-        Button newPropertyButton = new Button("New Property");
-        newPropertyButton.addClickListener(listener -> controller.addProperty(player));
+        playerCommandButtonView.setJustifyContentMode(JustifyContentMode.AROUND);
+        playerCommandButtonView.setWidthFull();
 
         startGameButton = null;
         if (!controller.isGameStarted()) {
             startGameButton = new Button("Start Game");
+            startGameButton.getElement().getStyle().set("margin", "auto");
             startGameButton.addClickListener(listener -> startGame());
         }
 
+        Button newPropertyButton = new Button("New Property");
+        newPropertyButton.getElement().getStyle().set("margin", "auto");
+        newPropertyButton.addClickListener(listener -> controller.addProperty(player));
+
         Button auctionButton = new Button("Auction");
-        auctionButton.addClickListener(event -> controller.startAuction());
+        auctionButton.getElement().getStyle().set("margin", "auto");
+        auctionButton.addClickListener(event -> controller.startAuction(player));
 
         Button sellButton = new Button("Sell");
+        sellButton.getElement().getStyle().set("margin", "auto");
         sellButton.addClickListener(event -> controller.startSell(player));
 
+        testCommandsLayout = new HorizontalLayout();
+        if (startGameButton != null) {
+            testCommandsLayout.add(startGameButton);
+        }
+        testCommandsLayout.add(newPropertyButton, auctionButton, sellButton);
+        testCommandsLayout.setMargin(false);
+        testCommandsLayout.setWidthFull();
+        testCommandsLayout.setJustifyContentMode(JustifyContentMode.AROUND);
+        testCommandsLayout.add(playerCommandButtonView);
+
+        rightLayout.setJustifyContentMode(JustifyContentMode.END);
+        rightLayout.add(testCommandsLayout, playerCommandButtonView);
+
         setSizeFull();
-        setMargin(false);
         setSpacing(false);
         setPadding(false);
 
-        expand(propertyListView);
-
-        footer = new HorizontalLayout();
-        footer.add(propertiesVerticalLayout, newPropertyButton);
-        if (startGameButton != null) {
-            footer.add(startGameButton);
-        }
-        footer.add(auctionButton, sellButton);
-        footer.add(playerCommandButtonView);
-        footer.setWidthFull();
-        footer.setHeight(45, Unit.PERCENTAGE);
-        footer.setAlignItems(Alignment.END);
-        setJustifyContentMode(JustifyContentMode.END);
-        footer.setAlignSelf(Alignment.START, propertiesVerticalLayout);
-        footer.setAlignSelf(Alignment.END, playerCommandButtonView);
-
-        add(footer);
+        add(leftLayout, rightLayout);
+        setFlexGrow(.5, leftLayout, rightLayout);
     }
 
     private void notifyOffers(AbstractOfferManager offerManager) {
@@ -125,8 +139,7 @@ public class MainView extends VerticalLayout {
                 }
             } else {
                 offersView = new OffersView(player, controller.getReadablePlayer(player), offerManager);
-                offersView.setAlignSelf(Alignment.CENTER);
-                offersView.getStyle().set("position", "absolute");
+                setAlignSelf(Alignment.CENTER, offersView);
                 setButtonActive(false);
                 add(offersView);
             }
@@ -169,9 +182,12 @@ public class MainView extends VerticalLayout {
 
     public void updateReadable(ReadablePlayerModel readablePlayer) {
         this.readablePlayer = readablePlayer;
-        propertyListView.setProperties(readablePlayer.getProperties());
-        setButtonActive(readablePlayer.isTurn());
-        setJustifyContentMode(JustifyContentMode.END);
+        ViewUtil.runOnUiThread(getUI(), () -> {
+            propertyCommandButtonView.clear();
+            propertyListView.setProperties(readablePlayer.getProperties());
+            setButtonActive(readablePlayer.isTurn());
+            setJustifyContentMode(JustifyContentMode.END);
+        });
     }
 
     private void setButtonActive(boolean active) {
@@ -190,7 +206,7 @@ public class MainView extends VerticalLayout {
 
     private void startGame() {
         controller.startGame();
-        footer.remove(startGameButton);
+        testCommandsLayout.remove(startGameButton);
     }
 
     private void displayCommands(PropertyModel property) {
