@@ -43,7 +43,7 @@ public class PayRentCommand implements Command {
         PropertyManager propertyManager = propertyController.getManager(property);
         payCommandBuilder
                 .addDebtor(player)
-                .setMoney(propertyManager.getPriceManager().getRent(property))
+                .setMoney(propertyManager.getPriceManager().getRent())
                 .build()
                 .execute();
     }

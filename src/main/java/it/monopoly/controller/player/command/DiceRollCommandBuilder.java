@@ -36,7 +36,6 @@ public class DiceRollCommandBuilder implements CommandBuilder {
 
     @Override
     public Command build() {
-        logger.info("Building DiceRollCommand with configuration " + this);
         PlayerManager manager = playerController.getManager(player);
         if (PlayerState.IN_JAIL.equals(manager.getState())) {
             return new DiceRollForJailCommand(playerController, eventDispatcher, player, moveCommandBuilder, payCommandBuilder);

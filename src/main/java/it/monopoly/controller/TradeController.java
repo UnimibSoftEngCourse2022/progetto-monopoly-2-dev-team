@@ -18,7 +18,7 @@ public class TradeController {
 
     public boolean buyProperty(PlayerModel buyer, PropertyModel propertyWithoutOwner) {
         PropertyManager propertyManager = propertyController.getManager(propertyWithoutOwner);
-        int price = propertyManager.getPriceManager().getPrice(propertyWithoutOwner);
+        int price = propertyManager.getPriceManager().getPrice();
         return buyPropertyWithoutOwner(buyer, propertyWithoutOwner, price);
     }
 

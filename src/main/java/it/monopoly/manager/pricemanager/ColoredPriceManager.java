@@ -11,16 +11,16 @@ public class ColoredPriceManager extends PriceManager {
 
     //TODO Add randomization logic
 
-    public ColoredPriceManager(PropertyOwnerMapper propertyOwnerMapper, PropertyCategoryMapper propertyCategoryMapper) {
-        super(propertyOwnerMapper, propertyCategoryMapper);
+    public ColoredPriceManager(PropertyModel property, PropertyOwnerMapper propertyOwnerMapper, PropertyCategoryMapper propertyCategoryMapper) {
+        super(property, propertyOwnerMapper, propertyCategoryMapper);
     }
 
     @Override
-    public int getRent(PropertyModel property) {
-        return getCleanRent(property);
+    public int getRent() {
+        return getCleanRent();
     }
 
-    private int getCleanRent(PropertyModel property) {
+    private int getCleanRent() {
         int rent;
         if (property.getHotelNumber() != 0) {
             rent = property.getHotelRent();
@@ -36,7 +36,7 @@ public class ColoredPriceManager extends PriceManager {
                 for (int i = 0; i < categoryProperties.size() && sameOwner; i++) {
                     sameOwner = player.equals(propertyOwnerMapper.getOwner(categoryProperties.get(i)));
                 }
-                if(sameOwner) {
+                if (sameOwner) {
                     rent *= 2;
                 }
             }
@@ -46,12 +46,12 @@ public class ColoredPriceManager extends PriceManager {
 
 
     @Override
-    public int getHousePrice(PropertyModel property) {
+    public int getHousePrice() {
         return property.getHousePrice();
     }
 
     @Override
-    public int getHotelPrice(PropertyModel property) {
+    public int getHotelPrice() {
         return property.getHotelPrice();
     }
 }

@@ -10,16 +10,16 @@ public class RailroadPriceManager extends PriceManager {
 
     //TODO Add randomization logic
 
-    public RailroadPriceManager(PropertyOwnerMapper propertyOwnerMapper, PropertyCategoryMapper propertyCategoryMapper) {
-        super(propertyOwnerMapper, propertyCategoryMapper);
+    public RailroadPriceManager(PropertyModel property, PropertyOwnerMapper propertyOwnerMapper, PropertyCategoryMapper propertyCategoryMapper) {
+        super(property, propertyOwnerMapper, propertyCategoryMapper);
     }
 
     @Override
-    public int getRent(PropertyModel property) {
-        return getCleanRent(property);
+    public int getRent() {
+        return getCleanRent();
     }
 
-    private int getCleanRent(PropertyModel property) {
+    private int getCleanRent() {
         PlayerModel player = propertyOwnerMapper.getOwner(property);
         int ownedRailroads = 1;
         if (player != null) {

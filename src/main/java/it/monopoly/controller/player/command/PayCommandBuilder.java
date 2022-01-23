@@ -36,11 +36,6 @@ public class PayCommandBuilder implements CommandBuilder {
     }
 
     public PayCommand build() {
-        logger.info(
-                "Building payment command for\ndebtors: {}\ncreditors:{}",
-                debtors.stream().map(PlayerModel::getId),
-                creditors.stream().map(PlayerModel::getId)
-        );
         return new PayCommand(tradeController, creditors, debtors, money);
     }
 }

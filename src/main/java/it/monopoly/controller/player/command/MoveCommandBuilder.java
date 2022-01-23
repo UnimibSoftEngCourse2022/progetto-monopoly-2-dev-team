@@ -41,7 +41,6 @@ public class MoveCommandBuilder implements CommandBuilder {
     }
 
     public MoveCommand build() {
-        logger.info("Building movement command for player {}", player.getId());
         return new MoveCommand(
                 playerController,
                 player,

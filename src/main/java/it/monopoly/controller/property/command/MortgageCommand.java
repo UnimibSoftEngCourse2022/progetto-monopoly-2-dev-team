@@ -20,19 +20,23 @@ public class MortgageCommand implements Command {
 
     @Override
     public String getCommandName() {
-        return "Mortgage";
+        return property.isMortgaged() ? "Lift Mortgage" : "Mortgage";
     }
 
     @Override
     public boolean isEnabled() {
         PropertyManager manager = controller.getManager(property);
-        return manager.canMortgage();
+        return property.isMortgaged() ? manager.canLiftMortgage() : manager.canMortgage();
     }
 
     @Override
     public void execute() {
         logger.info("Mortgaging property {}", property.getName());
         PropertyManager manager = controller.getManager(property);
-        manager.mortgage();
+        if (property.isMortgaged()) {
+            manager.liftMortgage();
+        } else {
+            manager.mortgage();
+        }
     }
 }

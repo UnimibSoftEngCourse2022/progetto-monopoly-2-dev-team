@@ -5,29 +5,31 @@ import it.monopoly.model.PropertyOwnerMapper;
 import it.monopoly.model.property.PropertyModel;
 
 public abstract class PriceManager {
+    protected final PropertyModel property;
     protected final PropertyOwnerMapper propertyOwnerMapper;
     protected final PropertyCategoryMapper propertyCategoryMapper;
 
-    protected PriceManager(PropertyOwnerMapper propertyOwnerMapper, PropertyCategoryMapper propertyCategoryMapper) {
+    protected PriceManager(PropertyModel property, PropertyOwnerMapper propertyOwnerMapper, PropertyCategoryMapper propertyCategoryMapper) {
+        this.property = property;
         this.propertyOwnerMapper = propertyOwnerMapper;
         this.propertyCategoryMapper = propertyCategoryMapper;
     }
 
-    public int getPrice(PropertyModel property) {
+    public int getPrice() {
         return property.getPrice();
     }
 
-    public int getHousePrice(PropertyModel property) {
+    public int getHousePrice() {
         return property.getHousePrice();
     }
 
-    public int getHotelPrice(PropertyModel property) {
+    public int getHotelPrice() {
         return property.getHotelPrice();
     }
 
-    public int getMortgageValue(PropertyModel property) {
+    public int getMortgageValue() {
         return property.getMortgageValue();
     }
 
-    public abstract int getRent(PropertyModel property);
+    public abstract int getRent();
 }

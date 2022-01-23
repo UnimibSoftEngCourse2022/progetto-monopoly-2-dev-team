@@ -49,31 +49,29 @@ public class PropertyCommandBuilder implements CommandBuilder {
         Command propertyCommand;
         int price;
 
-        logger.debug("Building {} property command for property {}", type, property.getName());
-
         if (Type.BUILD.equals(type)) {
             if (property.getHouseNumber() < PropertyManager.MAX_NUMBER_OF_HOUSES) {
                 propertyCommand = new BuildHouseCommand(propertyController, property);
-                price = propertyManager.getPriceManager().getHousePrice(property);
+                price = propertyManager.getPriceManager().getHousePrice();
             } else {
                 propertyCommand = new BuildHotelCommand(propertyController, property);
-                price = propertyManager.getPriceManager().getHotelPrice(property);
+                price = propertyManager.getPriceManager().getHotelPrice();
             }
         } else if (Type.SELL.equals(type)) {
             if (property.getHotelNumber() > 0) {
                 propertyCommand = new SellHotelCommand(propertyController, property);
-                price = propertyManager.getPriceManager().getHotelPrice(property) / 2;
+                price = propertyManager.getPriceManager().getHotelPrice() / 2;
             } else {
                 propertyCommand = new SellHouseCommand(propertyController, property);
-                price = propertyManager.getPriceManager().getHousePrice(property) / 2;
+                price = propertyManager.getPriceManager().getHousePrice() / 2;
             }
         } else {//(Type.MORTGAGE.equals(type))
             propertyCommand = new MortgageCommand(propertyController, property);
-            price = propertyManager.getPriceManager().getMortgageValue(property);
+            price = propertyManager.getPriceManager().getMortgageValue();
         }
 
         PayCommandBuilder payCommandBuilder = new PayCommandBuilder(tradeController);
-        if (Type.BUILD.equals(type)) {
+        if (Type.BUILD.equals(type) || (Type.MORTGAGE.equals(type) && property.isMortgaged())) {
             payCommandBuilder.addDebtor(propertyManager.getOwner());
         } else {
             payCommandBuilder.addCreditor(propertyManager.getOwner());

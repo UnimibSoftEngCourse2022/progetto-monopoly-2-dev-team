@@ -19,16 +19,16 @@ public class PriceManagerDispatcher {
     ) {
         this.propertyOwnerMapper = propertyOwnerMapper;
         this.propertyCategoryMapper = propertyCategoryMapper;
-        this.diceRoller= diceRoller;
+        this.diceRoller = diceRoller;
     }
 
     public PriceManager getPriceManager(PropertyModel property) {
         PropertyCategory category = property.getCategory();
         if (PropertyCategory.RAILROAD.equals(category)) {
-            return new RailroadPriceManager(propertyOwnerMapper, propertyCategoryMapper);
+            return new RailroadPriceManager(property, propertyOwnerMapper, propertyCategoryMapper);
         } else if (PropertyCategory.UTILITY.equals(category)) {
-            return new UtilityPriceManager(propertyOwnerMapper, propertyCategoryMapper, diceRoller);
+            return new UtilityPriceManager(property, propertyOwnerMapper, propertyCategoryMapper, diceRoller);
         }
-        return new ColoredPriceManager(propertyOwnerMapper, propertyCategoryMapper);
+        return new ColoredPriceManager(property, propertyOwnerMapper, propertyCategoryMapper);
     }
 }

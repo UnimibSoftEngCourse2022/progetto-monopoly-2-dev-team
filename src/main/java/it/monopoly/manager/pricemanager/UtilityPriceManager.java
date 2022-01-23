@@ -13,17 +13,17 @@ public class UtilityPriceManager extends PriceManager {
     //TODO Add randomization logic
     private DiceRoller diceRoller;
 
-    public UtilityPriceManager(PropertyOwnerMapper propertyOwnerMapper, PropertyCategoryMapper propertyCategoryMapper, DiceRoller diceRoller) {
-        super(propertyOwnerMapper, propertyCategoryMapper);
+    public UtilityPriceManager(PropertyModel property, PropertyOwnerMapper propertyOwnerMapper, PropertyCategoryMapper propertyCategoryMapper, DiceRoller diceRoller) {
+        super(property, propertyOwnerMapper, propertyCategoryMapper);
         this.diceRoller = diceRoller;
     }
 
     @Override
-    public int getRent(PropertyModel property) {
-        return getRentMultiplier(property) * getDiceRollValue();
+    public int getRent() {
+        return getRentMultiplier() * getDiceRollValue();
     }
 
-    private int getRentMultiplier(PropertyModel property) {
+    private int getRentMultiplier() {
         PlayerModel player = propertyOwnerMapper.getOwner(property);
         int ownedUtilities = 1;
         if (player != null) {
