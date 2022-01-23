@@ -3,11 +3,7 @@ package ut;
 import controller.board.Board;
 import controller.board.space.*;
 import controller.card.DrawableCardController;
-import controller.command.CommandBuilder;
-import controller.command.CommandBuilderDispatcher;
-import controller.event.DiceRoller;
 import controller.player.command.GetOutOfJailCommand;
-import controller.player.command.MoveCommand;
 import manager.player.PlayerManager;
 import model.player.PlayerModel;
 import model.player.PlayerState;
@@ -15,9 +11,7 @@ import model.property.PropertyCategory;
 import model.property.PropertyModel;
 import org.junit.Assert;
 import org.junit.Test;
-import util.Pair;
 
-import javax.swing.text.ChangedCharSetException;
 import java.util.List;
 
 import static model.player.PlayerState.FREE;
@@ -133,11 +127,11 @@ public class BoardTest extends BaseTest {
         Assert.assertEquals(position - 3, playerManager.getPosition().getIntPosition());
 
         // move_near card
-        playerManager.getPosition().setPosition(7);
+        playerManager.getPosition().setPosition(39);
 
         chanceSpace.applyEffect(player);
 
-        Assert.assertEquals(15, playerManager.getPosition().getIntPosition());
+        Assert.assertEquals(5, playerManager.getPosition().getIntPosition());
 
         // pay - player creditor
         funds = playerManager.getFunds();

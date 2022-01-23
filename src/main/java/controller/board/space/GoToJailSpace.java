@@ -1,9 +1,7 @@
 package controller.board.space;
 
-import controller.command.Command;
 import controller.command.CommandBuilderDispatcher;
 import controller.player.PlayerController;
-import controller.player.command.MoveCommand;
 import controller.player.command.MoveCommandBuilder;
 import model.player.PlayerModel;
 

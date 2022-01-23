@@ -44,7 +44,7 @@ public class ChanceSpace extends AbstractSpace {
                 commandBuilder = movementEffect(player, card);
             } else if (card.getPay() != null) {
                 commandBuilder = payEffect(player, card);
-            } else { // keep card
+            } else {
                 playerController.getManager(player).keepCard(card);
             }
         }

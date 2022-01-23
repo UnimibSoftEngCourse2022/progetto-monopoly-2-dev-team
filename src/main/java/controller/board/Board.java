@@ -2,8 +2,8 @@ package controller.board;
 
 import controller.board.dispenser.*;
 import controller.board.space.Space;
-import controller.command.CommandBuilderDispatcher;
 import controller.card.DrawableCardController;
+import controller.command.CommandBuilderDispatcher;
 import controller.player.PlayerController;
 import model.property.PropertyModel;
 

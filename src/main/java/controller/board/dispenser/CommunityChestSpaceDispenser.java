@@ -2,8 +2,8 @@ package controller.board.dispenser;
 
 import controller.board.space.CommunityChestSpace;
 import controller.board.space.Space;
-import controller.command.CommandBuilderDispatcher;
 import controller.card.DrawableCardController;
+import controller.command.CommandBuilderDispatcher;
 import controller.player.PlayerController;
 
 public class CommunityChestSpaceDispenser extends SpaceDispenser {

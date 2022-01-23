@@ -1,8 +1,8 @@
 package controller.board.space;
 
+import controller.card.DrawableCardController;
 import controller.command.CommandBuilder;
 import controller.command.CommandBuilderDispatcher;
-import controller.card.DrawableCardController;
 import controller.player.PlayerController;
 import controller.player.command.MoveCommand;
 import controller.player.command.MoveCommandBuilder;
@@ -16,7 +16,8 @@ import model.property.PropertyModel;
 
 import java.util.List;
 
-import static model.enums.Movement.*;
+import static model.enums.Movement.MOVE_OF;
+import static model.enums.Movement.MOVE_TO;
 
 public class CommunityChestSpace extends AbstractSpace {
 
@@ -43,7 +44,7 @@ public class CommunityChestSpace extends AbstractSpace {
                 commandBuilder = movementEffect(player, card);
             } else if (card.getPay() != null) {
                 commandBuilder = payEffect(player, card);
-            } else { // keep card
+            } else {
                 playerController.getManager(player).keepCard(card);
             }
         }

@@ -10,10 +10,7 @@ import model.property.PropertyModel;
 import util.Pair;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerManager extends Manager<PlayerModel> {
     private int funds;

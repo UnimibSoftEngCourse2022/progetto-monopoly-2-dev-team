@@ -1,6 +1,9 @@
 package model;
 
-import model.enums.*;
+import model.enums.CreditorDebtor;
+import model.enums.DrawableCardCategory;
+import model.enums.Movement;
+import model.enums.Pay;
 
 public class DrawableCardModel {
 
