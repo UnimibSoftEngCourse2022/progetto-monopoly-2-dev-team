@@ -8,8 +8,8 @@ import controller.player.PlayerController;
 
 public class ChanceSpaceDispenser extends SpaceDispenser {
 
-    private DrawableCardController drawableCardController;
-    private PlayerController playerController;
+    private final DrawableCardController drawableCardController;
+    private final PlayerController playerController;
 
     public ChanceSpaceDispenser(CommandBuilderDispatcher commandBuilderDispatcher,
                                 DrawableCardController drawableCardController,

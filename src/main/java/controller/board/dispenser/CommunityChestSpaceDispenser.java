@@ -8,8 +8,8 @@ import controller.player.PlayerController;
 
 public class CommunityChestSpaceDispenser extends SpaceDispenser {
 
-    private DrawableCardController drawableCardController;
-    private PlayerController playerController;
+    private final DrawableCardController drawableCardController;
+    private final PlayerController playerController;
 
     public CommunityChestSpaceDispenser(CommandBuilderDispatcher commandBuilderDispatcher,
                                         DrawableCardController drawableCardController,

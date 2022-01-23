@@ -39,7 +39,7 @@ public class DrawableCardController {
                 communities = jacksonMapper.readValue(new File(jsonCommunityChestsURL.toURI()), new TypeReference<>() {
                 });
             } catch (IOException | URISyntaxException e) {
-                e.printStackTrace();
+                
             }
         }
 
