@@ -1,6 +1,7 @@
 package manager.player;
 
 import manager.Manager;
+import model.DrawableCardModel;
 import model.PropertyOwnerMapper;
 import model.player.PlayerModel;
 import model.player.PlayerState;
@@ -8,15 +9,21 @@ import model.player.Position;
 import model.property.PropertyModel;
 import util.Pair;
 
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerManager extends Manager<PlayerModel> {
     private int funds;
     private PlayerState state;
     private Position position;
     private PropertyOwnerMapper ownerMapper;
+    private List<DrawableCardModel> drawableCardModels = Collections.emptyList();
     private static final int EARN_ON_GO = 200; //TODO Check configuration
     private int getOutOfJailTries = 0;
+
+
 
     public PlayerManager(PlayerModel player, int funds, PropertyOwnerMapper ownerMapper) {
         super(player);
@@ -66,6 +73,10 @@ public class PlayerManager extends Manager<PlayerModel> {
         return false;
     }
 
+    public void keepCard(DrawableCardModel cardModel) {
+        drawableCardModels.add(cardModel);
+    }
+
     public void getOutOfJail() {
         if (PlayerState.IN_JAIL.equals(state) || PlayerState.FINED.equals(state)) {
             getOutOfJailTries = 0;
@@ -94,6 +105,10 @@ public class PlayerManager extends Manager<PlayerModel> {
 
     public boolean isInJail() {
         return PlayerState.IN_JAIL.equals(state);
+    }
+
+    public List<DrawableCardModel> getDrawableCardModels() {
+        return drawableCardModels;
     }
 
     public int getFunds() {

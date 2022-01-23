@@ -25,8 +25,8 @@ public class ChanceSpace extends AbstractSpace {
     private PlayerController playerController;
 
     public ChanceSpace(CommandBuilderDispatcher commandBuilderDispatcher,
-                               DrawableCardController drawableCardController,
-                               PlayerController playerController) {
+                       DrawableCardController drawableCardController,
+                       PlayerController playerController) {
         super(commandBuilderDispatcher);
         this.drawableCardController = drawableCardController;
         this.playerController = playerController;
@@ -42,10 +42,10 @@ public class ChanceSpace extends AbstractSpace {
         if (card != null) {
             if (card.getMovement() != null) {
                 commandBuilder = movementEffect(player, card);
-            } else if (card.getPay() != null){
+            } else if (card.getPay() != null) {
                 commandBuilder = payEffect(player, card);
-            } else {
-                //TODO: keep command
+            } else { // keep card
+                playerController.getManager(player).keepCard(card);
             }
         }
 

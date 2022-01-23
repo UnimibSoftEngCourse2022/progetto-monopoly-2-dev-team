@@ -41,8 +41,10 @@ public class CommunityChestSpace extends AbstractSpace {
         if (card != null) {
             if (card.getMovement() != null) {
                 commandBuilder = movementEffect(player, card);
-            } else { // payment command
+            } else if (card.getPay() != null) {
                 commandBuilder = payEffect(player, card);
+            } else { // keep card
+                playerController.getManager(player).keepCard(card);
             }
         }
 
