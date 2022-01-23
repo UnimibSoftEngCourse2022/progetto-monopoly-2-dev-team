@@ -42,8 +42,10 @@ public class GetOutOfJailCommand implements Command {
                 } else {
                     drawableCardController.getCommunities().add(cardModel);
                 }
-                manager.setState(PlayerState.FREE);
+                manager.getDrawableCardModels().remove(cardModel);
+                manager.getOutOfJail();
             }
         }
     }
+
 }

@@ -41,5 +41,10 @@
     "houseFee": 40,
     "hotelFee": 115,
     "debtor": "PLAYER"
+  },
+  {
+    "text": "Get Out of Jail Free. This card may be kept until needed or sold/traded.",
+    "category": "COMMUNITY_CHEST",
+    "keep": true
   }
 ]

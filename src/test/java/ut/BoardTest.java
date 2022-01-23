@@ -3,7 +3,10 @@ package ut;
 import controller.board.Board;
 import controller.board.space.*;
 import controller.card.DrawableCardController;
+import controller.command.CommandBuilder;
+import controller.command.CommandBuilderDispatcher;
 import controller.event.DiceRoller;
+import controller.player.command.GetOutOfJailCommand;
 import controller.player.command.MoveCommand;
 import manager.player.PlayerManager;
 import model.player.PlayerModel;
@@ -17,6 +20,7 @@ import util.Pair;
 import javax.swing.text.ChangedCharSetException;
 import java.util.List;
 
+import static model.player.PlayerState.FREE;
 import static model.player.PlayerState.IN_JAIL;
 
 public class BoardTest extends BaseTest {
@@ -120,8 +124,8 @@ public class BoardTest extends BaseTest {
         Assert.assertEquals(10, playerManager.getPosition().getIntPosition());
         Assert.assertEquals(funds, playerManager.getFunds());
 
-        // move_of card
         playerManager.getOutOfJail();
+        // move_of card
         position = playerManager.getPosition().getIntPosition();
 
         chanceSpace.applyEffect(player);
@@ -180,6 +184,24 @@ public class BoardTest extends BaseTest {
         chanceSpace.applyEffect(player);
 
         Assert.assertEquals(funds - 4 * 25 - 100, playerManager.getFunds());
+
+        // keep - get out of jail card
+        Assert.assertEquals(0, playerManager.getDrawableCardModels().size());
+        Assert.assertEquals(FREE, playerManager.getState());
+
+        chanceSpace.applyEffect(player);
+
+        playerManager.goToJail();
+
+        Assert.assertEquals(IN_JAIL, playerManager.getState());
+        Assert.assertEquals(1, playerManager.getDrawableCardModels().size());
+
+        GetOutOfJailCommand getOutOfJailCommand = new GetOutOfJailCommand(playerController, drawableCardController, player);
+        getOutOfJailCommand.execute();
+
+        Assert.assertEquals(FREE, playerManager.getState());
+        Assert.assertEquals(0, playerManager.getDrawableCardModels().size());
+
     }
 
     @Test
@@ -210,6 +232,7 @@ public class BoardTest extends BaseTest {
         Assert.assertEquals(10, playerManager.getPosition().getIntPosition());
         Assert.assertEquals(funds, playerManager.getFunds());
 
+        playerManager.getOutOfJail();
         // pay - player creditor
         funds = playerManager.getFunds();
 
@@ -255,6 +278,23 @@ public class BoardTest extends BaseTest {
         communityChestSpace.applyEffect(player);
 
         Assert.assertEquals(funds - 4 * 40 - 115, playerManager.getFunds());
+
+        // keep - get out of jail card
+        Assert.assertEquals(0, playerManager.getDrawableCardModels().size());
+        Assert.assertEquals(FREE, playerManager.getState());
+
+        communityChestSpace.applyEffect(player);
+
+        playerManager.goToJail();
+
+        Assert.assertEquals(IN_JAIL, playerManager.getState());
+        Assert.assertEquals(1, playerManager.getDrawableCardModels().size());
+
+        GetOutOfJailCommand getOutOfJailCommand = new GetOutOfJailCommand(playerController, drawableCardController, player);
+        getOutOfJailCommand.execute();
+
+        Assert.assertEquals(FREE, playerManager.getState());
+        Assert.assertEquals(0, playerManager.getDrawableCardModels().size());
     }
 
     @Test

@@ -9,6 +9,7 @@ import model.player.Position;
 import model.property.PropertyModel;
 import util.Pair;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,10 +20,9 @@ public class PlayerManager extends Manager<PlayerModel> {
     private PlayerState state;
     private Position position;
     private PropertyOwnerMapper ownerMapper;
-    private List<DrawableCardModel> drawableCardModels = Collections.emptyList();
+    private List<DrawableCardModel> drawableCardModels = new ArrayList<>();
     private static final int EARN_ON_GO = 200; //TODO Check configuration
     private int getOutOfJailTries = 0;
-
 
 
     public PlayerManager(PlayerModel player, int funds, PropertyOwnerMapper ownerMapper) {
