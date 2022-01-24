@@ -1,6 +1,8 @@
 package manager.player;
 
 import manager.Manager;
+import manager.loyaltyprogram.LoyaltyProgram;
+import model.Configuration;
 import model.DrawableCardModel;
 import model.PropertyOwnerMapper;
 import model.player.PlayerModel;
@@ -18,6 +20,8 @@ public class PlayerManager extends Manager<PlayerModel> {
     private Position position;
     private PropertyOwnerMapper ownerMapper;
     private List<DrawableCardModel> drawableCardModels = new ArrayList<>();
+    private LoyaltyProgram loyaltyProgram = null;
+
     private static final int EARN_ON_GO = 200; //TODO Check configuration
     private int getOutOfJailTries = 0;
 
@@ -98,6 +102,20 @@ public class PlayerManager extends Manager<PlayerModel> {
     public boolean canTakeTurn() {
         PlayerState playerState = state;
         return !PlayerState.BANKRUPT.equals(playerState);
+    }
+
+    public boolean joinLoyaltyProgram(LoyaltyProgram loyaltyProgram) {
+        if (this.loyaltyProgram != null) {
+            this.loyaltyProgram = loyaltyProgram;
+            return true;
+        }
+        return false;
+    }
+
+    public LoyaltyProgram quitLoyaltyProgram() {
+        LoyaltyProgram temp = loyaltyProgram;
+        this.loyaltyProgram = null;
+        return temp;
     }
 
     public boolean isInJail() {
