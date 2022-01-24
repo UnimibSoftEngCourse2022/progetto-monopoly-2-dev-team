@@ -62,10 +62,12 @@ public class DiceRollForMovementCommand implements Command {
 
     private void count(int first, int second) {
         logger.info("Dice rolled {} and {}", first, second);
+        eventDispatcher.sendMessage(player.getName() + "rolled " + first + " & " + second);
         didDouble = first == second;
         if (didDouble) {
             doubleCount++;
             logger.info("Dice rolled double, re-rolling dice");
+            eventDispatcher.sendMessage("Re-rolling dice");
         }
         result += first + second;
     }

@@ -194,6 +194,7 @@ public class MainView extends HorizontalLayout {
         Notification notification = new Notification(message);
         notification.setPosition(Notification.Position.TOP_END);
         notification.setDuration(1500);
+        add(notification);
         notification.open();
     }
 

@@ -50,6 +50,7 @@ public class DiceRollForJailCommand implements Command {
 
     private void count(int first, int second) {
         logger.info("Dice rolled {} and {}", first, second);
+        eventDispatcher.sendMessage(player.getName() + "rolled " + first + " & " + second);
         boolean succeeded;
         int result = first + second;
         if (first == second) {
@@ -65,6 +66,7 @@ public class DiceRollForJailCommand implements Command {
             }
         }
         if (succeeded) {
+            eventDispatcher.sendMessage(player.getName() + " got out of jail!");
             moveCommandBuilder
                     .setSpace(MoveCommand.Type.MOVE_OF, result)
                     .setPlayer(player)

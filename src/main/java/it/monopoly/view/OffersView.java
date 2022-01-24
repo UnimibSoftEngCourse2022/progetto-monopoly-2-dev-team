@@ -9,6 +9,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.dom.Style;
+import com.vaadin.flow.function.ValueProvider;
 import it.monopoly.manager.AbstractOfferManager;
 import it.monopoly.model.OfferModel;
 import it.monopoly.model.enums.OfferType;
@@ -75,7 +76,9 @@ public class OffersView extends VerticalLayout implements Observer<Collection<Of
         setAlignSelf(Alignment.CENTER, header);
 
         grid = new Grid<>();
-        grid.addColumn(OfferModel::getPlayer).setHeader("Player");
+        grid.addColumn(
+                (ValueProvider<OfferModel, String>) offerModel -> offerModel.getPlayer().getName()
+        ).setHeader("Player");
         grid.addColumn(OfferModel::getAmount).setHeader("Amount");
 
         horizontalLayout = new HorizontalLayout();
