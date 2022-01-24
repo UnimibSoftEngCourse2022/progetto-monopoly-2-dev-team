@@ -1,9 +1,8 @@
 package it.monopoly.controller.board.dispenser;
 
-import it.monopoly.controller.board.dispenser.SpaceDispenser;
+import it.monopoly.controller.board.card.DrawableCardController;
 import it.monopoly.controller.board.space.ChanceSpace;
 import it.monopoly.controller.board.space.Space;
-import it.monopoly.controller.board.card.DrawableCardController;
 import it.monopoly.controller.command.CommandBuilderDispatcher;
 import it.monopoly.controller.player.PlayerController;
 

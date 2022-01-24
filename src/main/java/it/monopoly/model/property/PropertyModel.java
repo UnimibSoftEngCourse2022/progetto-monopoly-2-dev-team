@@ -33,8 +33,16 @@ public class PropertyModel {
         return houseNumber;
     }
 
+    public void setHouseNumber(int houseNumber) {
+        this.houseNumber = houseNumber;
+    }
+
     public int getHotelNumber() {
         return hotelNumber;
+    }
+
+    public void setHotelNumber(int hotelNumber) {
+        this.hotelNumber = hotelNumber;
     }
 
     public int getHousePrice() {
@@ -51,6 +59,10 @@ public class PropertyModel {
 
     public boolean isMortgaged() {
         return mortgaged;
+    }
+
+    public void setMortgaged(boolean mortgaged) {
+        this.mortgaged = mortgaged;
     }
 
     public int[] getRentValue() {
@@ -81,17 +93,5 @@ public class PropertyModel {
 
     public boolean isImprovable() {
         return !category.equals(PropertyCategory.RAILROAD) && !category.equals(PropertyCategory.UTILITY);
-    }
-
-    public void setHouseNumber(int houseNumber) {
-        this.houseNumber = houseNumber;
-    }
-
-    public void setHotelNumber(int hotelNumber) {
-        this.hotelNumber = hotelNumber;
-    }
-
-    public void setMortgaged(boolean mortgaged) {
-        this.mortgaged = mortgaged;
     }
 }

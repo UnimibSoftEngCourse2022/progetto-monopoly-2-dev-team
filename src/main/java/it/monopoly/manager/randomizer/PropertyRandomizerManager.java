@@ -7,15 +7,17 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PropertyRandomizerManager implements Randomizer {
 
+    private final List<PropertyModel> properties;
+    private final float randomnessIndex;
+    private final Map<PropertyModel, PropertyRandomizeModel> randomizeMap = new ConcurrentHashMap<>();
+    private final PropertyRandomizeModel defaultRandomizeModel;
+    private final Random random = new Random();
     Logger logger = LogManager.getLogger(getClass());
-    private List<PropertyModel> properties;
-    private float randomnessIndex;
-    private Map<PropertyModel, PropertyRandomizeModel> randomizeMap = new ConcurrentHashMap<>();
-    private PropertyRandomizeModel defaultRandomizeModel;
 
     public PropertyRandomizerManager(List<PropertyModel> properties, float randomnessIndex) {
         this.properties = properties;
@@ -32,13 +34,13 @@ public class PropertyRandomizerManager implements Randomizer {
         logger.info("Randomizing some properties values");
         randomizeMap.clear();
         for (PropertyModel property : properties) {
-            if (Math.random() < randomnessIndex) {
+            if (random.nextFloat() < randomnessIndex) {
                 PropertyRandomizeModel randomizeModel = new PropertyRandomizeModel(randomValue(),
                         randomValue(),
                         randomValue(),
                         randomValue(),
                         randomValue());
-                logger.info("Randomizing " + property.getName() + " -> " + randomizeModel);
+                logger.info("Randomizing {} -> {}", property.getName(), randomizeModel);
                 randomizeMap.put(property, randomizeModel);
             }
         }
@@ -49,8 +51,8 @@ public class PropertyRandomizerManager implements Randomizer {
     }
 
     private float randomValue() {
-        float random = (float) Math.random();
-        return (random - (random / 2));// * randomnessIndex;
+        float value = random.nextFloat();
+        return (value - (value / 2));
     }
 
     public Map<PropertyModel, PropertyRandomizeModel> getRandomizeMap() {

@@ -2,8 +2,6 @@ package it.monopoly.controller.board.dispenser;
 
 import it.monopoly.controller.board.space.Space;
 import it.monopoly.controller.board.space.TaxSpace;
-import it.monopoly.controller.board.space.Space;
-import it.monopoly.controller.board.space.TaxSpace;
 import it.monopoly.controller.command.CommandBuilderDispatcher;
 
 public class TaxSpaceDispenser extends SpaceDispenser {

@@ -39,19 +39,19 @@ public class PayRentCommand implements Command {
 
     @Override
     public void execute() {
-        logger.info("Executing PayRentCommand for player {} on property {}", player.getId(), property.getName());
         PropertyManager propertyManager = propertyController.getManager(property);
         if (player == null || propertyManager.getOwner() == null) {
             return;
         }
+        logger.info("Executing PayRentCommand for player {} on property {}", player.getId(), property.getName());
         if (player.equals(propertyManager.getOwner())) {
             return;
         }
         payCommandBuilder
-                    .addDebtor(player)
-                    .addCreditor(propertyManager.getOwner())
-                    .setMoney(propertyManager.getPriceManager().getRent())
-                    .build()
-                    .execute();
+                .addDebtor(player)
+                .addCreditor(propertyManager.getOwner())
+                .setMoney(propertyManager.getPriceManager().getRent())
+                .build()
+                .execute();
     }
 }

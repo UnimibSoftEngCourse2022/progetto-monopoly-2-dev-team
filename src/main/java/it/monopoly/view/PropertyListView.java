@@ -4,7 +4,6 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.server.Command;
-import it.monopoly.model.property.PropertyModel;
 import it.monopoly.model.property.ReadablePropertyModel;
 
 import java.util.List;
@@ -12,10 +11,8 @@ import java.util.List;
 public class PropertyListView extends Div {
 
     private final Grid<ReadablePropertyModel> grid;
-    private final SelectionListener<Grid<ReadablePropertyModel>, ReadablePropertyModel> selectionListener;
 
     public PropertyListView(SelectionListener<Grid<ReadablePropertyModel>, ReadablePropertyModel> selectionListener) {
-        this.selectionListener = selectionListener;
 
         grid = new Grid<>(ReadablePropertyModel.class, false);
         grid.addSelectionListener(selectionListener);

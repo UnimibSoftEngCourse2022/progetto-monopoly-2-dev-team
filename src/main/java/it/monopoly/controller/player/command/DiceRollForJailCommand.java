@@ -1,43 +1,21 @@
 package it.monopoly.controller.player.command;
 
-import it.monopoly.controller.command.Command;
 import it.monopoly.controller.event.EventDispatcher;
 import it.monopoly.controller.player.PlayerController;
-import it.monopoly.manager.player.PlayerManager;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.util.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-public class DiceRollForJailCommand implements Command {
-    private final Logger logger = LogManager.getLogger(getClass());
-    private final PlayerController playerController;
-    private final EventDispatcher eventDispatcher;
-    private final PlayerModel player;
-    private final MoveCommandBuilder moveCommandBuilder;
-    private PayCommandBuilder payCommandBuilder;
+public class DiceRollForJailCommand extends DiceRollCommand {
+
+    private final PayCommandBuilder payCommandBuilder;
 
     public DiceRollForJailCommand(PlayerController playerController,
                                   EventDispatcher eventDispatcher,
                                   PlayerModel player,
                                   MoveCommandBuilder moveCommandBuilder,
                                   PayCommandBuilder payCommandBuilder) {
-        this.playerController = playerController;
-        this.eventDispatcher = eventDispatcher;
-        this.player = player;
-        this.moveCommandBuilder = moveCommandBuilder;
+        super(playerController, eventDispatcher, player, moveCommandBuilder);
         this.payCommandBuilder = payCommandBuilder;
-    }
-
-    @Override
-    public String getCommandName() {
-        return "Roll dice";
-    }
-
-    @Override
-    public boolean isEnabled() {
-        PlayerManager manager = playerController.getManager(player);
-        return manager != null && manager.canTakeTurn() && !manager.hasRolledDice();
     }
 
     @Override

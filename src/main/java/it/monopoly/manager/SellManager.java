@@ -45,7 +45,7 @@ public class SellManager extends AbstractOfferManager {
     public void endOffers(OfferModel offer) {
         hasEnded = true;
         if (offer != null) {
-            logger.info("Sell ended, player {} got property {} for {} money", offer.getPlayer().toString(), property.getName(), offer.getAmount());
+            logger.info("Sell ended, player {} got property {} for {} money", offer.getPlayer(), property.getName(), offer.getAmount());
             tradeController.buyPropertyFromPlayer(offer.getPlayer(), owner, property, offer.getAmount());
         }
         notifyObservers();

@@ -30,6 +30,8 @@ import java.util.function.Consumer;
 @Route("")
 public class MainView extends HorizontalLayout {
     private final Controller controller;
+    private final Map<Class<?>, Observer<?>> observers = new HashMap<>();
+    private final Map<Class<?>, Consumer<?>> consumers = new HashMap<>();
     private CommandButtonView propertyCommandButtonView;
     private PropertyListView propertyListView;
     private PlayerModel player;
@@ -37,13 +39,10 @@ public class MainView extends HorizontalLayout {
     private CommandButtonView playerCommandButtonView;
     private HorizontalLayout testCommandsLayout;
     private Button startGameButton;
-
-    private final Map<Class<?>, Observer<?>> observers = new HashMap<>();
-    private final Map<Class<?>, Consumer<?>> consumers = new HashMap<>();
     private OffersView offersView;
     private PlayerListView playerListView;
-    private Consumer<ReadablePlayerModel> allPlayersConsumer;
-    private Consumer<String> messageConsumer;
+    private transient Consumer<ReadablePlayerModel> allPlayersConsumer;
+    private transient Consumer<String> messageConsumer;
 
     public MainView(@Autowired Controller controller) {
         this.controller = controller;
@@ -94,22 +93,24 @@ public class MainView extends HorizontalLayout {
         playerCommandButtonView.setWidthFull();
 
         startGameButton = null;
+        String margin = "margin";
+        String auto = "auto";
         if (!controller.isGameStarted()) {
             startGameButton = new Button("Start Game");
-            startGameButton.getElement().getStyle().set("margin", "auto");
+            startGameButton.getElement().getStyle().set(margin, auto);
             startGameButton.addClickListener(listener -> startGame());
         }
 
         Button newPropertyButton = new Button("New Property");
-        newPropertyButton.getElement().getStyle().set("margin", "auto");
+        newPropertyButton.getElement().getStyle().set(margin, auto);
         newPropertyButton.addClickListener(listener -> controller.addProperty(player));
 
         Button auctionButton = new Button("Auction");
-        auctionButton.getElement().getStyle().set("margin", "auto");
+        auctionButton.getElement().getStyle().set(margin, auto);
         auctionButton.addClickListener(event -> controller.startAuction(player));
 
         Button sellButton = new Button("Sell");
-        sellButton.getElement().getStyle().set("margin", "auto");
+        sellButton.getElement().getStyle().set(margin, auto);
         sellButton.addClickListener(event -> controller.startSell(player));
 
         testCommandsLayout = new HorizontalLayout();

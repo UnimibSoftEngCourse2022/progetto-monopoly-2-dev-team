@@ -49,7 +49,6 @@ public class TurnController implements Observer<ReadablePlayerModel> {
     }
 
     private void notifyPlayerTurn() {
-        PlayerModel currentPlayer = getCurrentPlayer();
         if (currentPlayer == null) {
             nextTurn();
             return;
@@ -65,14 +64,10 @@ public class TurnController implements Observer<ReadablePlayerModel> {
         }
     }
 
-    private PlayerModel getCurrentPlayer() {
-        return currentPlayer;
-    }
-
     @Override
     public synchronized void notify(ReadablePlayerModel player) {
-        if (getCurrentPlayer() != null) {
-            PlayerManager manager = playerController.getManager(getCurrentPlayer());
+        if (currentPlayer != null) {
+            PlayerManager manager = playerController.getManager(currentPlayer);
             if (manager != null && !manager.isTakingTurn()) {
                 nextTurn();
             }

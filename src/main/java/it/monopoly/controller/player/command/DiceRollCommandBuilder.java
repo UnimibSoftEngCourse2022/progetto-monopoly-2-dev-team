@@ -8,16 +8,13 @@ import it.monopoly.controller.player.PlayerController;
 import it.monopoly.manager.player.PlayerManager;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.PlayerState;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class DiceRollCommandBuilder implements CommandBuilder {
-    private final Logger logger = LogManager.getLogger(getClass());
     private final PlayerController playerController;
     private final EventDispatcher eventDispatcher;
-    private PlayerModel player;
     private final MoveCommandBuilder moveCommandBuilder;
     private final PayCommandBuilder payCommandBuilder;
+    private PlayerModel player;
 
     public DiceRollCommandBuilder(PlayerController playerController,
                                   EventDispatcher eventDispatcher,
@@ -41,7 +38,8 @@ public class DiceRollCommandBuilder implements CommandBuilder {
             return new DiceRollForJailCommand(playerController, eventDispatcher, player, moveCommandBuilder, payCommandBuilder);
         }
 
-        DiceRollForMovementCommand rollForMovementCommand = new DiceRollForMovementCommand(playerController, eventDispatcher, player, moveCommandBuilder);
+        Command rollForMovementCommand =
+                new DiceRollForMovementCommand(playerController, eventDispatcher, player, moveCommandBuilder);
 
         if (PlayerState.FREE.equals(manager.getState())) {
             return rollForMovementCommand;

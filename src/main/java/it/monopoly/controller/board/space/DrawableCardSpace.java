@@ -20,8 +20,8 @@ import static it.monopoly.model.enums.Movement.MOVE_OF;
 import static it.monopoly.model.enums.Movement.MOVE_TO;
 
 public abstract class DrawableCardSpace extends AbstractSpace {
-    protected DrawableCardController drawableCardController;
     private final PlayerController playerController;
+    protected DrawableCardController drawableCardController;
 
     protected DrawableCardSpace(CommandBuilderDispatcher commandBuilderDispatcher,
                                 DrawableCardController drawableCardController,

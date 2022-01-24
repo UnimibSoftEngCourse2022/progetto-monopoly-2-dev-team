@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class PropertyManager extends Manager<PropertyModel> {
+    public static final int MAX_NUMBER_OF_HOUSES = 4;
+    public static final int MAX_NUMBER_OF_HOTEL = 1;
+    private static final int MAX_NUMBER_OF_HOUSES_IN_GAME = 32; //TODO Implement max number of houses/hotel in game
+    private static final int MAX_NUMBER_OF_HOTEL_IN_GAME = 12;
     private final PropertyOwnerMapper ownerMapper;
     private final PropertyCategoryMapper categoryMapper;
     private final PriceManager priceManager;
-    private static final int MAX_NUMBER_OF_HOUSES_IN_GAME = 32; //TODO Implement max number of houses/hotel in game
-    private static final int MAX_NUMBER_OF_HOTEL_IN_GAME = 12;
-    public static final int MAX_NUMBER_OF_HOUSES = 4;
-    public static final int MAX_NUMBER_OF_HOTEL = 1;
 
     public PropertyManager(PropertyModel property,
                            PriceManager priceManager,
@@ -129,16 +129,16 @@ public class PropertyManager extends Manager<PropertyModel> {
         return model.isMortgaged();
     }
 
-    public void setOwner(PlayerModel player) {
-        ownerMapper.setOwner(model, player);
-    }
-
     public PlayerModel removeOwner() {
         return ownerMapper.removeOwner(model);
     }
 
     public PlayerModel getOwner() {
         return ownerMapper.getOwner(model);
+    }
+
+    public void setOwner(PlayerModel player) {
+        ownerMapper.setOwner(model, player);
     }
 
     public PriceManager getPriceManager() {

@@ -28,12 +28,13 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
 @Component
-public class Controller {
+public class Controller implements Serializable {
     private final PlayerController playerController;
     private final PropertyController propertyController;
     private final PropertyMapper mapper;
@@ -45,8 +46,9 @@ public class Controller {
     private final TradeController tradeController;
     private final RandomizationManager randomizationManager;
     private final Configuration configuration;
-    private boolean gameStarted = false;
     private final Logger logger = LogManager.getLogger(getClass());
+    private final Random random = new Random();
+    private boolean gameStarted = false;
 
     Controller() {
         this(null);
@@ -62,8 +64,7 @@ public class Controller {
             try {
                 properties = jacksonMapper.readValue(new File(jsonURL.toURI()), new TypeReference<>() {
                 });
-            } catch (IOException | URISyntaxException e) {
-                e.printStackTrace();
+            } catch (IOException | URISyntaxException ignored) {
             }
         }
         mapper = new PropertyMapper(properties);
@@ -176,8 +177,8 @@ public class Controller {
 
     public void addProperty(PlayerModel player) {
         List<PropertyModel> models = propertyController.getModels();
-        int random = new Random().nextInt(models.size());
-        PropertyModel property = models.get(random);
+        int index = random.nextInt(models.size());
+        PropertyModel property = models.get(index);
         LogManager.getLogger(getClass()).info("New property ({}) {} to player {}", random, property, player.getId());
         propertyController.getManager(property).setOwner(player);
     }
@@ -215,13 +216,13 @@ public class Controller {
 
     public void startAuction(PlayerModel player) {
         List<PropertyModel> models = propertyController.getModels();
-        int index = new Random().nextInt(models.size());
+        int index = random.nextInt(models.size());
         eventDispatcher.startOffer(new AuctionManager(player, models.get(index), tradeController));
     }
 
     public void startSell(PlayerModel player) {
         List<PropertyModel> models = propertyController.getModels();
-        int index = new Random().nextInt(models.size());
+        int index = random.nextInt(models.size());
         eventDispatcher.startOffer(new SellManager(player, models.get(index), tradeController));
     }
 }

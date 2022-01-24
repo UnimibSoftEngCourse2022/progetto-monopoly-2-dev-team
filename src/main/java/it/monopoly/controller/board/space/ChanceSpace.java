@@ -1,6 +1,5 @@
 package it.monopoly.controller.board.space;
 
-import it.monopoly.controller.board.space.DrawableCardSpace;
 import it.monopoly.controller.board.card.DrawableCardController;
 import it.monopoly.controller.command.CommandBuilderDispatcher;
 import it.monopoly.controller.player.PlayerController;

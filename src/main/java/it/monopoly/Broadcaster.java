@@ -19,8 +19,8 @@ public class Broadcaster {
     private final List<Consumer<String>> messageListeners = new LinkedList<>();
     private final List<Consumer<ReadablePlayerModel>> playerListeners = new LinkedList<>();
     private final List<Consumer<AbstractOfferManager>> offersListeners = new LinkedList<>();
-    private AbstractOfferManager offerManager;
     private final Observer<ReadablePlayerModel> playerObserver = this::notifyAllPlayers;
+    private AbstractOfferManager offerManager;
 
     public Observer<ReadablePlayerModel> getPlayerObserver() {
         return playerObserver;

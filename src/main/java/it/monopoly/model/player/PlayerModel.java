@@ -1,6 +1,8 @@
 package it.monopoly.model.player;
 
-public class PlayerModel {
+import java.io.Serializable;
+
+public class PlayerModel implements Serializable {
     private String id;
     private String name;
 

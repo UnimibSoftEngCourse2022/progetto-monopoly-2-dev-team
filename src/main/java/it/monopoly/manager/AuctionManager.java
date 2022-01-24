@@ -14,9 +14,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class AuctionManager extends AbstractOfferManager {
-    private final Logger logger = LogManager.getLogger(getClass());
-    private int maxOffer;
     private final ScheduledExecutorService executor;
+    private int maxOffer;
     private ScheduledFuture<?> scheduledFuture;
 
     public AuctionManager(PlayerModel player, PropertyModel property, TradeController tradeController) {
@@ -58,7 +57,7 @@ public class AuctionManager extends AbstractOfferManager {
             hasEnded = true;
             OfferModel bestOffer = getBestOfferModel();
             if (bestOffer != null) {
-                logger.info("Auction ended, player {} got property {} for {} money", bestOffer.getPlayer().toString(), property.getName(), bestOffer.getAmount());
+                logger.info("Auction ended, player {} got property {} for {} money", bestOffer.getPlayer(), property.getName(), bestOffer.getAmount());
                 tradeController.buyPropertyAfterAuction(bestOffer.getPlayer(), property, bestOffer.getAmount());
             }
             notifyObservers();

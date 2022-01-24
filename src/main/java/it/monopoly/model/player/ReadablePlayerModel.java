@@ -2,9 +2,10 @@ package it.monopoly.model.player;
 
 import it.monopoly.model.property.PropertyModel;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ReadablePlayerModel {
+public class ReadablePlayerModel implements Serializable {
     private final String name;
     private final int funds;
     private final PlayerState state;
@@ -46,7 +47,7 @@ public class ReadablePlayerModel {
             return "In jail";
         } else if (PlayerState.FINED.equals(state)) {
             return "Fined";
-        } else { //if (PlayerState.BANKRUPT.equals(state)) {
+        } else {
             return "Bankrupted";
         }
     }

@@ -10,28 +10,26 @@ import it.monopoly.view.Observer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class AbstractOfferManager implements Observable<Collection<OfferModel>>, OfferManager {
+public abstract class AbstractOfferManager implements Observable<Collection<OfferModel>>, OfferManager, Serializable {
     protected final Logger logger = LogManager.getLogger(getClass());
-    protected boolean hasEnded = false;
-    private final OfferType type;
-    private final PlayerModel player;
     protected final PropertyModel property;
     protected final TradeController tradeController;
-    private final List<Observer<Collection<OfferModel>>> observers = new LinkedList<>();
     protected final Map<PlayerModel, OfferModel> playerOfferMap = new ConcurrentHashMap<>();
+    private final OfferType type;
+    private final PlayerModel player;
+    private final List<Observer<Collection<OfferModel>>> observers = new LinkedList<>();
+    protected boolean hasEnded = false;
 
-    public AbstractOfferManager(OfferType type, PlayerModel player, PropertyModel property, TradeController tradeController) {
+    protected AbstractOfferManager(OfferType type, PlayerModel player, PropertyModel property, TradeController tradeController) {
         this.type = type;
         this.player = player;
         this.property = property;
         this.tradeController = tradeController;
     }
-
-    @Override
-    public abstract void makeOffer(PlayerModel player, int amount);
 
     protected void putNewOffer(PlayerModel player, int amount) {
         playerOfferMap.put(player, new OfferModel(getType(), player, amount));
@@ -41,9 +39,6 @@ public abstract class AbstractOfferManager implements Observable<Collection<Offe
     public final Collection<OfferModel> getOffers() {
         return playerOfferMap.values();
     }
-
-    @Override
-    public abstract int getBestOffer();
 
 
     protected OfferModel getBestOfferModel() {

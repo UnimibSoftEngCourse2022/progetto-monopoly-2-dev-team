@@ -18,11 +18,6 @@ public class DrawableCardController {
     private Queue<DrawableCardModel> chancesCards = new ConcurrentLinkedQueue<>();
     private Queue<DrawableCardModel> communitiesCards = new ConcurrentLinkedQueue<>();
 
-    public enum Type {
-        CHANCE,
-        COMMUNITY_CHEST;
-    }
-
     public DrawableCardController(boolean shuffle) {
 
         List<DrawableCardModel> chances = Collections.emptyList();
@@ -74,6 +69,11 @@ public class DrawableCardController {
 
     public Queue<DrawableCardModel> getCommunitiesCards() {
         return communitiesCards;
+    }
+
+    public enum Type {
+        CHANCE,
+        COMMUNITY_CHEST;
     }
 
 }

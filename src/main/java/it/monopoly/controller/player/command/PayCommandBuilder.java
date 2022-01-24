@@ -10,11 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PayCommandBuilder implements CommandBuilder {
-    private final Logger logger = LogManager.getLogger(getClass());
     private final TradeController tradeController;
-    private int money;
     private final List<PlayerModel> creditors = new ArrayList<>();
     private final List<PlayerModel> debtors = new ArrayList<>();
+    private int money;
 
     public PayCommandBuilder(TradeController tradeController) {
         this.tradeController = tradeController;

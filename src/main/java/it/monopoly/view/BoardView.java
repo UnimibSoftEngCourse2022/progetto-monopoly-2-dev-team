@@ -14,11 +14,10 @@ import com.vaadin.flow.function.SerializableConsumer;
 
 public class BoardView extends VerticalLayout {
 
-    private Button zoomIn;
-    private Button zoomOut;
     private static final int MAX_ZOOM = 3000;
     private static final int MIN_ZOOM = 500;
-
+    private Button zoomIn;
+    private Button zoomOut;
 
     @Override
     protected void onAttach(AttachEvent attachEvent) {

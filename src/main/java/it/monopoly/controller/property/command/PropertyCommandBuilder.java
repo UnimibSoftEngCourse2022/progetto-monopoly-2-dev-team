@@ -13,17 +13,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class PropertyCommandBuilder implements CommandBuilder {
-    private final Logger logger = LogManager.getLogger(getClass());
     private final PropertyController propertyController;
     private final TradeController tradeController;
     private PropertyModel property;
     private Type type;
-
-    public enum Type {
-        BUILD,
-        SELL,
-        MORTGAGE
-    }
 
     public PropertyCommandBuilder(PropertyController propertyController, TradeController tradeController) {
         this.propertyController = propertyController;
@@ -95,5 +88,11 @@ public class PropertyCommandBuilder implements CommandBuilder {
         command.addCommand(transactionCommand);
 
         return command;
+    }
+
+    public enum Type {
+        BUILD,
+        SELL,
+        MORTGAGE
     }
 }

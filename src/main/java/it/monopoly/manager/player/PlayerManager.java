@@ -19,16 +19,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class PlayerManager extends Manager<PlayerModel> implements Observable<ReadablePlayerModel>, Observer<List<PropertyModel>> {
+    private static final int EARN_ON_GO = 200; //TODO Check configuration
     private final Logger logger = LogManager.getLogger(getClass());
+    private final List<Observer<ReadablePlayerModel>> observers = new LinkedList<>();
+    private final Position position;
+    private final PropertyOwnerMapper ownerMapper;
     private boolean isTurn = false;
     private boolean hasRolledDice = false;
-    private final List<Observer<ReadablePlayerModel>> observers = new LinkedList<>();
     private int funds;
     private List<DrawableCardModel> drawableCardModels = new ArrayList<>();
     private PlayerState state;
-    private final Position position;
-    private final PropertyOwnerMapper ownerMapper;
-    private static final int EARN_ON_GO = 200; //TODO Check configuration
     private int getOutOfJailTries = 0;
 
     public PlayerManager(PlayerModel player, int funds, PropertyOwnerMapper ownerMapper) {

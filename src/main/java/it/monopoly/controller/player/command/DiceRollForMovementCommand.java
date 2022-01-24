@@ -1,41 +1,21 @@
 package it.monopoly.controller.player.command;
 
-import it.monopoly.controller.command.Command;
 import it.monopoly.controller.event.EventDispatcher;
 import it.monopoly.controller.player.PlayerController;
-import it.monopoly.manager.player.PlayerManager;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.util.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-public class DiceRollForMovementCommand implements Command {
-    private final Logger logger = LogManager.getLogger(getClass());
-    private final PlayerController playerController;
-    private final EventDispatcher eventDispatcher;
-    private final PlayerModel player;
-    private final MoveCommandBuilder moveCommandBuilder;
+public class DiceRollForMovementCommand extends DiceRollCommand {
 
     private int doubleCount = 0;
     private boolean didDouble = false;
     private int result = 0;
 
-    public DiceRollForMovementCommand(PlayerController playerController, EventDispatcher eventDispatcher, PlayerModel player, MoveCommandBuilder moveCommandBuilder) {
-        this.playerController = playerController;
-        this.eventDispatcher = eventDispatcher;
-        this.player = player;
-        this.moveCommandBuilder = moveCommandBuilder;
-    }
-
-    @Override
-    public String getCommandName() {
-        return "Roll dice";
-    }
-
-    @Override
-    public boolean isEnabled() {
-        PlayerManager manager = playerController.getManager(player);
-        return manager != null && manager.canTakeTurn() && !manager.hasRolledDice();
+    public DiceRollForMovementCommand(PlayerController playerController,
+                                      EventDispatcher eventDispatcher,
+                                      PlayerModel player,
+                                      MoveCommandBuilder moveCommandBuilder) {
+        super(playerController, eventDispatcher, player, moveCommandBuilder);
     }
 
     @Override
@@ -66,7 +46,7 @@ public class DiceRollForMovementCommand implements Command {
         didDouble = first == second;
         if (didDouble) {
             doubleCount++;
-            logger.info(player.getName() + " rolled double, re-rolling dice");
+            logger.info("{} rolled double, re-rolling dice", player.getName());
             eventDispatcher.sendMessage("Re-rolling dice");
         }
         result += first + second;

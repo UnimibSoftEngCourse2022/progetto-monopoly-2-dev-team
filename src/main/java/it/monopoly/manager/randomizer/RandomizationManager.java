@@ -4,10 +4,12 @@ import it.monopoly.model.Configuration;
 import it.monopoly.model.property.PropertyModel;
 
 import java.util.List;
+import java.util.Random;
 
 public class RandomizationManager implements Randomizer {
     private final PropertyRandomizerManager propertyRandomizerManager;
     private final TaxRandomizerManager taxRandomizerManager;
+    private final Random random = new Random();
     private float priceChangeRate = .25f;
     private float taxChangeRate = .25f;
 
@@ -26,10 +28,10 @@ public class RandomizationManager implements Randomizer {
 
     @Override
     public void randomize() {
-        if (Math.random() < priceChangeRate) {
+        if (random.nextFloat() < priceChangeRate) {
             propertyRandomizerManager.randomize();
         }
-        if (Math.random() < taxChangeRate) {
+        if (random.nextFloat() < taxChangeRate) {
             taxRandomizerManager.randomize();
         }
     }

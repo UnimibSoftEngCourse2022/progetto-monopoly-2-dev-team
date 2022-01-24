@@ -11,17 +11,11 @@ public class MoveCommand implements Command {
     private final Logger logger = LogManager.getLogger(getClass());
     private final PlayerController playerController;
     private final PlayerModel player;
-    private int space;
-    private int[] nearSpaces;
     private final boolean directMovement;
     private final boolean goToJail;
     private final Type type;
-
-    public enum Type {
-        MOVE_OF,
-        MOVE_TO,
-        MOVE_NEAR
-    }
+    private int space;
+    private int[] nearSpaces;
 
     public MoveCommand(PlayerController playerController, PlayerModel player, Type type, int space, int[] nearSpaces, boolean directMovement, boolean goToJail) {
         this.playerController = playerController;
@@ -47,13 +41,13 @@ public class MoveCommand implements Command {
     public void execute() {
         if (player != null && playerController != null) {
             PlayerManager manager = playerController.getManager(player);
-            if(goToJail) {
+            if (goToJail) {
                 space = 10;
             }
-            if(Type.MOVE_TO.equals(type) || goToJail) {
+            if (Type.MOVE_TO.equals(type) || goToJail) {
                 logger.info("Executing movement to space {}", space);
                 manager.moveTo(space, goToJail || directMovement);
-            } else if (Type.MOVE_OF.equals(type)){
+            } else if (Type.MOVE_OF.equals(type)) {
                 logger.info("Executing movement of {} spaces", space);
                 manager.move(space, directMovement);
             } else {
@@ -66,12 +60,18 @@ public class MoveCommand implements Command {
                         min = nearSpaces[i] - manager.getPosition().getIntPosition();
                     }
                 }
-                manager.moveTo(nearSpaces[index],false);
+                manager.moveTo(nearSpaces[index], false);
             }
             if (goToJail) {
                 manager.goToJail();
-                manager.move(space, goToJail || directMovement);
+                manager.move(space, true);
             }
         }
+    }
+
+    public enum Type {
+        MOVE_OF,
+        MOVE_TO,
+        MOVE_NEAR
     }
 }

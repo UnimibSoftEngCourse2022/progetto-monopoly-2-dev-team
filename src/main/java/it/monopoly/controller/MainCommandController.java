@@ -2,10 +2,10 @@ package it.monopoly.controller;
 
 import it.monopoly.controller.command.Command;
 import it.monopoly.controller.command.CommandBuilderDispatcher;
-import it.monopoly.controller.property.command.SellPropertyCommandBuilder;
 import it.monopoly.controller.player.command.DiceRollCommandBuilder;
 import it.monopoly.controller.player.command.EndTurnCommandBuilder;
 import it.monopoly.controller.property.command.PropertyCommandBuilder;
+import it.monopoly.controller.property.command.SellPropertyCommandBuilder;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.property.PropertyModel;
 

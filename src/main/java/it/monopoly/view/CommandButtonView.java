@@ -11,7 +11,7 @@ import it.monopoly.util.ViewUtil;
 import java.util.List;
 
 public class CommandButtonView extends HorizontalLayout {
-    private List<Command> commands = null;
+    private transient List<Command> commands = null;
     private boolean active = false;
 
     public CommandButtonView() {

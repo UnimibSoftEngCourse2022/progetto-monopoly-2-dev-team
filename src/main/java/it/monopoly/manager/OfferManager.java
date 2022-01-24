@@ -7,7 +7,10 @@ import java.util.Collection;
 
 public interface OfferManager {
     void makeOffer(PlayerModel player, int amount);
+
     Collection<OfferModel> getOffers();
+
     int getBestOffer();
+
     boolean hasEnded();
 }
