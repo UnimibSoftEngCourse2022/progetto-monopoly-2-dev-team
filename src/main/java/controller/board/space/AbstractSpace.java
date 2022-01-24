@@ -9,7 +9,4 @@ public abstract class AbstractSpace implements Space {
     protected AbstractSpace(CommandBuilderDispatcher commandBuilderDispatcher) {
         this.commandBuilderDispatcher = commandBuilderDispatcher;
     }
-
-    @Override
-    public abstract void applyEffect(PlayerModel player);
 }

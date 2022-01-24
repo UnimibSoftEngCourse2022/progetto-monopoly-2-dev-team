@@ -15,9 +15,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class DrawableCardController {
 
-    private Queue<DrawableCardModel> chances = new ConcurrentLinkedQueue<>();
-    private Queue<DrawableCardModel> communities = new ConcurrentLinkedQueue<>();
-    private boolean shuffle = true;
+    private Queue<DrawableCardModel> chancesCards = new ConcurrentLinkedQueue<>();
+    private Queue<DrawableCardModel> communitiesCards = new ConcurrentLinkedQueue<>();
 
     public enum Type {
         CHANCE,
@@ -39,7 +38,8 @@ public class DrawableCardController {
                 communities = jacksonMapper.readValue(new File(jsonCommunityChestsURL.toURI()), new TypeReference<>() {
                 });
             } catch (IOException | URISyntaxException e) {
-                
+                chances = Collections.emptyList();
+                communities = Collections.emptyList();
             }
         }
 
@@ -47,33 +47,33 @@ public class DrawableCardController {
             Collections.shuffle(chances);
             Collections.shuffle(communities);
         }
-        this.chances.addAll(chances);
-        this.communities.addAll(communities);
+        this.chancesCards.addAll(chances);
+        this.communitiesCards.addAll(communities);
 
     }
 
     public DrawableCardModel draw(Type type) {
         DrawableCardModel card;
         if (Type.CHANCE.equals(type)) {
-            card = chances.poll();
+            card = chancesCards.poll();
             if (card != null && !card.isKeep()) {
-                chances.add(card);
+                chancesCards.add(card);
             }
         } else {
-            card = communities.poll();
+            card = communitiesCards.poll();
             if (card != null && !card.isKeep()) {
-                communities.add(card);
+                communitiesCards.add(card);
             }
         }
         return card;
     }
 
-    public Queue<DrawableCardModel> getChances() {
-        return chances;
+    public Queue<DrawableCardModel> getChancesCards() {
+        return chancesCards;
     }
 
-    public Queue<DrawableCardModel> getCommunities() {
-        return communities;
+    public Queue<DrawableCardModel> getCommunitiesCards() {
+        return communitiesCards;
     }
 
 }

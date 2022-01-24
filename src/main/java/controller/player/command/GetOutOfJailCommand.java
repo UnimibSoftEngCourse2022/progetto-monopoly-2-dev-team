@@ -28,23 +28,21 @@ public class GetOutOfJailCommand implements Command {
 
     @Override
     public boolean isEnabled() {
-        return playerController.getManager(player).getState().equals(PlayerState.IN_JAIL) && playerController.getManager(player).getDrawableCardModels().size() > 0;
+        return playerController.getManager(player).getState().equals(PlayerState.IN_JAIL) && !playerController.getManager(player).getDrawableCardModels().isEmpty();
     }
 
     @Override
     public void execute() {
         PlayerManager manager = playerController.getManager(player);
-        if (isEnabled()) {
-            if (player != null && playerController != null) {
-                DrawableCardModel cardModel = manager.getDrawableCardModels().get(0);
-                if (cardModel.getCategory().equals(DrawableCardCategory.CHANCE)) {
-                    drawableCardController.getChances().add(cardModel);
-                } else {
-                    drawableCardController.getCommunities().add(cardModel);
-                }
-                manager.getDrawableCardModels().remove(cardModel);
-                manager.getOutOfJail();
+        if (isEnabled() && player != null && playerController != null) {
+            DrawableCardModel cardModel = manager.getDrawableCardModels().get(0);
+            if (cardModel.getCategory().equals(DrawableCardCategory.CHANCE)) {
+                drawableCardController.getChancesCards().add(cardModel);
+            } else {
+                drawableCardController.getCommunitiesCards().add(cardModel);
             }
+            manager.getDrawableCardModels().remove(cardModel);
+            manager.getOutOfJail();
         }
     }
 

@@ -16,7 +16,7 @@ public class TaxSpaceDispenser extends SpaceDispenser {
 
     @Override
     protected Space getSpaceInstance() {
-        if (taxes != null && index < taxes.length) {
+        if (index < taxes.length) {
             return new TaxSpace(commandBuilderDispatcher, taxes[index++]);
         }
         return null;

@@ -21,9 +21,9 @@ import static model.enums.Movement.MOVE_TO;
 
 public abstract class DrawableCardSpace extends AbstractSpace {
     protected DrawableCardController drawableCardController;
-    private PlayerController playerController;
+    private final PlayerController playerController;
 
-    public DrawableCardSpace(CommandBuilderDispatcher commandBuilderDispatcher,
+    protected DrawableCardSpace(CommandBuilderDispatcher commandBuilderDispatcher,
                        DrawableCardController drawableCardController,
                        PlayerController playerController) {
         super(commandBuilderDispatcher);
