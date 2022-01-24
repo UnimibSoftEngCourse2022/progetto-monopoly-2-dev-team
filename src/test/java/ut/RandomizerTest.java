@@ -1,7 +1,7 @@
 package ut;
 
-import it.monopoly.manager.PropertyRandomizerManager;
-import it.monopoly.manager.TaxRandomizerManager;
+import it.monopoly.manager.randomizer.PropertyRandomizerManager;
+import it.monopoly.manager.randomizer.TaxRandomizerManager;
 import it.monopoly.model.PropertyRandomizeModel;
 import it.monopoly.model.property.PropertyModel;
 import org.junit.Assert;

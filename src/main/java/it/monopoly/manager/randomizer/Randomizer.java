@@ -1,4 +1,4 @@
-package it.monopoly.manager;
+package it.monopoly.manager.randomizer;
 
 public interface Randomizer {
 

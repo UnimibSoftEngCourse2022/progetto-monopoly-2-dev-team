@@ -12,6 +12,8 @@ import it.monopoly.controller.property.PropertyController;
 import it.monopoly.manager.AuctionManager;
 import it.monopoly.manager.SellManager;
 import it.monopoly.manager.player.PlayerManager;
+import it.monopoly.manager.randomizer.RandomizationManager;
+import it.monopoly.model.Configuration;
 import it.monopoly.model.PropertyMapper;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.ReadablePlayerModel;
@@ -22,6 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -42,10 +45,17 @@ public class Controller {
     private final EventDispatcher eventDispatcher;
     private final ViewController viewController;
     private final TradeController tradeController;
+    private final RandomizationManager randomizationManager;
+    private final Configuration configuration;
     private boolean gameStarted = false;
     private final Logger logger = LogManager.getLogger(getClass());
 
     Controller() {
+        this(null);
+    }
+
+    Controller(Configuration configuration) {
+        this.configuration = configuration;
         List<PropertyModel> properties = Collections.emptyList();
         List<PlayerModel> players = new ArrayList<>();
         ObjectMapper jacksonMapper = new ObjectMapper();
@@ -67,7 +77,10 @@ public class Controller {
         eventDispatcher = new MainEventDispatcher(broadcaster, tradeController, viewController);
         CommandBuilderDispatcher builderDispatcher = new MainCommandBuilderDispatcher(propertyController, playerController, tradeController, eventDispatcher);
         commandController = new MainCommandController(builderDispatcher);
-        turnController = new TurnController(playerController);
+
+        randomizationManager = new RandomizationManager(properties, configuration);
+
+        turnController = new TurnController(playerController, randomizationManager);
 
     }
 

@@ -39,4 +39,15 @@ public class PropertyRandomizeModel {
     public float getRentPercentage() {
         return rentPercentage;
     }
+
+    @Override
+    public String toString() {
+        return "PropertyRandomizeModel{" +
+                "pricePercentage=" + pricePercentage +
+                ", mortgagePercentage=" + mortgagePercentage +
+                ", housePricePercentage=" + housePricePercentage +
+                ", hotelPricePercentage=" + hotelPricePercentage +
+                ", rentPercentage=" + rentPercentage +
+                '}';
+    }
 }
