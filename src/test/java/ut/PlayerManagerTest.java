@@ -8,14 +8,14 @@ import org.junit.Assert;
 import org.junit.Test;
 import util.Pair;
 
-public class PlayerManagerTest {
+public class PlayerManagerTest extends BaseTest{
 
     @Test
     public void playerManagerTest() {
         PlayerManager playerManager = new PlayerManager(
                 new PlayerModel("id", "name"),
                 1000,
-                TestUtils.getPropertyOwnerMapper()
+                ownerMapper
         );
         playerManager.earn(100);
         Assert.assertEquals(1100, playerManager.getFunds());

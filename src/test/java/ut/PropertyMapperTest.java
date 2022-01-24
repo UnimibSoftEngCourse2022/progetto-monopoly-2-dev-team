@@ -9,13 +9,15 @@ import org.junit.Test;
 
 import java.util.List;
 
-public class PropertyMapperTest {
+public class PropertyMapperTest extends BaseTest {
 
-    private static PropertyCategoryMapper propertyCategoryMapper = TestUtils.getPropertyCategoryMapper();
-    private static PropertyOwnerMapper propertyOwnerMapper = TestUtils.getPropertyOwnerMapper();
+    private static PropertyCategoryMapper propertyCategoryMapper;
+    private static PropertyOwnerMapper propertyOwnerMapper;
 
     @Test
     public void categoryMapperTest() {
+        propertyCategoryMapper  = categoryMapper;
+        propertyOwnerMapper = ownerMapper;
         List<PropertyModel> categoryProperties = propertyCategoryMapper.getCategoryProperties(PropertyCategory.BROWN);
 
         Assert.assertNotNull(categoryProperties);

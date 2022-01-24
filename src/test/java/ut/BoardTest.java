@@ -19,10 +19,11 @@ import static model.player.PlayerState.IN_JAIL;
 
 public class BoardTest extends BaseTest {
 
-    private static Board board = new Board(commandBuilderDispatcher, playerController, TestUtils.getProperties());
+    private static Board board;
 
     @Test
     public void chainOfResponsabilityTest() {
+        board =  new Board(commandBuilderDispatcher, playerController, properties);
         List<Space> boardSpaces = board.getSpaces();
 
         Assert.assertNotNull(boardSpaces);

@@ -27,11 +27,12 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class BaseTest {
+    protected static PropertyMapper propertyMapper;
     protected static PropertyOwnerMapper ownerMapper;
     protected static PropertyCategoryMapper categoryMapper;
 
-    protected static List<DrawableCardModel> chances;
-    protected static List<DrawableCardModel> communities;
+    // protected static List<DrawableCardModel> chances;
+    // protected static List<DrawableCardModel> communities;
     protected static List<PropertyModel> properties;
     protected static List<PlayerModel> players;
 
@@ -45,17 +46,16 @@ public abstract class BaseTest {
     @Before
     public void init() {
         ObjectMapper jacksonMapper = new ObjectMapper();
-
-        URL jsonPropertyURL = PropertyMapperTest.class.getClassLoader().getResource("properties-test.json");
-        if (jsonPropertyURL != null) {
+        URL jsonURL = PropertyMapperTest.class.getClassLoader().getResource("properties-test.json");
+        if (jsonURL != null) {
             try {
-                properties = jacksonMapper.readValue(new File(jsonPropertyURL.toURI()), new TypeReference<>() {
+                properties = jacksonMapper.readValue(new File(jsonURL.toURI()), new TypeReference<>() {
                 });
             } catch (IOException | URISyntaxException e) {
                 e.printStackTrace();
                 properties = Collections.emptyList();
             }
-            PropertyMapper propertyMapper = new PropertyMapper(properties);
+            propertyMapper = new PropertyMapper(properties);
             ownerMapper = propertyMapper;
             categoryMapper = propertyMapper;
         }

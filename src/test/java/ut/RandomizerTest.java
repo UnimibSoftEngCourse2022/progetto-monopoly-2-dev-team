@@ -10,8 +10,8 @@ import org.junit.Test;
 import java.util.List;
 import java.util.Map;
 
-public class RandomizerTest {
-    private static List<PropertyModel> properties = TestUtils.getProperties();
+public class RandomizerTest extends BaseTest{
+    private static List<PropertyModel> properties = BaseTest.properties;
 
     @Test
     public void randomizePropertyTest() {
