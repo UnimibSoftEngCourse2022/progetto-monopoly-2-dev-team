@@ -11,13 +11,16 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class PriceManagerTest {
-    private static PropertyCategoryMapper propertyCategoryMapper = TestUtils.getPropertyCategoryMapper();
-    private static PropertyOwnerMapper propertyOwnerMapper = TestUtils.getPropertyOwnerMapper();
+    private final static PropertyCategoryMapper propertyCategoryMapper = TestUtils.getPropertyCategoryMapper();
+    private final static PropertyOwnerMapper propertyOwnerMapper = TestUtils.getPropertyOwnerMapper();
 
     @Test
     public void coloredPriceManagerNoRandomizationTest() {
         PropertyModel property = TestUtils.getProperties().get(0);
-        PriceManager priceManager = new ColoredPriceManager(property, propertyOwnerMapper, propertyCategoryMapper);
+        PriceManager priceManager = new ColoredPriceManager(property,
+                null,
+                propertyOwnerMapper,
+                propertyCategoryMapper);
         Assert.assertEquals(60, priceManager.getPrice());
         Assert.assertEquals(2, priceManager.getRent());
         PlayerModel playerModel = new PlayerModel("0", "name");
@@ -37,7 +40,11 @@ public class PriceManagerTest {
                 .getPropertyCategoryMapper()
                 .getCategoryProperties(PropertyCategory.RAILROAD)
                 .get(0);
-        PriceManager priceManager = new RailroadPriceManager(property, propertyOwnerMapper, propertyCategoryMapper);
+        propertyOwnerMapper.removeOwner(property);
+        PriceManager priceManager = new RailroadPriceManager(property,
+                null,
+                propertyOwnerMapper,
+                propertyCategoryMapper);
         Assert.assertEquals(200, priceManager.getPrice());
         Assert.assertEquals(25, priceManager.getRent());
         PlayerModel playerModel = new PlayerModel("0", "name");
@@ -55,6 +62,7 @@ public class PriceManagerTest {
                 .get(0);
         PriceManager priceManager = new UtilityPriceManager(
                 property,
+                null,
                 propertyOwnerMapper,
                 propertyCategoryMapper,
                 () -> new Pair<>(5, 3)
@@ -75,6 +83,7 @@ public class PriceManagerTest {
                 .getCategoryProperties(PropertyCategory.UTILITY)
                 .get(0);
         PriceManager priceManager = new PriceManagerDispatcher(
+                null,
                 propertyOwnerMapper,
                 propertyCategoryMapper,
                 () -> new Pair<>(5, 3)
@@ -86,6 +95,7 @@ public class PriceManagerTest {
                 .getCategoryProperties(PropertyCategory.RAILROAD)
                 .get(0);
         priceManager = new PriceManagerDispatcher(
+                null,
                 propertyOwnerMapper,
                 propertyCategoryMapper,
                 () -> new Pair<>(5, 3)
@@ -98,6 +108,7 @@ public class PriceManagerTest {
                 .getCategoryProperties(PropertyCategory.GREEN)
                 .get(0);
         priceManager = new PriceManagerDispatcher(
+                null,
                 propertyOwnerMapper,
                 propertyCategoryMapper,
                 () -> new Pair<>(5, 3)

@@ -1,5 +1,6 @@
 package ut;
 
+import it.monopoly.manager.pricemanager.PriceManager;
 import it.monopoly.manager.property.PropertyManager;
 import it.monopoly.model.PropertyCategoryMapper;
 import it.monopoly.model.PropertyOwnerMapper;
@@ -108,9 +109,19 @@ public class PropertyManagerTest {
     public static PropertyManager getPropertyManager(PropertyModel propertyModel) {
         return new PropertyManager(
                 propertyModel,
+                getPriceManager(propertyModel),
                 ownerMapper,
                 categoryMapper
         );
+    }
+
+    private static PriceManager getPriceManager(PropertyModel propertyModel) {
+        return new PriceManager(propertyModel, null, ownerMapper, categoryMapper) {
+            @Override
+            protected int getCleanRent() {
+                return this.property.getBaseRent();
+            }
+        };
     }
 
     public static PlayerModel getPlayer() {

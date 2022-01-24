@@ -15,10 +15,16 @@ public class PropertyRandomizerManager implements Randomizer {
     private List<PropertyModel> properties;
     private float randomnessIndex;
     private Map<PropertyModel, PropertyRandomizeModel> randomizeMap = new ConcurrentHashMap<>();
+    private PropertyRandomizeModel defaultRandomizeModel;
 
     public PropertyRandomizerManager(List<PropertyModel> properties, float randomnessIndex) {
         this.properties = properties;
         this.randomnessIndex = randomnessIndex;
+        this.defaultRandomizeModel = new PropertyRandomizeModel(0,
+                0,
+                0,
+                0,
+                0);
     }
 
     @Override
@@ -39,7 +45,7 @@ public class PropertyRandomizerManager implements Randomizer {
     }
 
     public PropertyRandomizeModel getPropertyRandomize(PropertyModel propertyModel) {
-        return randomizeMap.getOrDefault(propertyModel, null);
+        return randomizeMap.getOrDefault(propertyModel, defaultRandomizeModel);
     }
 
     private float randomValue() {

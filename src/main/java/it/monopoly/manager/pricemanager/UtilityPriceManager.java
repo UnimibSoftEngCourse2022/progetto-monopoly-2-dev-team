@@ -1,6 +1,7 @@
 package it.monopoly.manager.pricemanager;
 
 import it.monopoly.controller.event.DiceRoller;
+import it.monopoly.manager.randomizer.PropertyRandomizerManager;
 import it.monopoly.model.PropertyCategoryMapper;
 import it.monopoly.model.PropertyOwnerMapper;
 import it.monopoly.model.player.PlayerModel;
@@ -9,21 +10,19 @@ import it.monopoly.model.property.PropertyModel;
 import it.monopoly.util.Pair;
 
 public class UtilityPriceManager extends PriceManager {
+    private final DiceRoller diceRoller;
 
-    //TODO Add randomization logic
-    private DiceRoller diceRoller;
-
-    public UtilityPriceManager(PropertyModel property, PropertyOwnerMapper propertyOwnerMapper, PropertyCategoryMapper propertyCategoryMapper, DiceRoller diceRoller) {
-        super(property, propertyOwnerMapper, propertyCategoryMapper);
+    public UtilityPriceManager(PropertyModel property,
+                               PropertyRandomizerManager propertyRandomizerManager,
+                               PropertyOwnerMapper propertyOwnerMapper,
+                               PropertyCategoryMapper propertyCategoryMapper,
+                               DiceRoller diceRoller) {
+        super(property, propertyRandomizerManager, propertyOwnerMapper, propertyCategoryMapper);
         this.diceRoller = diceRoller;
     }
 
     @Override
-    public int getRent() {
-        return getRentMultiplier() * getDiceRollValue();
-    }
-
-    private int getRentMultiplier() {
+    protected int getCleanRent() {
         PlayerModel player = propertyOwnerMapper.getOwner(property);
         int ownedUtilities = 1;
         if (player != null) {
@@ -32,10 +31,13 @@ public class UtilityPriceManager extends PriceManager {
                     .filter(propertyModel -> PropertyCategory.UTILITY.equals(propertyModel.getCategory()))
                     .count();
         }
-        return property.getRentValue()[ownedUtilities - 1];
+        return property.getRentValue()[ownedUtilities - 1] * getDiceRollValue();
     }
 
     private int getDiceRollValue() {
+        if (diceRoller == null) {
+            return 1;
+        }
         Pair<Integer, Integer> roll = diceRoller.rollDice();
         return roll.getFirst() + roll.getSecond();
     }

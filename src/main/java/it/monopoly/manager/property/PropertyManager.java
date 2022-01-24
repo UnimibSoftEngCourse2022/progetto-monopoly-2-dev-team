@@ -12,21 +12,22 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class PropertyManager extends Manager<PropertyModel> {
-    private PropertyOwnerMapper ownerMapper;
-    private PropertyCategoryMapper categoryMapper;
-    private PriceManager priceManager;
+    private final PropertyOwnerMapper ownerMapper;
+    private final PropertyCategoryMapper categoryMapper;
+    private final PriceManager priceManager;
     private static final int MAX_NUMBER_OF_HOUSES_IN_GAME = 32; //TODO Implement max number of houses/hotel in game
     private static final int MAX_NUMBER_OF_HOTEL_IN_GAME = 12;
     public static final int MAX_NUMBER_OF_HOUSES = 4;
     public static final int MAX_NUMBER_OF_HOTEL = 1;
 
-    public PropertyManager(PropertyModel property, PropertyOwnerMapper ownerMapper, PropertyCategoryMapper categoryMapper) {
+    public PropertyManager(PropertyModel property,
+                           PriceManager priceManager,
+                           PropertyOwnerMapper ownerMapper,
+                           PropertyCategoryMapper categoryMapper) {
         super(property);
         this.ownerMapper = ownerMapper;
         this.categoryMapper = categoryMapper;
-        this.priceManager =
-                new PriceManagerDispatcher(ownerMapper, categoryMapper, null) //TODO DiceRoller
-                        .getPriceManager(property);
+        this.priceManager = priceManager;
     }
 
     public boolean buildHouse() {

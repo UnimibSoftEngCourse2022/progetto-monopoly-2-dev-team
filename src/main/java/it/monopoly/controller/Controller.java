@@ -12,6 +12,7 @@ import it.monopoly.controller.property.PropertyController;
 import it.monopoly.manager.AuctionManager;
 import it.monopoly.manager.SellManager;
 import it.monopoly.manager.player.PlayerManager;
+import it.monopoly.manager.pricemanager.PriceManagerDispatcher;
 import it.monopoly.manager.randomizer.RandomizationManager;
 import it.monopoly.model.Configuration;
 import it.monopoly.model.PropertyMapper;
@@ -24,7 +25,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -69,19 +69,25 @@ public class Controller {
             }
         }
         mapper = new PropertyMapper(properties);
+        randomizationManager = new RandomizationManager(properties, configuration);
+
         viewController = new ViewController();
+
         playerController = new PlayerController(players, mapper);
-        propertyController = new PropertyController(properties, mapper, mapper);
+
+        PriceManagerDispatcher priceManagerDispatcher = new PriceManagerDispatcher(randomizationManager.getPropertyRandomizerManager(),
+                mapper,
+                mapper,
+                getEventDispatcher().diceRollEvent());
+        propertyController = new PropertyController(properties, priceManagerDispatcher, mapper, mapper);
         tradeController = new TradeController(playerController, propertyController);
         broadcaster = new Broadcaster(playerController);
         eventDispatcher = new MainEventDispatcher(broadcaster, tradeController, viewController);
         CommandBuilderDispatcher builderDispatcher = new MainCommandBuilderDispatcher(propertyController, playerController, tradeController, eventDispatcher);
         commandController = new MainCommandController(builderDispatcher);
 
-        randomizationManager = new RandomizationManager(properties, configuration);
 
         turnController = new TurnController(playerController, randomizationManager);
-
     }
 
     public synchronized PlayerModel setupPlayer(MainView view) {

@@ -15,13 +15,14 @@ import it.monopoly.controller.property.PropertyController;
 import it.monopoly.controller.property.command.PropertyCommandBuilder;
 import it.monopoly.manager.AbstractOfferManager;
 import it.monopoly.manager.player.PlayerManager;
+import it.monopoly.manager.pricemanager.PriceManagerDispatcher;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.property.PropertyCategory;
 import it.monopoly.model.property.PropertyModel;
+import it.monopoly.util.Pair;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import it.monopoly.util.Pair;
 
 import static it.monopoly.model.player.PlayerState.*;
 
@@ -34,28 +35,30 @@ public class CommandTest extends BaseTest {
     @Before
     public void init() {
         super.init();
+        EventDispatcher eventDispatcher = new EventDispatcher() {
+            @Override
+            public DiceRoller diceRollEvent() {
+                return diceRoller;
+            }
+
+            @Override
+            public DiceRoller diceRollEvent(DiceRollEventCallback callback) {
+                return diceRoller;
+            }
+
+            @Override
+            public void startOffer(AbstractOfferManager offerManager) {
+
+            }
+        };
         playerController = new PlayerController(players, ownerMapper);
-        propertyController = new PropertyController(properties, ownerMapper, categoryMapper);
+        PriceManagerDispatcher priceManagerDispatcher = new PriceManagerDispatcher(null, ownerMapper, categoryMapper, eventDispatcher.diceRollEvent());
+        propertyController = new PropertyController(properties, priceManagerDispatcher, ownerMapper, categoryMapper);
         commandBuilderDispatcher = new MainCommandBuilderDispatcher(
                 propertyController,
                 playerController,
                 new TradeController(playerController, propertyController),
-                new EventDispatcher() {
-                    @Override
-                    public DiceRoller diceRollEvent() {
-                        return diceRoller;
-                    }
-
-                    @Override
-                    public DiceRoller diceRollEvent(DiceRollEventCallback callback) {
-                        return diceRoller;
-                    }
-
-                    @Override
-                    public void startOffer(AbstractOfferManager offerManager) {
-
-                    }
-                }
+                eventDispatcher
         );
     }
 
