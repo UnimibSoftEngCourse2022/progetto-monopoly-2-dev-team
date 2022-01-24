@@ -10,14 +10,16 @@ import org.junit.Assert;
 import org.junit.Test;
 import util.Pair;
 
-public class PriceManagerTest {
-    private static PropertyCategoryMapper propertyCategoryMapper = TestUtils.getPropertyCategoryMapper();
-    private static PropertyOwnerMapper propertyOwnerMapper = TestUtils.getPropertyOwnerMapper();
+public class PriceManagerTest extends BaseTest {
+    private static PropertyCategoryMapper propertyCategoryMapper = categoryMapper;
+    private static PropertyOwnerMapper propertyOwnerMapper = ownerMapper;
 
     @Test
     public void coloredPriceManagerNoRandomizationTest() {
+        resetPlayers();
+        resetProperties();
         PriceManager priceManager = new ColoredPriceManager(propertyOwnerMapper, propertyCategoryMapper);
-        PropertyModel property = TestUtils.getProperties().get(0);
+        PropertyModel property = properties.get(0);
         Assert.assertEquals(60, priceManager.getPrice(property));
         Assert.assertEquals(2, priceManager.getRent(property));
         PlayerModel playerModel = new PlayerModel("0", "name");
@@ -33,9 +35,10 @@ public class PriceManagerTest {
 
     @Test
     public void railroadPriceManagerNoRandomizationTest() {
+        resetPlayers();
+        resetProperties();
         PriceManager priceManager = new RailroadPriceManager(propertyOwnerMapper, propertyCategoryMapper);
-        PropertyModel property = TestUtils
-                .getPropertyCategoryMapper()
+        PropertyModel property = categoryMapper
                 .getCategoryProperties(PropertyCategory.RAILROAD)
                 .get(0);
         Assert.assertEquals(200, priceManager.getPrice(property));
@@ -49,13 +52,14 @@ public class PriceManagerTest {
 
     @Test
     public void utilityPriceManagerNoRandomizationTest() {
+        resetPlayers();
+        resetProperties();
         PriceManager priceManager = new UtilityPriceManager(
                 propertyOwnerMapper,
                 propertyCategoryMapper,
                 () -> new Pair<>(5, 3)
         );
-        PropertyModel property = TestUtils
-                .getPropertyCategoryMapper()
+        PropertyModel property = categoryMapper
                 .getCategoryProperties(PropertyCategory.UTILITY)
                 .get(0);
         Assert.assertEquals(150, priceManager.getPrice(property));
@@ -69,8 +73,9 @@ public class PriceManagerTest {
 
     @Test
     public void priceManagerDispatcherNoRandomizationTest() {
-        PropertyModel property = TestUtils
-                .getPropertyCategoryMapper()
+        resetPlayers();
+        resetProperties();
+        PropertyModel property = categoryMapper
                 .getCategoryProperties(PropertyCategory.UTILITY)
                 .get(0);
         PriceManager priceManager = new PriceManagerDispatcher(
@@ -80,8 +85,7 @@ public class PriceManagerTest {
         ).getPriceManager(property);
         Assert.assertTrue(priceManager instanceof UtilityPriceManager);
 
-        property = TestUtils
-                .getPropertyCategoryMapper()
+        property = categoryMapper
                 .getCategoryProperties(PropertyCategory.RAILROAD)
                 .get(0);
         priceManager = new PriceManagerDispatcher(
@@ -92,8 +96,7 @@ public class PriceManagerTest {
 
         Assert.assertTrue(priceManager instanceof RailroadPriceManager);
 
-        property = TestUtils
-                .getPropertyCategoryMapper()
+        property = categoryMapper
                 .getCategoryProperties(PropertyCategory.GREEN)
                 .get(0);
         priceManager = new PriceManagerDispatcher(
