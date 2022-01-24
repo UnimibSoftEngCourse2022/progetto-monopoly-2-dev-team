@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 public class RandomizerTest extends BaseTest{
-    private static List<PropertyModel> properties = BaseTest.properties;
 
     @Test
     public void randomizePropertyTest() {

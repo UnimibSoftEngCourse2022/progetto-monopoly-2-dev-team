@@ -1,8 +1,6 @@
 package ut;
 
 import manager.property.PropertyManager;
-import model.PropertyCategoryMapper;
-import model.PropertyOwnerMapper;
 import model.player.PlayerModel;
 import model.property.PropertyCategory;
 import model.property.PropertyModel;
@@ -13,13 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PropertyManagerTest extends BaseTest {
-    private static PropertyOwnerMapper ownerMapper;
-    private static PropertyCategoryMapper categoryMapper;
 
     @Test
     public void propertyManagerBuildingTestNotImprovable() {
-        ownerMapper = BaseTest.ownerMapper;
-        categoryMapper = BaseTest.categoryMapper;
         //RAILROADS
         final List<PropertyModel> properties = categoryMapper.getCategoryProperties(PropertyCategory.RAILROAD);
         PropertyManager propertyManager = getPropertyManager(properties.get(0));
@@ -38,8 +32,6 @@ public class PropertyManagerTest extends BaseTest {
 
     @Test
     public void propertyManagerBuildingTestPink() {
-        ownerMapper = BaseTest.ownerMapper;
-        categoryMapper = BaseTest.categoryMapper;
         //PINK
         List<PropertyModel> properties = categoryMapper.getCategoryProperties(PropertyCategory.PINK);
         PropertyManager propertyManager = getPropertyManager(properties.get(0));

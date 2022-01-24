@@ -1,7 +1,5 @@
 package ut;
 
-import model.PropertyCategoryMapper;
-import model.PropertyOwnerMapper;
 import model.property.PropertyCategory;
 import model.property.PropertyModel;
 import org.junit.Assert;
@@ -11,14 +9,10 @@ import java.util.List;
 
 public class PropertyMapperTest extends BaseTest {
 
-    private static PropertyCategoryMapper propertyCategoryMapper;
-    private static PropertyOwnerMapper propertyOwnerMapper;
 
     @Test
     public void categoryMapperTest() {
-        propertyCategoryMapper  = categoryMapper;
-        propertyOwnerMapper = ownerMapper;
-        List<PropertyModel> categoryProperties = propertyCategoryMapper.getCategoryProperties(PropertyCategory.BROWN);
+        List<PropertyModel> categoryProperties = categoryMapper.getCategoryProperties(PropertyCategory.BROWN);
 
         Assert.assertNotNull(categoryProperties);
         Assert.assertEquals(2, categoryProperties.size());
@@ -43,6 +37,7 @@ public class PropertyMapperTest extends BaseTest {
         model.setHouseNumber(4);
         Assert.assertEquals(4, model.getHouseNumber());
         Assert.assertEquals(160, model.getHouseRent());
+
         /*
         model.setHotelNumber(1);
         Assert.assertEquals(0, model.getHouseNumber());
