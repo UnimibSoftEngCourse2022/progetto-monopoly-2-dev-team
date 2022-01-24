@@ -1,21 +1,21 @@
 package ut;
 
-import controller.board.Board;
-import controller.board.space.*;
-import controller.card.DrawableCardController;
-import controller.player.command.GetOutOfJailCommand;
-import manager.player.PlayerManager;
-import model.player.PlayerModel;
-import model.player.PlayerState;
-import model.property.PropertyCategory;
-import model.property.PropertyModel;
+import it.monopoly.controller.board.Board;
+import it.monopoly.controller.board.card.DrawableCardController;
+import it.monopoly.controller.board.space.*;
+import it.monopoly.controller.player.command.GetOutOfJailCommand;
+import it.monopoly.manager.player.PlayerManager;
+import it.monopoly.model.player.PlayerModel;
+import it.monopoly.model.player.PlayerState;
+import it.monopoly.model.property.PropertyCategory;
+import it.monopoly.model.property.PropertyModel;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
 
-import static model.player.PlayerState.FREE;
-import static model.player.PlayerState.IN_JAIL;
+import static it.monopoly.model.player.PlayerState.FREE;
+import static it.monopoly.model.player.PlayerState.IN_JAIL;
 
 public class BoardTest extends BaseTest {
 
@@ -23,7 +23,7 @@ public class BoardTest extends BaseTest {
 
     @Test
     public void chainOfResponsabilityTest() {
-        board =  new Board(commandBuilderDispatcher, playerController, properties);
+        board = new Board(commandBuilderDispatcher, playerController, properties);
         List<Space> boardSpaces = board.getSpaces();
 
         Assert.assertNotNull(boardSpaces);

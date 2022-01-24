@@ -1,16 +1,15 @@
 package ut;
 
-import manager.PropertyRandomizerManager;
-import manager.TaxRandomizerManager;
-import model.PropertyRandomizeModel;
-import model.property.PropertyModel;
+import it.monopoly.manager.randomizer.PropertyRandomizerManager;
+import it.monopoly.manager.randomizer.TaxRandomizerManager;
+import it.monopoly.model.PropertyRandomizeModel;
+import it.monopoly.model.property.PropertyModel;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.Map;
 
-public class RandomizerTest extends BaseTest{
+public class RandomizerTest extends BaseTest {
 
     @Test
     public void randomizePropertyTest() {

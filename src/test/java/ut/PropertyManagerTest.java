@@ -1,9 +1,10 @@
 package ut;
 
-import manager.property.PropertyManager;
-import model.player.PlayerModel;
-import model.property.PropertyCategory;
-import model.property.PropertyModel;
+import it.monopoly.manager.pricemanager.PriceManager;
+import it.monopoly.manager.property.PropertyManager;
+import it.monopoly.model.player.PlayerModel;
+import it.monopoly.model.property.PropertyCategory;
+import it.monopoly.model.property.PropertyModel;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,6 +12,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PropertyManagerTest extends BaseTest {
+
+    public static PropertyManager getPropertyManager(PropertyModel propertyModel) {
+        return new PropertyManager(
+                propertyModel,
+                getPriceManager(propertyModel),
+                ownerMapper,
+                categoryMapper
+        );
+    }
+
+    private static PriceManager getPriceManager(PropertyModel propertyModel) {
+        return new PriceManager(propertyModel, null, ownerMapper, categoryMapper) {
+            @Override
+            protected int getCleanRent() {
+                return this.property.getBaseRent();
+            }
+        };
+    }
+
+    public static PlayerModel getPlayer() {
+        return new PlayerModel("id", "name");
+    }
 
     @Test
     public void propertyManagerBuildingTestNotImprovable() {
@@ -99,17 +122,5 @@ public class PropertyManagerTest extends BaseTest {
             Assert.assertEquals(0, property.getHouseNumber());
             Assert.assertEquals(0, property.getHotelNumber());
         }
-    }
-
-    public static PropertyManager getPropertyManager(PropertyModel propertyModel) {
-        return new PropertyManager(
-                propertyModel,
-                ownerMapper,
-                categoryMapper
-        );
-    }
-
-    public static PlayerModel getPlayer() {
-        return new PlayerModel("id", "name");
     }
 }

@@ -2,20 +2,21 @@ package ut;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import controller.TradeController;
-import controller.command.CommandBuilderDispatcher;
-import controller.command.MainCommandBuilderDispatcher;
-import controller.event.DiceRollEventCallback;
-import controller.event.DiceRoller;
-import controller.event.EventDispatcher;
-import controller.player.PlayerController;
-import controller.property.PropertyController;
-import model.DrawableCardModel;
-import model.PropertyCategoryMapper;
-import model.PropertyMapper;
-import model.PropertyOwnerMapper;
-import model.player.PlayerModel;
-import model.property.PropertyModel;
+import it.monopoly.controller.TradeController;
+import it.monopoly.controller.command.CommandBuilderDispatcher;
+import it.monopoly.controller.command.MainCommandBuilderDispatcher;
+import it.monopoly.controller.event.DiceRollEventCallback;
+import it.monopoly.controller.event.DiceRoller;
+import it.monopoly.controller.event.EventDispatcher;
+import it.monopoly.controller.player.PlayerController;
+import it.monopoly.controller.property.PropertyController;
+import it.monopoly.manager.AbstractOfferManager;
+import it.monopoly.manager.pricemanager.PriceManagerDispatcher;
+import it.monopoly.model.PropertyCategoryMapper;
+import it.monopoly.model.PropertyMapper;
+import it.monopoly.model.PropertyOwnerMapper;
+import it.monopoly.model.player.PlayerModel;
+import it.monopoly.model.property.PropertyModel;
 import org.junit.Before;
 
 import java.io.File;
@@ -31,8 +32,6 @@ public abstract class BaseTest {
     protected static PropertyOwnerMapper ownerMapper;
     protected static PropertyCategoryMapper categoryMapper;
 
-    // protected static List<DrawableCardModel> chances;
-    // protected static List<DrawableCardModel> communities;
     protected static List<PropertyModel> properties;
     protected static List<PlayerModel> players;
 
@@ -42,6 +41,14 @@ public abstract class BaseTest {
     protected static DiceRoller diceRoller;
     protected static TradeController tradeController;
     protected static EventDispatcher eventDispatcher;
+
+    public static void resetPlayers() {
+        players = new ArrayList<>();
+        players.add(new PlayerModel("1", "name1"));
+        players.add(new PlayerModel("2", "name2"));
+        players.add(new PlayerModel("3", "name3"));
+        players.add(new PlayerModel("4", "name4"));
+    }
 
     @Before
     public void init() {
@@ -59,27 +66,10 @@ public abstract class BaseTest {
             ownerMapper = propertyMapper;
             categoryMapper = propertyMapper;
         }
-        /*
-        URL jsonChancesURL = getClass().getClassLoader().getResource("chances.json");
-        URL jsonCommunityChestsURL = getClass().getClassLoader().getResource("communityChests.json");
-        if (jsonChancesURL != null && jsonCommunityChestsURL != null) {
-            try {
-                chances = jacksonMapper.readValue(new File(jsonChancesURL.toURI()), new TypeReference<>() {
-                });
-                communities = jacksonMapper.readValue(new File(jsonCommunityChestsURL.toURI()), new TypeReference<>() {
-                });
-            } catch (IOException | URISyntaxException e) {
-                e.printStackTrace();
-            }
-        }
-        */
         if (players == null) {
             resetPlayers();
         }
 
-        playerController = new PlayerController(players, ownerMapper);
-        propertyController = new PropertyController(properties, ownerMapper, categoryMapper);
-        tradeController = new TradeController(playerController, propertyController);
         eventDispatcher = new EventDispatcher() {
             @Override
             public DiceRoller diceRollEvent() {
@@ -90,7 +80,19 @@ public abstract class BaseTest {
             public DiceRoller diceRollEvent(DiceRollEventCallback callback) {
                 return diceRoller;
             }
+
+            @Override
+            public void startOffer(AbstractOfferManager offerManager) {
+            }
+
+            @Override
+            public void sendMessage(String message) {
+            }
         };
+        PriceManagerDispatcher priceManagerDispatcher = new PriceManagerDispatcher(null, ownerMapper, categoryMapper, eventDispatcher.diceRollEvent());
+        playerController = new PlayerController(players, ownerMapper);
+        propertyController = new PropertyController(properties, priceManagerDispatcher, ownerMapper, categoryMapper);
+        tradeController = new TradeController(playerController, propertyController);
 
         commandBuilderDispatcher = new MainCommandBuilderDispatcher(
                 propertyController,
@@ -102,13 +104,5 @@ public abstract class BaseTest {
 
     public void resetProperties() {
         init();
-    }
-
-    public static void resetPlayers() {
-        players = new ArrayList<>();
-        players.add(new PlayerModel("1", "name1"));
-        players.add(new PlayerModel("2", "name2"));
-        players.add(new PlayerModel("3", "name3"));
-        players.add(new PlayerModel("4", "name4"));
     }
 }
