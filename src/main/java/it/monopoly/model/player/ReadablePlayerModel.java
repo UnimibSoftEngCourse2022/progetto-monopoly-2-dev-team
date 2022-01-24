@@ -35,7 +35,11 @@ public class ReadablePlayerModel {
         return funds;
     }
 
-    public String getState() {
+    public PlayerState getState() {
+        return state;
+    }
+
+    public String getStateName() {
         if (PlayerState.FREE.equals(state)) {
             return "Free";
         } else if (PlayerState.IN_JAIL.equals(state)) {

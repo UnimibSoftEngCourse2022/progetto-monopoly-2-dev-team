@@ -19,6 +19,7 @@ import it.monopoly.model.PropertyMapper;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.ReadablePlayerModel;
 import it.monopoly.model.property.PropertyModel;
+import it.monopoly.model.property.ReadablePropertyModel;
 import it.monopoly.view.MainView;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -69,25 +70,27 @@ public class Controller {
             }
         }
         mapper = new PropertyMapper(properties);
-        randomizationManager = new RandomizationManager(properties, configuration);
 
         viewController = new ViewController();
 
         playerController = new PlayerController(players, mapper);
 
+        randomizationManager = new RandomizationManager(properties, configuration);
+        turnController = new TurnController(playerController, randomizationManager);
+
+        broadcaster = new Broadcaster(playerController);
+        eventDispatcher = new MainEventDispatcher(broadcaster, viewController);
+
         PriceManagerDispatcher priceManagerDispatcher = new PriceManagerDispatcher(randomizationManager.getPropertyRandomizerManager(),
                 mapper,
                 mapper,
-                getEventDispatcher().diceRollEvent());
+                eventDispatcher.diceRollEvent());
         propertyController = new PropertyController(properties, priceManagerDispatcher, mapper, mapper);
+
         tradeController = new TradeController(playerController, propertyController);
-        broadcaster = new Broadcaster(playerController);
-        eventDispatcher = new MainEventDispatcher(broadcaster, tradeController, viewController);
+
         CommandBuilderDispatcher builderDispatcher = new MainCommandBuilderDispatcher(propertyController, playerController, tradeController, eventDispatcher);
         commandController = new MainCommandController(builderDispatcher);
-
-
-        turnController = new TurnController(playerController, randomizationManager);
     }
 
     public synchronized PlayerModel setupPlayer(MainView view) {
@@ -129,6 +132,15 @@ public class Controller {
 
     public ReadablePlayerModel getReadablePlayer(PlayerModel playerModel) {
         return playerController.getManager(playerModel).getReadable();
+    }
+
+    public List<ReadablePropertyModel> getReadableProperties(PlayerModel playerModel) {
+        List<ReadablePropertyModel> list = new ArrayList<>();
+        for (PropertyModel property : mapper.getPlayerProperties(playerModel)) {
+            ReadablePropertyModel readable = propertyController.getManager(property).getReadable();
+            list.add(readable);
+        }
+        return list;
     }
 
     public PropertyController getPropertyController() {

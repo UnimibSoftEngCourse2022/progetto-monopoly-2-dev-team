@@ -2,11 +2,11 @@ package it.monopoly.manager.property;
 
 import it.monopoly.manager.Manager;
 import it.monopoly.manager.pricemanager.PriceManager;
-import it.monopoly.manager.pricemanager.PriceManagerDispatcher;
 import it.monopoly.model.PropertyCategoryMapper;
 import it.monopoly.model.PropertyOwnerMapper;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.property.PropertyModel;
+import it.monopoly.model.property.ReadablePropertyModel;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -238,5 +238,17 @@ public class PropertyManager extends Manager<PropertyModel> {
 
     private boolean hasValidBuildingsForRemovingHotel() {
         return model.getHouseNumber() == 0 && model.getHotelNumber() > 0;
+    }
+
+
+    public ReadablePropertyModel getReadable() {
+        return new ReadablePropertyModel(
+                model,
+                priceManager.getPrice(),
+                priceManager.getHousePrice(),
+                priceManager.getHotelPrice(),
+                priceManager.getMortgageValue(),
+                priceManager.getRent()
+        );
     }
 }

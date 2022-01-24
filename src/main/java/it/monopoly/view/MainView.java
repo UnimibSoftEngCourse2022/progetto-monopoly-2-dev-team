@@ -1,25 +1,22 @@
 package it.monopoly.view;
 
-import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.ClientCallable;
+import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.IFrame;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.data.selection.SelectionListener;
-import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.router.Route;
-import elemental.json.JsonValue;
 import it.monopoly.controller.Controller;
 import it.monopoly.controller.command.Command;
 import it.monopoly.manager.AbstractOfferManager;
 import it.monopoly.model.player.PlayerModel;
+import it.monopoly.model.player.PlayerState;
 import it.monopoly.model.player.ReadablePlayerModel;
-import it.monopoly.model.property.PropertyModel;
+import it.monopoly.model.property.ReadablePropertyModel;
 import it.monopoly.util.ViewUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -66,7 +63,7 @@ public class MainView extends HorizontalLayout {
         VerticalLayout leftLayout = new VerticalLayout();
 
         propertyListView = new PropertyListView(
-                (SelectionListener<Grid<PropertyModel>, PropertyModel>) selectionEvent -> selectionEvent
+                (SelectionListener<Grid<ReadablePropertyModel>, ReadablePropertyModel>) selectionEvent -> selectionEvent
                         .getFirstSelectedItem()
                         .ifPresentOrElse(MainView.this::displayCommands, () -> propertyCommandButtonView.clear())
         );
@@ -154,7 +151,7 @@ public class MainView extends HorizontalLayout {
 
         Observer<T> observer = null;
         if (ReadablePlayerModel.class.equals(className)) {
-            observer = obj -> updateReadable((ReadablePlayerModel) obj);
+            observer = obj -> updatePlayer((ReadablePlayerModel) obj);
         }
 
         if (observer != null) {
@@ -180,13 +177,22 @@ public class MainView extends HorizontalLayout {
         return consumer;
     }
 
-    public void updateReadable(ReadablePlayerModel readablePlayer) {
+    public void updatePlayer(ReadablePlayerModel readablePlayer) {
         this.readablePlayer = readablePlayer;
         ViewUtil.runOnUiThread(getUI(), () -> {
             propertyCommandButtonView.clear();
-            propertyListView.setProperties(readablePlayer.getProperties());
-            setButtonActive(readablePlayer.isTurn());
+            getPropertiesAndUpdate();
+            setButtonActive(!PlayerState.BANKRUPT.equals(readablePlayer.getState()) &&
+                    readablePlayer.isTurn());
             setJustifyContentMode(JustifyContentMode.END);
+        });
+    }
+
+    public void getPropertiesAndUpdate() {
+        List<ReadablePropertyModel> properties = controller.getReadableProperties(player);
+        ViewUtil.runOnUiThread(getUI(), () -> {
+            propertyCommandButtonView.clear();
+            propertyListView.setProperties(properties);
         });
     }
 
@@ -209,8 +215,8 @@ public class MainView extends HorizontalLayout {
         testCommandsLayout.remove(startGameButton);
     }
 
-    private void displayCommands(PropertyModel property) {
-        List<Command> commands = controller.getCommandController().generateCommands(property);
+    private void displayCommands(ReadablePropertyModel property) {
+        List<Command> commands = controller.getCommandController().generateCommands(property.getModel());
         propertyCommandButtonView.newCommands(commands);
     }
 }

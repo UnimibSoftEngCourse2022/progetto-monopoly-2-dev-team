@@ -5,23 +5,25 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.server.Command;
 import it.monopoly.model.property.PropertyModel;
+import it.monopoly.model.property.ReadablePropertyModel;
 
 import java.util.List;
 
 public class PropertyListView extends Div {
 
-    private final Grid<PropertyModel> grid;
-    private final SelectionListener<Grid<PropertyModel>, PropertyModel> selectionListener;
+    private final Grid<ReadablePropertyModel> grid;
+    private final SelectionListener<Grid<ReadablePropertyModel>, ReadablePropertyModel> selectionListener;
 
-    public PropertyListView(SelectionListener<Grid<PropertyModel>, PropertyModel> selectionListener) {
+    public PropertyListView(SelectionListener<Grid<ReadablePropertyModel>, ReadablePropertyModel> selectionListener) {
         this.selectionListener = selectionListener;
 
-        grid = new Grid<>(PropertyModel.class, false);
+        grid = new Grid<>(ReadablePropertyModel.class, false);
         grid.addSelectionListener(selectionListener);
-        grid.addColumn(PropertyModel::getName).setHeader("Street name");
-        grid.addColumn(PropertyModel::getHouseNumber).setHeader("House number");
-        grid.addColumn(PropertyModel::getHotelNumber).setHeader("Hotel number");
-        grid.addColumn(PropertyModel::getCategory).setHeader("Category");
+        grid.addColumn(ReadablePropertyModel::getName).setHeader("Street name");
+        grid.addColumn(ReadablePropertyModel::getHouseNumber).setHeader("House number");
+        grid.addColumn(ReadablePropertyModel::getHotelNumber).setHeader("Hotel number");
+        grid.addColumn(ReadablePropertyModel::getRent).setHeader("Rent");
+        grid.addColumn(ReadablePropertyModel::getCategory).setHeader("Category");
 
         grid.setSizeFull();
 
@@ -29,7 +31,7 @@ public class PropertyListView extends Div {
         add(grid);
     }
 
-    public void setProperties(List<PropertyModel> properties) {
+    public void setProperties(List<ReadablePropertyModel> properties) {
         getUI().ifPresent(ui -> ui.access((Command) () -> grid.setItems(properties)));
     }
 }
