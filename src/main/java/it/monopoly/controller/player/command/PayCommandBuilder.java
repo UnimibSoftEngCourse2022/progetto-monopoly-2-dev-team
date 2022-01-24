@@ -3,8 +3,6 @@ package it.monopoly.controller.player.command;
 import it.monopoly.controller.TradeController;
 import it.monopoly.controller.command.CommandBuilder;
 import it.monopoly.model.player.PlayerModel;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;

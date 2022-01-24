@@ -9,8 +9,6 @@ import it.monopoly.controller.player.command.PayCommandBuilder;
 import it.monopoly.controller.property.PropertyController;
 import it.monopoly.manager.property.PropertyManager;
 import it.monopoly.model.property.PropertyModel;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class PropertyCommandBuilder implements CommandBuilder {
     private final PropertyController propertyController;
