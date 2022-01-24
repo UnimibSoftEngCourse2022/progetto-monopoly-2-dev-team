@@ -10,4 +10,6 @@ public interface EventDispatcher {
     DiceRoller diceRollEvent(DiceRollEventCallback callback);
 
     void startOffer(AbstractOfferManager offerManager);
+
+    void sendMessage(String message);
 }

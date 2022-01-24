@@ -35,4 +35,9 @@ public class MainEventDispatcher implements EventDispatcher {
             }
         });
     }
+
+    @Override
+    public void sendMessage(String message) {
+        broadcaster.broadcastMessage(message);
+    }
 }

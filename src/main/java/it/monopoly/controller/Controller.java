@@ -72,21 +72,28 @@ public class Controller {
 
         playerController = new PlayerController(players, mapper);
 
-        randomizationManager = new RandomizationManager(properties, configuration);
-        turnController = new TurnController(playerController, randomizationManager);
-
         broadcaster = new Broadcaster();
         eventDispatcher = new MainEventDispatcher(broadcaster, viewController);
 
-        PriceManagerDispatcher priceManagerDispatcher = new PriceManagerDispatcher(randomizationManager.getPropertyRandomizerManager(),
+        randomizationManager = new RandomizationManager(properties, configuration);
+        turnController = new TurnController(playerController, eventDispatcher, randomizationManager);
+
+        PriceManagerDispatcher priceManagerDispatcher = new PriceManagerDispatcher(
+                randomizationManager.getPropertyRandomizerManager(),
                 mapper,
                 mapper,
-                eventDispatcher.diceRollEvent());
+                eventDispatcher.diceRollEvent()
+        );
         propertyController = new PropertyController(properties, priceManagerDispatcher, mapper, mapper);
 
         tradeController = new TradeController(playerController, propertyController);
 
-        CommandBuilderDispatcher builderDispatcher = new MainCommandBuilderDispatcher(propertyController, playerController, tradeController, eventDispatcher);
+        CommandBuilderDispatcher builderDispatcher = new MainCommandBuilderDispatcher(
+                propertyController,
+                playerController,
+                tradeController,
+                eventDispatcher
+        );
         commandController = new MainCommandController(builderDispatcher);
     }
 
@@ -100,6 +107,7 @@ public class Controller {
         mapper.register(manager);
         broadcaster.registerForOffers(viewController.getAuctionConsumer(player));
         broadcaster.registerForPlayers(viewController.getAllPlayersConsumer(player));
+        broadcaster.registerForMessages(viewController.getMessageConsumer(player));
         manager.register(viewController.getPlayerObserver(player));
         manager.register(turnController);
         manager.register(broadcaster.getPlayerObserver());

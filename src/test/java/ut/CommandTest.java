@@ -50,6 +50,10 @@ public class CommandTest extends BaseTest {
             public void startOffer(AbstractOfferManager offerManager) {
 
             }
+
+            @Override
+            public void sendMessage(String message) {
+            }
         };
         playerController = new PlayerController(players, ownerMapper);
         PriceManagerDispatcher priceManagerDispatcher = new PriceManagerDispatcher(null, ownerMapper, categoryMapper, eventDispatcher.diceRollEvent());

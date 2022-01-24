@@ -6,7 +6,6 @@ import it.monopoly.model.player.ReadablePlayerModel;
 import it.monopoly.view.MainView;
 import it.monopoly.view.Observer;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -32,6 +31,10 @@ public class ViewController {
 
     public Consumer<ReadablePlayerModel> getAllPlayersConsumer(PlayerModel player) {
         return playerViewMap.get(player).getAllPlayerConsumer();
+    }
+
+    public Consumer<String> getMessageConsumer(PlayerModel player) {
+        return playerViewMap.get(player).getMessageConsumer();
     }
 
     public Observer<ReadablePlayerModel> getPlayerObserver(PlayerModel player) {

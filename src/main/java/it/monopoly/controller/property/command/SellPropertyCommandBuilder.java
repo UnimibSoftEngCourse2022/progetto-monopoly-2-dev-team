@@ -1,9 +1,10 @@
-package it.monopoly.controller.command;
+package it.monopoly.controller.property.command;
 
 import it.monopoly.controller.TradeController;
+import it.monopoly.controller.command.Command;
+import it.monopoly.controller.command.CommandBuilder;
 import it.monopoly.controller.event.EventDispatcher;
 import it.monopoly.controller.property.PropertyController;
-import it.monopoly.controller.property.command.SellPropertyCommand;
 import it.monopoly.model.property.PropertyModel;
 
 public class SellPropertyCommandBuilder implements CommandBuilder {

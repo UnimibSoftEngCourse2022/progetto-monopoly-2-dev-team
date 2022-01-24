@@ -6,6 +6,7 @@ import it.monopoly.controller.player.PlayerController;
 import it.monopoly.controller.player.command.*;
 import it.monopoly.controller.property.PropertyController;
 import it.monopoly.controller.property.command.PropertyCommandBuilder;
+import it.monopoly.controller.property.command.SellPropertyCommandBuilder;
 
 public class MainCommandBuilderDispatcher implements CommandBuilderDispatcher {
     private final PropertyController propertyController;

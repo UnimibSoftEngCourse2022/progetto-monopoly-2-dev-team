@@ -2,7 +2,6 @@ package it.monopoly;
 
 import it.monopoly.manager.AbstractOfferManager;
 import it.monopoly.model.player.ReadablePlayerModel;
-import it.monopoly.model.property.PropertyModel;
 import it.monopoly.view.Observer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,11 +16,21 @@ public class Broadcaster {
     private final Logger logger = LogManager.getLogger(getClass());
     private final Executor executor = Executors.newSingleThreadExecutor();
 
-    private final List<Consumer<PropertyModel>> propertyListeners = new LinkedList<>();
+    private final List<Consumer<String>> messageListeners = new LinkedList<>();
     private final List<Consumer<ReadablePlayerModel>> playerListeners = new LinkedList<>();
     private final List<Consumer<AbstractOfferManager>> offersListeners = new LinkedList<>();
     private AbstractOfferManager offerManager;
     private final Observer<ReadablePlayerModel> playerObserver = this::notifyAllPlayers;
+
+    public Observer<ReadablePlayerModel> getPlayerObserver() {
+        return playerObserver;
+    }
+
+    public void broadcastMessage(String message) {
+        for (Consumer<String> listener : messageListeners) {
+            listener.accept(message);
+        }
+    }
 
     public void notifyAllPlayers(ReadablePlayerModel readablePlayers) {
         logger.debug("Notifying all players update");
@@ -30,22 +39,6 @@ public class Broadcaster {
                 playerListener.accept(readablePlayers);
             }
         });
-    }
-
-    public Observer<ReadablePlayerModel> getPlayerObserver() {
-        return playerObserver;
-    }
-
-    public void registerForPlayers(Consumer<ReadablePlayerModel> consumer) {
-        if (consumer != null) {
-            playerListeners.add(consumer);
-        }
-    }
-
-    public void deregisterForPlayers(Consumer<ReadablePlayerModel> consumer) {
-        if (consumer != null) {
-            playerListeners.remove(consumer);
-        }
     }
 
     public void startOffers(AbstractOfferManager offerManager) {
@@ -76,6 +69,18 @@ public class Broadcaster {
         });
     }
 
+    public void registerForPlayers(Consumer<ReadablePlayerModel> consumer) {
+        if (consumer != null) {
+            playerListeners.add(consumer);
+        }
+    }
+
+    public void deregisterForPlayers(Consumer<ReadablePlayerModel> consumer) {
+        if (consumer != null) {
+            playerListeners.remove(consumer);
+        }
+    }
+
     public void registerForOffers(Consumer<AbstractOfferManager> offerManagerConsumer) {
         if (offerManagerConsumer != null) {
             offersListeners.add(offerManagerConsumer);
@@ -88,6 +93,18 @@ public class Broadcaster {
     public void deregisterFromOffers(Consumer<AbstractOfferManager> offerManagerConsumer) {
         if (offerManagerConsumer != null) {
             offersListeners.remove(offerManagerConsumer);
+        }
+    }
+
+    public void registerForMessages(Consumer<String> messageConsumer) {
+        if (messageConsumer != null) {
+            messageListeners.add(messageConsumer);
+        }
+    }
+
+    public void deregisterForMessages(Consumer<String> messageConsumer) {
+        if (messageConsumer != null) {
+            offersListeners.remove(messageConsumer);
         }
     }
 }

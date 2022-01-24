@@ -1,5 +1,6 @@
 package it.monopoly.controller;
 
+import it.monopoly.controller.event.EventDispatcher;
 import it.monopoly.controller.player.PlayerController;
 import it.monopoly.manager.player.PlayerManager;
 import it.monopoly.manager.randomizer.RandomizationManager;
@@ -9,12 +10,16 @@ import it.monopoly.view.Observer;
 
 public class TurnController implements Observer<ReadablePlayerModel> {
     private final PlayerController playerController;
+    private final EventDispatcher eventDispatcher;
     private final RandomizationManager randomizationManager;
     private int currentPlayerIndex = -1;
     private PlayerModel currentPlayer;
 
-    public TurnController(PlayerController playerController, RandomizationManager randomizationManager) {
+    public TurnController(PlayerController playerController,
+                          EventDispatcher eventDispatcher,
+                          RandomizationManager randomizationManager) {
         this.playerController = playerController;
+        this.eventDispatcher = eventDispatcher;
         this.randomizationManager = randomizationManager;
     }
 
@@ -44,14 +49,18 @@ public class TurnController implements Observer<ReadablePlayerModel> {
     }
 
     private void notifyPlayerTurn() {
-        if (getCurrentPlayer() == null) {
+        PlayerModel currentPlayer = getCurrentPlayer();
+        if (currentPlayer == null) {
             nextTurn();
+            return;
         }
-        PlayerManager manager = playerController.getManager(getCurrentPlayer());
+        PlayerManager manager = playerController.getManager(currentPlayer);
         if (manager != null) {
             boolean tookTurn = manager.startTurn();
             if (!tookTurn) {
                 nextTurn();
+            } else {
+                eventDispatcher.sendMessage(currentPlayer.getName() + " turn");
             }
         }
     }

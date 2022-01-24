@@ -5,6 +5,7 @@ import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Push;
@@ -42,6 +43,7 @@ public class MainView extends HorizontalLayout {
     private OffersView offersView;
     private PlayerListView playerListView;
     private Consumer<ReadablePlayerModel> allPlayersConsumer;
+    private Consumer<String> messageConsumer;
 
     public MainView(@Autowired Controller controller) {
         this.controller = controller;
@@ -179,6 +181,20 @@ public class MainView extends HorizontalLayout {
             consumers.put(className, consumer);
         }
         return consumer;
+    }
+
+    public Consumer<String> getMessageConsumer() {
+        if (messageConsumer == null) {
+            messageConsumer = this::publishNotification;
+        }
+        return messageConsumer;
+    }
+
+    public void publishNotification(String message) {
+        Notification notification = new Notification(message);
+        notification.setPosition(Notification.Position.TOP_END);
+        notification.setDuration(1500);
+        notification.open();
     }
 
     public Consumer<ReadablePlayerModel> getAllPlayerConsumer() {
