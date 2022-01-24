@@ -40,6 +40,8 @@ public class MainView extends HorizontalLayout {
     private final Map<Class<?>, Observer<?>> observers = new HashMap<>();
     private final Map<Class<?>, Consumer<?>> consumers = new HashMap<>();
     private OffersView offersView;
+    private PlayerListView playerListView;
+    private Consumer<ReadablePlayerModel> allPlayersConsumer;
 
     public MainView(@Autowired Controller controller) {
         this.controller = controller;
@@ -67,16 +69,18 @@ public class MainView extends HorizontalLayout {
                         .getFirstSelectedItem()
                         .ifPresentOrElse(MainView.this::displayCommands, () -> propertyCommandButtonView.clear())
         );
-
-
         propertyCommandButtonView = new CommandButtonView();
-
         VerticalLayout propertiesVerticalLayout = new VerticalLayout();
         propertiesVerticalLayout.setMargin(false);
         propertiesVerticalLayout.setHeight(50, Unit.PERCENTAGE);
+
+        playerListView = new PlayerListView();
+        playerListView.setHeight(50, Unit.PERCENTAGE);
+        updateAllPlayers(readablePlayer);
+
         propertiesVerticalLayout.add(propertyListView, propertyCommandButtonView);
 
-        leftLayout.add(propertiesVerticalLayout);
+        leftLayout.add(playerListView, propertiesVerticalLayout);
 
         VerticalLayout rightLayout = new VerticalLayout();
 
@@ -177,6 +181,13 @@ public class MainView extends HorizontalLayout {
         return consumer;
     }
 
+    public Consumer<ReadablePlayerModel> getAllPlayerConsumer() {
+        if (allPlayersConsumer == null) {
+            allPlayersConsumer = this::updateAllPlayers;
+        }
+        return allPlayersConsumer;
+    }
+
     public void updatePlayer(ReadablePlayerModel readablePlayer) {
         this.readablePlayer = readablePlayer;
         ViewUtil.runOnUiThread(getUI(), () -> {
@@ -201,8 +212,9 @@ public class MainView extends HorizontalLayout {
         propertyCommandButtonView.setActive(active);
     }
 
-    public void updateAllPlayers(List<ReadablePlayerModel> players) {
-
+    public void updateAllPlayers(ReadablePlayerModel players) {
+        List<ReadablePlayerModel> list = controller.getPlayers();
+        ViewUtil.runOnUiThread(getUI(), () -> playerListView.setPlayers(list));
     }
 
     @ClientCallable

@@ -30,10 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Component
 public class Controller {
@@ -78,7 +75,7 @@ public class Controller {
         randomizationManager = new RandomizationManager(properties, configuration);
         turnController = new TurnController(playerController, randomizationManager);
 
-        broadcaster = new Broadcaster(playerController);
+        broadcaster = new Broadcaster();
         eventDispatcher = new MainEventDispatcher(broadcaster, viewController);
 
         PriceManagerDispatcher priceManagerDispatcher = new PriceManagerDispatcher(randomizationManager.getPropertyRandomizerManager(),
@@ -101,9 +98,11 @@ public class Controller {
         }
         PlayerManager manager = playerController.getManager(player);
         mapper.register(manager);
-        manager.register(viewController.getPlayerObserver(player));
         broadcaster.registerForOffers(viewController.getAuctionConsumer(player));
+        broadcaster.registerForPlayers(viewController.getAllPlayersConsumer(player));
+        manager.register(viewController.getPlayerObserver(player));
         manager.register(turnController);
+        manager.register(broadcaster.getPlayerObserver());
         LogManager.getLogger(getClass()).info("Adding new player {}#{}", player.getName(), player.getId());
         return player;
     }
@@ -126,8 +125,12 @@ public class Controller {
         return propertyController.getModels();
     }
 
-    public List<PlayerModel> getPlayers() {
-        return playerController.getModels();
+    public List<ReadablePlayerModel> getPlayers() {
+        List<ReadablePlayerModel> list = new LinkedList<>();
+        for (PlayerModel model : playerController.getModels()) {
+            list.add(playerController.getManager(model).getReadable());
+        }
+        return list;
     }
 
     public ReadablePlayerModel getReadablePlayer(PlayerModel playerModel) {

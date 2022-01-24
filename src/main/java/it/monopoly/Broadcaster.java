@@ -1,11 +1,11 @@
 package it.monopoly;
 
-import it.monopoly.controller.player.PlayerController;
 import it.monopoly.manager.AbstractOfferManager;
-import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.ReadablePlayerModel;
 import it.monopoly.model.property.PropertyModel;
 import it.monopoly.view.Observer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -14,61 +14,66 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class Broadcaster {
+    private final Logger logger = LogManager.getLogger(getClass());
     private final Executor executor = Executors.newSingleThreadExecutor();
-    private final PlayerController playerController;
 
     private final List<Consumer<PropertyModel>> propertyListeners = new LinkedList<>();
     private final List<Consumer<ReadablePlayerModel>> playerListeners = new LinkedList<>();
     private final List<Consumer<AbstractOfferManager>> offersListeners = new LinkedList<>();
     private AbstractOfferManager offerManager;
-    private Observer<ReadablePlayerModel> playerObserver;
+    private final Observer<ReadablePlayerModel> playerObserver = this::notifyAllPlayers;
 
-    public Broadcaster(PlayerController playerController) {
-        this.playerController = playerController;
+    public void notifyAllPlayers(ReadablePlayerModel readablePlayers) {
+        logger.debug("Notifying all players update");
+        executor.execute(() -> {
+            for (Consumer<ReadablePlayerModel> playerListener : playerListeners) {
+                playerListener.accept(readablePlayers);
+            }
+        });
     }
 
-    public void registerPlayerListener(Consumer<ReadablePlayerModel> consumer) {
-        playerListeners.add(consumer);
-    }
-
-    public void deregisterPlayerListener(Consumer<ReadablePlayerModel> consumer) {
-        playerListeners.remove(consumer);
-    }
-
-    public Observer<ReadablePlayerModel> getAllPlayersObserver() {
-        if (playerObserver == null) {
-            playerObserver = readablePlayer -> {
-                for (Consumer<ReadablePlayerModel> listener : playerListeners) {
-                    executor.execute(() -> listener.accept(readablePlayer));
-                }
-            };
-        }
+    public Observer<ReadablePlayerModel> getPlayerObserver() {
         return playerObserver;
     }
 
-    public void getPlayerObserver(PlayerModel player, Consumer<ReadablePlayerModel> consumer) {
-        if (player != null) {
-            Observer<ReadablePlayerModel> observer =
-                    readablePlayer -> executor.execute(() -> consumer.accept(readablePlayer));
-            playerController.getManager(player).register(observer);
+    public void registerForPlayers(Consumer<ReadablePlayerModel> consumer) {
+        if (consumer != null) {
+            playerListeners.add(consumer);
+        }
+    }
+
+    public void deregisterForPlayers(Consumer<ReadablePlayerModel> consumer) {
+        if (consumer != null) {
+            playerListeners.remove(consumer);
         }
     }
 
     public void startOffers(AbstractOfferManager offerManager) {
         if (this.offerManager != null) {
+            logger.error("Sell/Auction already started");
             return;
         }
-        this.offerManager = offerManager;
-        for (Consumer<AbstractOfferManager> listener : offersListeners) {
-            listener.accept(offerManager);
-        }
+        logger.debug("Notifying all players for auction/sell start");
+        executor.execute(() -> {
+            this.offerManager = offerManager;
+            for (Consumer<AbstractOfferManager> listener : offersListeners) {
+                listener.accept(offerManager);
+            }
+        });
     }
 
     public void endOffers(AbstractOfferManager offerManager) {
-        for (Consumer<AbstractOfferManager> offersEndListener : offersListeners) {
-            offersEndListener.accept(offerManager);
+        if (offerManager == null) {
+            logger.error("No auction/sell going");
+            return;
         }
-        this.offerManager = null;
+        logger.debug("Notifying all players for auction/sell end");
+        executor.execute(() -> {
+            for (Consumer<AbstractOfferManager> offersEndListener : offersListeners) {
+                offersEndListener.accept(offerManager);
+            }
+            this.offerManager = null;
+        });
     }
 
     public void registerForOffers(Consumer<AbstractOfferManager> offerManagerConsumer) {

@@ -1,12 +1,12 @@
 package it.monopoly.controller;
 
 import it.monopoly.manager.AbstractOfferManager;
-import it.monopoly.manager.AuctionManager;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.ReadablePlayerModel;
 import it.monopoly.view.MainView;
 import it.monopoly.view.Observer;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -28,6 +28,10 @@ public class ViewController {
 
     public Consumer<AbstractOfferManager> getAuctionConsumer(PlayerModel player) {
         return playerViewMap.get(player).getConsumer(AbstractOfferManager.class);
+    }
+
+    public Consumer<ReadablePlayerModel> getAllPlayersConsumer(PlayerModel player) {
+        return playerViewMap.get(player).getAllPlayerConsumer();
     }
 
     public Observer<ReadablePlayerModel> getPlayerObserver(PlayerModel player) {
