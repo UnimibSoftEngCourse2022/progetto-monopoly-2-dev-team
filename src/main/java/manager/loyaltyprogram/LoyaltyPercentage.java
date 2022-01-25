@@ -21,8 +21,14 @@ public class LoyaltyPercentage extends LoyaltyProgram {
     @Override
     public void gatherSales(PlayerModel creditor, int price) {
         if (creditor != null && creditor.equals(this.creditor) && percentage < MAX_PERCENTAGE) {
-            percentage += price * 0.01F;
+
+            if (randomnessIndex == 0F) {
+                percentage += price * 0.01F;
+            } else {
+                percentage += price * (randomnessIndex * 0.1F);
+            }
         }
+
         if (percentage > MAX_PERCENTAGE) {
             percentage = MAX_PERCENTAGE;
         }
@@ -33,6 +39,7 @@ public class LoyaltyPercentage extends LoyaltyProgram {
         if (creditor != null && creditor.equals(this.creditor)) {
             return price - (int) (price * percentage);
         }
+
         return price;
     }
 

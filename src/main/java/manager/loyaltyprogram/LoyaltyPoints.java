@@ -20,8 +20,14 @@ public class LoyaltyPoints extends LoyaltyProgram {
     @Override
     public void gatherSales(PlayerModel creditor, int price) {
         if (creditor != null && creditor.equals(this.creditor) && points < MAX_POINTS) {
-            points += price * 0.1F;
+
+            if (randomnessIndex == 0) {
+                points += price * 0.1F;
+            } else {
+                points += price * (randomnessIndex * 0.1F);
+            }
         }
+
         if (points > MAX_POINTS) {
             points = MAX_POINTS;
         }
@@ -30,7 +36,9 @@ public class LoyaltyPoints extends LoyaltyProgram {
     @Override
     public int spendSales(PlayerModel creditor, int price) {
         if (creditor != null && creditor.equals(this.creditor)) {
+
             int priceSaled;
+
             if (price >= points) {
                 priceSaled = price - points;
                 points = 0;
@@ -41,6 +49,7 @@ public class LoyaltyPoints extends LoyaltyProgram {
 
             return priceSaled;
         }
+
         return price;
     }
 
