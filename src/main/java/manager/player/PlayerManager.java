@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerManager extends Manager<PlayerModel> {
+
     private int funds;
     private PlayerState state;
     private Position position;
@@ -105,7 +106,7 @@ public class PlayerManager extends Manager<PlayerModel> {
     }
 
     public boolean joinLoyaltyProgram(LoyaltyProgram loyaltyProgram) {
-        if (this.loyaltyProgram != null) {
+        if (this.loyaltyProgram == null) {
             this.loyaltyProgram = loyaltyProgram;
             return true;
         }
@@ -140,6 +141,10 @@ public class PlayerManager extends Manager<PlayerModel> {
 
     public Position getPosition() {
         return position;
+    }
+
+    public LoyaltyProgram getLoyaltyProgram() {
+        return loyaltyProgram;
     }
 
     //PRIVATE METHODS

@@ -1,14 +1,19 @@
 package ut;
 
+import controller.command.Command;
+import controller.player.command.JoinLoyaltyProgramCommandBuilder;
+import controller.player.command.PayRentCommandBuilder;
+import manager.loyaltyprogram.LoyaltyProgram;
 import manager.player.PlayerManager;
 import model.player.PlayerModel;
 import model.player.PlayerState;
 import model.player.Position;
+import model.property.PropertyModel;
 import org.junit.Assert;
 import org.junit.Test;
 import util.Pair;
 
-public class PlayerManagerTest {
+public class PlayerManagerTest extends BaseTest {
 
     @Test
     public void playerManagerTest() {
@@ -48,5 +53,198 @@ public class PlayerManagerTest {
         Assert.assertEquals(19, position.getIntPosition());
         Assert.assertEquals(new Pair<>(6, 19), position.getLastMovement().getMovement());
         Assert.assertTrue(position.getLastMovement().isDirect());
+    }
+
+    @Test
+    public void loyaltyProgramPercentageTest() {
+
+        resetPlayers();
+        PlayerModel debtor = players.get(0);
+        PlayerModel creditor = players.get(1);
+
+        PropertyModel property = properties.get(21);
+
+        ownerMapper.setOwner(property, creditor);
+        property.setHouseNumber(1);
+
+        Assert.assertNull(playerController.getManager(debtor).getLoyaltyProgram());
+
+        Command joinLoyaltyProgramCommand =
+                commandBuilderDispatcher
+                        .createCommandBuilder(JoinLoyaltyProgramCommandBuilder.class)
+                        .setDebtor(debtor)
+                        .setCreditor(creditor)
+                        .setType(LoyaltyProgram.Type.PERCENTAGE)
+                        .build();
+
+        Assert.assertTrue(joinLoyaltyProgramCommand.isEnabled());
+
+        joinLoyaltyProgramCommand.execute();
+
+        LoyaltyProgram loyaltyProgram = playerController.getManager(debtor).getLoyaltyProgram();
+
+        Assert.assertNotNull(loyaltyProgram);
+        Assert.assertEquals(creditor, loyaltyProgram.getCreditor());
+
+        // first time using loyalty program
+        Command payRentCommand = commandBuilderDispatcher
+                .createCommandBuilder(PayRentCommandBuilder.class)
+                .setPlayer(debtor)
+                .setProperty(property)
+                .build();
+
+        int funds = playerController.getManager(debtor).getFunds();
+
+        payRentCommand.execute();
+
+        Assert.assertEquals(funds - 190, playerController.getManager(debtor).getFunds());
+
+        // second time using loyalty program
+        payRentCommand = commandBuilderDispatcher
+                .createCommandBuilder(PayRentCommandBuilder.class)
+                .setPlayer(debtor)
+                .setProperty(property)
+                .build();
+
+        funds = playerController.getManager(debtor).getFunds();
+
+        payRentCommand.execute();
+
+        Assert.assertEquals(funds - 150, playerController.getManager(debtor).getFunds());
+
+        // max percentage
+        payRentCommand = commandBuilderDispatcher
+                .createCommandBuilder(PayRentCommandBuilder.class)
+                .setPlayer(debtor)
+                .setProperty(property)
+                .build();
+
+        funds = playerController.getManager(debtor).getFunds();
+
+        payRentCommand.execute();
+
+        Assert.assertEquals(funds - 150, playerController.getManager(debtor).getFunds());
+
+        // players who didn't join a loyalt program always pay the same
+        PlayerModel debtor2 = players.get(2);
+
+        payRentCommand = commandBuilderDispatcher
+                .createCommandBuilder(PayRentCommandBuilder.class)
+                .setPlayer(debtor2)
+                .setProperty(property)
+                .build();
+
+        int funds2 = playerController.getManager(debtor2).getFunds();
+
+        payRentCommand.execute();
+
+        Assert.assertEquals(funds2 - 200, playerController.getManager(debtor2).getFunds());
+
+        payRentCommand = commandBuilderDispatcher
+                .createCommandBuilder(PayRentCommandBuilder.class)
+                .setPlayer(debtor2)
+                .setProperty(property)
+                .build();
+
+        funds2 = playerController.getManager(debtor2).getFunds();
+
+        payRentCommand.execute();
+
+        Assert.assertEquals(funds2 - 200, playerController.getManager(debtor2).getFunds());
+    }
+
+    @Test
+    public void loyaltyProgramPointsTest() {
+
+        resetPlayers();
+        PlayerModel debtor = players.get(0);
+        PlayerModel creditor = players.get(1);
+
+        PropertyModel property = properties.get(21);
+
+        ownerMapper.setOwner(property, creditor);
+        property.setHouseNumber(1);
+
+        Assert.assertNull(playerController.getManager(debtor).getLoyaltyProgram());
+
+        Command joinLoyaltyProgramCommand =
+                commandBuilderDispatcher
+                        .createCommandBuilder(JoinLoyaltyProgramCommandBuilder.class)
+                        .setDebtor(debtor)
+                        .setCreditor(creditor)
+                        .setType(LoyaltyProgram.Type.POINTS)
+                        .build();
+
+        Assert.assertTrue(joinLoyaltyProgramCommand.isEnabled());
+
+        joinLoyaltyProgramCommand.execute();
+
+        LoyaltyProgram loyaltyProgram = playerController.getManager(debtor).getLoyaltyProgram();
+
+        Assert.assertNotNull(loyaltyProgram);
+        Assert.assertEquals(creditor, loyaltyProgram.getCreditor());
+
+        // first time using loyalty program
+        Command payRentCommand = commandBuilderDispatcher
+                .createCommandBuilder(PayRentCommandBuilder.class)
+                .setPlayer(debtor)
+                .setProperty(property)
+                .build();
+
+        int funds = playerController.getManager(debtor).getFunds();
+        int points = (int) loyaltyProgram.getValue();
+
+        payRentCommand.execute();
+
+        Assert.assertEquals(funds - 200, playerController.getManager(debtor).getFunds());
+        Assert.assertEquals(points + 20, loyaltyProgram.getValue());
+
+        // second time using loyalty program
+        payRentCommand = commandBuilderDispatcher
+                .createCommandBuilder(PayRentCommandBuilder.class)
+                .setPlayer(debtor)
+                .setProperty(property)
+                .build();
+
+        funds = playerController.getManager(debtor).getFunds();
+        points = (int) loyaltyProgram.getValue();
+
+        payRentCommand.execute();
+
+        Assert.assertEquals(funds - 200, playerController.getManager(debtor).getFunds());
+        Assert.assertEquals(points + 20, loyaltyProgram.getValue());
+
+        // simil PayRentCommand
+        funds = playerController.getManager(debtor).getFunds();
+        points = (int) loyaltyProgram.getValue();
+
+        // use points case
+        playerController.getManager(debtor).spend(loyaltyProgram.spendSales(creditor, property.getHouseRent()));
+        Assert.assertEquals(funds - 160, playerController.getManager(debtor).getFunds());
+        Assert.assertEquals(points - 40, loyaltyProgram.getValue());
+
+        // use points case - points > rent
+        funds = playerController.getManager(debtor).getFunds();
+        points = (int) loyaltyProgram.getValue();
+
+        commandBuilderDispatcher
+                .createCommandBuilder(PayRentCommandBuilder.class)
+                .setPlayer(debtor)
+                .setProperty(property)
+                .build()
+                .execute();
+
+        Assert.assertEquals(funds - 200, playerController.getManager(debtor).getFunds());
+        Assert.assertEquals(points + 20, loyaltyProgram.getValue());
+
+        funds = playerController.getManager(debtor).getFunds();
+
+        PropertyModel property2 = properties.get(0);
+        ownerMapper.setOwner(property2, creditor);
+        
+        playerController.getManager(debtor).spend(loyaltyProgram.spendSales(creditor, property2.getBaseRent()));
+
+        Assert.assertEquals(funds, playerController.getManager(debtor).getFunds());
+        Assert.assertEquals(18, loyaltyProgram.getValue());
     }
 }

@@ -2,7 +2,7 @@ package model;
 
 import manager.loyaltyprogram.LoyaltyProgram;
 
-public class    Configuration {
+public class Configuration {
 
     private final int playerNumber;
     private final int playerFund;

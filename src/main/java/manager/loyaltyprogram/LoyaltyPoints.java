@@ -5,16 +5,22 @@ import model.player.PlayerModel;
 public class LoyaltyPoints extends LoyaltyProgram {
 
     private final int MAX_POINTS = 200;
+    private final float randomnessIndex;
     private int points = 0;
 
-    public LoyaltyPoints(PlayerModel playerModel) {
-        super(playerModel, Type.POINTS);
+    public LoyaltyPoints(PlayerModel creditor) {
+        this(creditor, 0F);
+    }
+
+    public LoyaltyPoints(PlayerModel creditor, float randomnessIndex) {
+        super(creditor, Type.POINTS);
+        this.randomnessIndex = randomnessIndex;
     }
 
     @Override
-    public void gatherSales(PlayerModel playerModel, int price) {
-        if (playerModel.equals(creditor) && points < MAX_POINTS) {
-            points += price * 0.01F;
+    public void gatherSales(PlayerModel creditor, int price) {
+        if (creditor != null && creditor.equals(this.creditor) && points < MAX_POINTS) {
+            points += price * 0.1F;
         }
         if (points > MAX_POINTS) {
             points = MAX_POINTS;
@@ -22,12 +28,25 @@ public class LoyaltyPoints extends LoyaltyProgram {
     }
 
     @Override
-    public int spendSales(PlayerModel playerModel, int price) {
-        if (playerModel.equals(creditor)) {
-            int priceSaled = price - points;
-            points = 0;
+    public int spendSales(PlayerModel creditor, int price) {
+        if (creditor != null && creditor.equals(this.creditor)) {
+            int priceSaled;
+            if (price >= points) {
+                priceSaled = price - points;
+                points = 0;
+            } else {
+                priceSaled = 0;
+                points = points - price;
+            }
+
             return priceSaled;
         }
         return price;
     }
+
+    @Override
+    public Object getValue() {
+        return points;
+    }
+
 }

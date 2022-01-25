@@ -2,9 +2,10 @@ package manager.loyaltyprogram;
 
 import model.player.PlayerModel;
 
-public abstract class LoyaltyProgram {
+public abstract class LoyaltyProgram<T> {
 
-    private Type type;
+    private T value;
+    private final Type type;
     protected PlayerModel creditor;
 
     public enum Type {
@@ -12,7 +13,11 @@ public abstract class LoyaltyProgram {
         POINTS
     }
 
-    public LoyaltyProgram(PlayerModel player, Type type) {}
+    public LoyaltyProgram(PlayerModel creditor, Type type) {
+
+        this.creditor = creditor;
+        this.type = type;
+    }
 
     public Type getType() {
         return type;
@@ -25,4 +30,6 @@ public abstract class LoyaltyProgram {
     public abstract void gatherSales(PlayerModel player, int price);
 
     public abstract int spendSales(PlayerModel player, int price);
+
+    public abstract T getValue();
 }
