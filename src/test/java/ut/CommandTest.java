@@ -4,7 +4,8 @@ import it.monopoly.controller.TradeController;
 import it.monopoly.controller.command.Command;
 import it.monopoly.controller.command.CommandBuilderDispatcher;
 import it.monopoly.controller.command.MainCommandBuilderDispatcher;
-import it.monopoly.controller.event.DiceRollEventCallback;
+import it.monopoly.controller.event.callback.BuyOrAuctionCallback;
+import it.monopoly.controller.event.callback.DiceRollEventCallback;
 import it.monopoly.controller.event.DiceRoller;
 import it.monopoly.controller.event.EventDispatcher;
 import it.monopoly.controller.player.PlayerController;
@@ -19,6 +20,7 @@ import it.monopoly.manager.pricemanager.PriceManagerDispatcher;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.property.PropertyCategory;
 import it.monopoly.model.property.PropertyModel;
+import it.monopoly.model.property.ReadablePropertyModel;
 import it.monopoly.util.Pair;
 import org.junit.Assert;
 import org.junit.Before;
@@ -49,6 +51,10 @@ public class CommandTest extends BaseTest {
             @Override
             public void startOffer(AbstractOfferManager offerManager) {
 
+            }
+
+            @Override
+            public void buyOrAuction(PlayerModel player, ReadablePropertyModel propertyModel, BuyOrAuctionCallback callback) {
             }
 
             @Override

@@ -3,6 +3,7 @@ package it.monopoly.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.monopoly.Broadcaster;
+import it.monopoly.controller.board.Board;
 import it.monopoly.controller.command.CommandBuilderDispatcher;
 import it.monopoly.controller.command.MainCommandBuilderDispatcher;
 import it.monopoly.controller.event.EventDispatcher;
@@ -49,6 +50,7 @@ public class Controller implements Serializable {
     private final Logger logger = LogManager.getLogger(getClass());
     private final Random random = new Random();
     private boolean gameStarted = false;
+    private Board board;
 
     Controller() {
         this(null);
@@ -95,6 +97,7 @@ public class Controller implements Serializable {
                 tradeController,
                 eventDispatcher
         );
+        board = new Board(builderDispatcher, playerController, properties);
         commandController = new MainCommandController(builderDispatcher);
     }
 
@@ -110,10 +113,42 @@ public class Controller implements Serializable {
         broadcaster.registerForPlayers(viewController.getAllPlayersConsumer(player));
         broadcaster.registerForMessages(viewController.getMessageConsumer(player));
         manager.register(viewController.getPlayerObserver(player));
+        manager.getPositionObservable().register(board);
         manager.register(turnController);
         manager.register(broadcaster.getPlayerObserver());
         LogManager.getLogger(getClass()).info("Adding new player {}#{}", player.getName(), player.getId());
         return player;
+    }
+
+    public void closePlayerSession(PlayerModel player) {
+        synchronized (playerController.getModels()) {
+
+            logger.info("Removing player {}#{}", player.getName(), player.getId());
+
+            PlayerManager manager = playerController.getManager(player);
+
+            mapper.deregister(manager);
+            broadcaster.deregisterFromOffers(viewController.getAuctionConsumer(player));
+            broadcaster.deregisterForPlayers(viewController.getAllPlayersConsumer(player));
+            broadcaster.deregisterForMessages(viewController.getMessageConsumer(player));
+            manager.deregister(viewController.getPlayerObserver(player));
+            manager.getPositionObservable().deregister(board);
+            manager.deregister(turnController);
+            manager.deregister(broadcaster.getPlayerObserver());
+
+            manager.setDiceRolled();
+            manager.endTurn();
+            mapper.removeAllPlayerProperties(player);
+
+            playerController.removePlayer(player);
+            manager.deregister(turnController);
+            viewController.remove(player);
+
+
+            if (playerController.getModels().isEmpty()) {
+                stopGame();
+            }
+        }
     }
 
     public void startGame() {
@@ -181,31 +216,6 @@ public class Controller implements Serializable {
         PropertyModel property = models.get(index);
         LogManager.getLogger(getClass()).info("New property ({}) {} to player {}", random, property, player.getId());
         propertyController.getManager(property).setOwner(player);
-    }
-
-    public void closePlayerSession(PlayerModel player) {
-        synchronized (playerController.getModels()) {
-
-            logger.info("Removing player {}#{}", player.getName(), player.getId());
-
-            PlayerManager manager = playerController.getManager(player);
-
-            manager.deregister(viewController.getPlayerObserver(player));
-            broadcaster.deregisterFromOffers(viewController.getAuctionConsumer(player));
-            manager.setDiceRolled();
-            manager.endTurn();
-            mapper.deregister(manager);
-            mapper.removeAllPlayerProperties(player);
-
-            playerController.removePlayer(player);
-            manager.deregister(turnController);
-            viewController.remove(player);
-
-
-            if (playerController.getModels().isEmpty()) {
-                stopGame();
-            }
-        }
     }
 
     public void stopGame() {

@@ -5,7 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.monopoly.controller.TradeController;
 import it.monopoly.controller.command.CommandBuilderDispatcher;
 import it.monopoly.controller.command.MainCommandBuilderDispatcher;
-import it.monopoly.controller.event.DiceRollEventCallback;
+import it.monopoly.controller.event.callback.BuyOrAuctionCallback;
+import it.monopoly.controller.event.callback.DiceRollEventCallback;
 import it.monopoly.controller.event.DiceRoller;
 import it.monopoly.controller.event.EventDispatcher;
 import it.monopoly.controller.player.PlayerController;
@@ -17,6 +18,7 @@ import it.monopoly.model.PropertyMapper;
 import it.monopoly.model.PropertyOwnerMapper;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.property.PropertyModel;
+import it.monopoly.model.property.ReadablePropertyModel;
 import org.junit.Before;
 
 import java.io.File;
@@ -83,6 +85,10 @@ public abstract class BaseTest {
 
             @Override
             public void startOffer(AbstractOfferManager offerManager) {
+            }
+
+            @Override
+            public void buyOrAuction(PlayerModel player, ReadablePropertyModel propertyModel, BuyOrAuctionCallback callback) {
             }
 
             @Override

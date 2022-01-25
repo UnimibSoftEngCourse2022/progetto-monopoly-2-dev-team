@@ -5,18 +5,22 @@ import it.monopoly.controller.board.dispenser.*;
 import it.monopoly.controller.board.space.Space;
 import it.monopoly.controller.command.CommandBuilderDispatcher;
 import it.monopoly.controller.player.PlayerController;
+import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.property.PropertyModel;
+import it.monopoly.view.Observer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Board {
+public class Board implements Observer<PlayerModel> {
 
     private final List<Space> spaces;
+    private final PlayerController playerController;
 
     public Board(CommandBuilderDispatcher commandBuilderDispatcher,
                  PlayerController playerController,
                  List<PropertyModel> properties) {
+        this.playerController = playerController;
         this.spaces = new ArrayList<>();
 
         DrawableCardController drawableCardController = new DrawableCardController(true);
@@ -42,5 +46,11 @@ public class Board {
             return spaces.get(position);
         }
         return null;
+    }
+
+    @Override
+    public void notify(PlayerModel player) {
+        int position = playerController.getManager(player).getPosition().getIntPosition();
+        getSpace(position).applyEffect(player);
     }
 }

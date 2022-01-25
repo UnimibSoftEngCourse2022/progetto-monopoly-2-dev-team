@@ -1,6 +1,8 @@
 package it.monopoly.controller.player.command;
 
+import it.monopoly.controller.TradeController;
 import it.monopoly.controller.command.CommandBuilder;
+import it.monopoly.controller.event.EventDispatcher;
 import it.monopoly.controller.property.PropertyController;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.property.PropertyModel;
@@ -11,12 +13,19 @@ public class PayRentCommandBuilder implements CommandBuilder {
     private final Logger logger = LogManager.getLogger(getClass());
     private final PropertyController propertyController;
     private final PayCommandBuilder payCommandBuilder;
+    private final EventDispatcher eventDispatcher;
+    private final TradeController tradeController;
     private PlayerModel player;
     private PropertyModel property;
 
-    public PayRentCommandBuilder(PropertyController propertyController, PayCommandBuilder payCommandBuilder) {
+    public PayRentCommandBuilder(PropertyController propertyController,
+                                 PayCommandBuilder payCommandBuilder,
+                                 EventDispatcher eventDispatcher,
+                                 TradeController tradeController) {
         this.propertyController = propertyController;
         this.payCommandBuilder = payCommandBuilder;
+        this.eventDispatcher = eventDispatcher;
+        this.tradeController = tradeController;
     }
 
     public PayRentCommandBuilder setPlayer(PlayerModel player) {
@@ -31,6 +40,11 @@ public class PayRentCommandBuilder implements CommandBuilder {
 
     public PayRentCommand build() {
         logger.info("Building pay rent command");
-        return new PayRentCommand(propertyController, player, property, payCommandBuilder);
+        return new PayRentCommand(propertyController,
+                player,
+                property,
+                payCommandBuilder,
+                eventDispatcher,
+                tradeController);
     }
 }

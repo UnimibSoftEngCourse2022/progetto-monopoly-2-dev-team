@@ -22,6 +22,7 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     private static final int EARN_ON_GO = 200; //TODO Check configuration
     private final Logger logger = LogManager.getLogger(getClass());
     private final List<Observer<ReadablePlayerModel>> observers = new LinkedList<>();
+    private final List<Observer<PlayerModel>> positionObservers = new LinkedList<>();
     private final Position position;
     private final PropertyOwnerMapper ownerMapper;
     private boolean isTurn = false;
@@ -30,6 +31,7 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     private List<DrawableCardModel> drawableCardModels = new ArrayList<>();
     private PlayerState state;
     private int getOutOfJailTries = 0;
+    private Observable<PlayerModel> positionObservable;
 
     public PlayerManager(PlayerModel player, int funds, PropertyOwnerMapper ownerMapper) {
         super(player);
@@ -93,6 +95,7 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     public Position moveTo(int space, boolean direct) {
         if (canMove()) {
             position.setPosition(space, direct);
+            notifyPosition();
             logger.info("Player {} moved to space {}", model.getId(), space);
         }
         Pair<Integer, Integer> movement = position.getLastMovement().getMovement();
@@ -225,5 +228,40 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     @Override
     public void notify(List<PropertyModel> obj) {
         notifyReadable();
+    }
+
+    public Observable<PlayerModel> getPositionObservable() {
+        if (positionObservable == null) {
+            positionObservable = new Observable<>() {
+                @Override
+                public void register(Observer<PlayerModel> observer) {
+                    PlayerManager.this.registerPositionObserver(observer);
+                }
+
+                @Override
+                public void deregister(Observer<PlayerModel> observer) {
+                    PlayerManager.this.deregisterPositionObserver(observer);
+                }
+            };
+        }
+        return positionObservable;
+    }
+
+    private void registerPositionObserver(Observer<PlayerModel> observer) {
+        if (observer != null) {
+            positionObservers.add(observer);
+        }
+    }
+
+    private void deregisterPositionObserver(Observer<PlayerModel> observer) {
+        if (observer != null) {
+            positionObservers.remove(observer);
+        }
+    }
+
+    private void notifyPosition() {
+        for (Observer<PlayerModel> observer : positionObservers) {
+            observer.notify(model);
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ClientCallable;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -13,6 +14,7 @@ import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.router.Route;
 import it.monopoly.controller.Controller;
 import it.monopoly.controller.command.Command;
+import it.monopoly.controller.event.callback.BuyOrAuctionCallback;
 import it.monopoly.manager.AbstractOfferManager;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.PlayerState;
@@ -148,6 +150,30 @@ public class MainView extends HorizontalLayout {
                 add(offersView);
             }
         });
+    }
+
+    public void dialog(ReadablePropertyModel property, BuyOrAuctionCallback callback) {
+        Dialog dialog = new Dialog();
+        dialog.setCloseOnEsc(false);
+        dialog.setCloseOnOutsideClick(false);
+        VerticalLayout verticalDialogLayout = new VerticalLayout();
+        verticalDialogLayout.add(property.toString());
+
+        HorizontalLayout buttonLayout = new HorizontalLayout();
+        Button yesButton = new Button("Buy", e -> {
+            callback.buy();
+            dialog.close();
+        });
+        Button noButton = new Button("Start Auction", e -> {
+            callback.startAuction();
+            dialog.close();
+        });
+
+        buttonLayout.add(yesButton, noButton);
+        verticalDialogLayout.add(buttonLayout);
+        dialog.add(verticalDialogLayout);
+
+        dialog.open();
     }
 
     @SuppressWarnings(value = "unchecked")

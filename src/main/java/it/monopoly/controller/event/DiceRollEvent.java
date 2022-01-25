@@ -1,5 +1,6 @@
 package it.monopoly.controller.event;
 
+import it.monopoly.controller.event.callback.DiceRollEventCallback;
 import it.monopoly.util.Pair;
 
 import java.security.NoSuchAlgorithmException;

@@ -2,7 +2,11 @@ package it.monopoly.controller.event;
 
 import it.monopoly.Broadcaster;
 import it.monopoly.controller.ViewController;
+import it.monopoly.controller.event.callback.BuyOrAuctionCallback;
+import it.monopoly.controller.event.callback.DiceRollEventCallback;
 import it.monopoly.manager.AbstractOfferManager;
+import it.monopoly.model.player.PlayerModel;
+import it.monopoly.model.property.ReadablePropertyModel;
 
 public class MainEventDispatcher implements EventDispatcher {
     private final Broadcaster broadcaster;
@@ -34,6 +38,13 @@ public class MainEventDispatcher implements EventDispatcher {
                 broadcaster.endOffers(offerManager);
             }
         });
+    }
+
+    @Override
+    public void buyOrAuction(PlayerModel player,
+                             ReadablePropertyModel propertyModel,
+                             BuyOrAuctionCallback callback) {
+        viewController.getView(player).dialog(propertyModel, callback);
     }
 
     @Override

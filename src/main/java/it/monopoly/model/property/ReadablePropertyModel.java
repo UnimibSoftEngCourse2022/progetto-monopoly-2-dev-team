@@ -65,4 +65,16 @@ public class ReadablePropertyModel {
     public int getRent() {
         return rent;
     }
+
+    @Override
+    public String toString() {
+        return "ReadablePropertyModel{" +
+                "name=" + getName() +
+                ", price=" + price +
+                ", housePrice=" + housePrice +
+                ", hotelPrice=" + hotelPrice +
+                ", mortgageValue=" + mortgageValue +
+                ", rent=" + rent +
+                '}';
+    }
 }
