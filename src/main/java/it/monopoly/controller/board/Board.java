@@ -8,12 +8,14 @@ import it.monopoly.controller.player.PlayerController;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.property.PropertyModel;
 import it.monopoly.view.Observer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Board implements Observer<PlayerModel> {
-
+    private final Logger logger = LogManager.getLogger(getClass());
     private final List<Space> spaces;
     private final PlayerController playerController;
 
@@ -42,7 +44,7 @@ public class Board implements Observer<PlayerModel> {
     }
 
     public Space getSpace(int position) {
-        if (position > 0 && position < spaces.size()) {
+        if (position >= 0 && position < spaces.size()) {
             return spaces.get(position);
         }
         return null;
@@ -51,6 +53,10 @@ public class Board implements Observer<PlayerModel> {
     @Override
     public void notify(PlayerModel player) {
         int position = playerController.getManager(player).getPosition().getIntPosition();
-        getSpace(position).applyEffect(player);
+        Space space = getSpace(position);
+        logger.info("Applying effect of space {} -> {}", position, space != null ? space.getClass() : null);
+        if (space != null) {
+            space.applyEffect(player);
+        }
     }
 }
