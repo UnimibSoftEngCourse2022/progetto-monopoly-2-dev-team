@@ -48,7 +48,6 @@ public class CommandButtonView extends HorizontalLayout {
     }
 
     public void clear() {
-
         removeAll();
     }
 }

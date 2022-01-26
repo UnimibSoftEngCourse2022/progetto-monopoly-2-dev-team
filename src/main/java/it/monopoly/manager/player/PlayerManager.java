@@ -4,10 +4,7 @@ import it.monopoly.manager.Manager;
 import it.monopoly.manager.loyaltyprogram.LoyaltyProgram;
 import it.monopoly.model.DrawableCardModel;
 import it.monopoly.model.PropertyOwnerMapper;
-import it.monopoly.model.player.PlayerModel;
-import it.monopoly.model.player.PlayerState;
-import it.monopoly.model.player.Position;
-import it.monopoly.model.player.ReadablePlayerModel;
+import it.monopoly.model.player.*;
 import it.monopoly.model.property.PropertyModel;
 import it.monopoly.util.Pair;
 import it.monopoly.view.Observable;
@@ -18,10 +15,13 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class PlayerManager extends Manager<PlayerModel> implements Observable<ReadablePlayerModel>, Observer<List<PropertyModel>> {
     private static final int EARN_ON_GO = 200; //TODO Check configuration
     private final Logger logger = LogManager.getLogger(getClass());
+    private final Executor executor = Executors.newSingleThreadExecutor();
     private final List<Observer<ReadablePlayerModel>> observers = new LinkedList<>();
     private final List<Observer<PlayerModel>> positionObservers = new LinkedList<>();
     private final Position position;
@@ -95,16 +95,19 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     }
 
     public Position moveTo(int space, boolean direct) {
-        if (canMove()) {
-            position.setPosition(space, direct);
-            notifyPosition();
-            logger.info("Player {} moved to space {}", model.getId(), space);
+        synchronized (getPosition()) {
+            if (canMove()) {
+                position.setPosition(space, direct);
+                notifyPosition();
+                logger.info("Player {} moved to space {}", model.getId(), space);
+            }
+            PlayerMovement lastMovement = position.getLastMovement();
+            Pair<Integer, Integer> movement = lastMovement.getMovement();
+            if (!lastMovement.isDirect() && movement.getFirst() > movement.getSecond()) {
+                earn(EARN_ON_GO);
+            }
+            notifyReadable();
         }
-        Pair<Integer, Integer> movement = position.getLastMovement().getMovement();
-        if (!direct && movement.getFirst() > movement.getSecond()) {
-            earn(EARN_ON_GO);
-        }
-        notifyReadable();
         return position;
     }
 
@@ -200,10 +203,11 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     }
 
     public void setState(PlayerState state) {
-        boolean changed = this.state != state;
+        PlayerState previous = this.state;
+        boolean changed = previous != state;
         this.state = state;
         if (changed) {
-            logger.info("Player {} changed its state from {} to {}", model.getId(), this.state, state);
+            logger.info("Player {} changed its state from {} to {}", model.getId(), previous, state);
             notifyReadable();
         }
     }
@@ -226,7 +230,7 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
         if (!observers.isEmpty()) {
             ReadablePlayerModel readable = getReadable();
             for (Observer<ReadablePlayerModel> observer : observers) {
-                observer.notify(readable);
+                executor.execute(() -> observer.notify(readable));
             }
         }
     }
@@ -281,7 +285,7 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
 
     private void notifyPosition() {
         for (Observer<PlayerModel> observer : positionObservers) {
-            observer.notify(model);
+            executor.execute(() -> observer.notify(model));
         }
     }
 }

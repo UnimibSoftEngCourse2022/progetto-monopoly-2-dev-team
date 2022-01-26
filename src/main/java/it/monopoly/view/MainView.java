@@ -175,9 +175,11 @@ public class MainView extends HorizontalLayout {
     }
 
     private void showAndRemoveDialog(Dialog dialog) {
-        add(dialog);
-        dialog.addDialogCloseActionListener(e -> MainView.this.remove(dialog));
-        dialog.open();
+        ViewUtil.runOnUiThread(getUI(), () -> {
+            add(dialog);
+            dialog.addDialogCloseActionListener(e -> MainView.this.remove(dialog));
+            dialog.open();
+        });
     }
 
 
@@ -223,11 +225,13 @@ public class MainView extends HorizontalLayout {
     }
 
     public void publishNotification(String message) {
-        Notification notification = new Notification(message);
-        notification.setPosition(Notification.Position.TOP_END);
-        notification.setDuration(2000);
-        add(notification);
-        notification.open();
+        ViewUtil.runOnUiThread(getUI(), () -> {
+            Notification notification = new Notification(message);
+            notification.setPosition(Notification.Position.TOP_END);
+            notification.setDuration(2000);
+            add(notification);
+            notification.open();
+        });
     }
 
     public Consumer<ReadablePlayerModel> getAllPlayerConsumer() {
@@ -250,8 +254,8 @@ public class MainView extends HorizontalLayout {
 
     private void getPlayerCommands() {
         ViewUtil.runOnUiThread(getUI(), () -> {
-            playerCommandButtonView.clear();
-            controller.getCommandController().generateCommands(player);
+            List<Command> commands = controller.getCommandController().generateCommands(player);
+            playerCommandButtonView.newCommands(commands);
         });
     }
 
