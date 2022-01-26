@@ -10,8 +10,10 @@ public class GoToJailSpaceDispenser extends SpaceDispenser {
     private PlayerController playerController;
 
     public GoToJailSpaceDispenser(CommandBuilderDispatcher commandBuilderDispatcher,
+                                  PlayerController playerController,
                                   int... spaceIndex) {
         super(commandBuilderDispatcher, spaceIndex);
+        this.playerController = playerController;
     }
 
     @Override

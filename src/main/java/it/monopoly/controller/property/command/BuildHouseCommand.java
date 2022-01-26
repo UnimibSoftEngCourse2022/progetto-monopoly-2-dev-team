@@ -2,6 +2,7 @@ package it.monopoly.controller.property.command;
 
 import it.monopoly.controller.ManagerController;
 import it.monopoly.controller.command.Command;
+import it.monopoly.manager.pricemanager.PriceManager;
 import it.monopoly.manager.property.PropertyManager;
 import it.monopoly.model.property.PropertyModel;
 import org.apache.logging.log4j.LogManager;
@@ -19,7 +20,8 @@ public class BuildHouseCommand implements Command {
 
     @Override
     public String getCommandName() {
-        return "Build House";
+        PriceManager priceManager = controller.getManager(property).getPriceManager();
+        return "Build House: " + priceManager.getHousePrice();
     }
 
     @Override

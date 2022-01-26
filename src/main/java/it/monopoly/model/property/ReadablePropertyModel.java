@@ -6,14 +6,14 @@ public class ReadablePropertyModel {
     private final int housePrice;
     private final int hotelPrice;
     private final int mortgageValue;
-    private final int rent;
+    private final String rent;
 
     public ReadablePropertyModel(PropertyModel property,
                                  int price,
                                  int housePrice,
                                  int hotelPrice,
                                  int mortgageValue,
-                                 int rent) {
+                                 String rent) {
         this.model = property;
         this.price = price;
         this.housePrice = housePrice;
@@ -62,7 +62,7 @@ public class ReadablePropertyModel {
         return model.isMortgaged();
     }
 
-    public int getRent() {
+    public String getRent() {
         return rent;
     }
 

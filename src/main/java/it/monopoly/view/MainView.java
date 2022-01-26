@@ -235,7 +235,7 @@ public class MainView extends HorizontalLayout {
     public void updatePlayer(ReadablePlayerModel readablePlayer) {
         this.readablePlayer = readablePlayer;
         ViewUtil.runOnUiThread(getUI(), () -> {
-            propertyCommandButtonView.clear();
+            getPlayerCommands();
             getPropertiesAndUpdate();
             setButtonActive(!PlayerState.BANKRUPT.equals(readablePlayer.getState()) &&
                     readablePlayer.isTurn());
@@ -243,7 +243,14 @@ public class MainView extends HorizontalLayout {
         });
     }
 
-    public void getPropertiesAndUpdate() {
+    private void getPlayerCommands() {
+        ViewUtil.runOnUiThread(getUI(), () -> {
+            playerCommandButtonView.clear();
+            controller.getCommandController().generateCommands(player);
+        });
+    }
+
+    private void getPropertiesAndUpdate() {
         List<ReadablePropertyModel> properties = controller.getReadableProperties(player);
         ViewUtil.runOnUiThread(getUI(), () -> {
             propertyCommandButtonView.clear();

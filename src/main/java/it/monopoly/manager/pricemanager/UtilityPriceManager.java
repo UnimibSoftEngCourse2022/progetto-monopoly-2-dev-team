@@ -31,7 +31,7 @@ public class UtilityPriceManager extends PriceManager {
                     .filter(propertyModel -> PropertyCategory.UTILITY.equals(propertyModel.getCategory()))
                     .count();
         }
-        return property.getRentValue()[ownedUtilities - 1] * getDiceRollValue();
+        return property.getRentValue()[ownedUtilities - 1];
     }
 
     private int getDiceRollValue() {
@@ -40,5 +40,15 @@ public class UtilityPriceManager extends PriceManager {
         }
         Pair<Integer, Integer> roll = diceRoller.rollDice();
         return roll.getFirst() + roll.getSecond();
+    }
+
+    @Override
+    public int getRent() {
+        return super.getRent() * getDiceRollValue();
+    }
+
+    @Override
+    public String getRentString() {
+        return String.valueOf(super.getRent()) + " x dice roll";
     }
 }

@@ -7,7 +7,7 @@ import it.monopoly.model.player.PlayerModel;
 
 public class GoToJailSpace extends AbstractSpace {
 
-    private PlayerController playerController;
+    private final PlayerController playerController;
 
     public GoToJailSpace(CommandBuilderDispatcher commandBuilderDispatcher,
                          PlayerController playerController) {

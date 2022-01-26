@@ -59,7 +59,7 @@ public abstract class PriceManager {
         return (int) (mortgageValue + randomValue);
     }
 
-    public final int getRent() {
+    public int getRent() {
         int rent = getCleanRent();
         float randomValue = 0;
         if (propertyRandomizerManager != null) {
@@ -71,6 +71,10 @@ public abstract class PriceManager {
     private PropertyRandomizeModel getRandomizeModel() {
         return propertyRandomizerManager
                 .getPropertyRandomize(property);
+    }
+
+    public String getRentString() {
+        return String.valueOf(getRent());
     }
 
     protected abstract int getCleanRent();
