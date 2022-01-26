@@ -109,6 +109,7 @@ public class Controller implements Serializable {
         }
         PlayerManager manager = playerController.getManager(player);
         mapper.register(manager);
+        board.register(viewController.getPlayerPositionObserver(player));
         broadcaster.registerForOffers(viewController.getAuctionConsumer(player));
         broadcaster.registerForPlayers(viewController.getAllPlayersConsumer(player));
         broadcaster.registerForMessages(viewController.getMessageConsumer(player));
@@ -128,6 +129,7 @@ public class Controller implements Serializable {
             PlayerManager manager = playerController.getManager(player);
 
             mapper.deregister(manager);
+            board.deregister(viewController.getPlayerPositionObserver(player));
             broadcaster.deregisterFromOffers(viewController.getAuctionConsumer(player));
             broadcaster.deregisterForPlayers(viewController.getAllPlayersConsumer(player));
             broadcaster.deregisterForMessages(viewController.getMessageConsumer(player));

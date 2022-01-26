@@ -12,6 +12,7 @@ import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.router.Route;
 import it.monopoly.controller.Controller;
+import it.monopoly.controller.board.PlayerPosition;
 import it.monopoly.controller.command.Command;
 import it.monopoly.controller.event.callback.BuyOrAuctionCallback;
 import it.monopoly.manager.AbstractOfferManager;
@@ -44,6 +45,7 @@ public class MainView extends HorizontalLayout {
     private PlayerListView playerListView;
     private transient Consumer<ReadablePlayerModel> allPlayersConsumer;
     private transient Consumer<String> messageConsumer;
+    private BoardView boardView;
 
     public MainView(@Autowired Controller controller) {
         this.controller = controller;
@@ -86,8 +88,9 @@ public class MainView extends HorizontalLayout {
 
         VerticalLayout rightLayout = new VerticalLayout();
 
-        BoardView boardView = new BoardView();
+        boardView = new BoardView();
         rightLayout.add(boardView);
+        //boardView.addPlayer(player.getName(), player.getId());
 
         playerCommandButtonView = new CommandButtonView(controller.getCommandController().generateCommands(player));
         playerCommandButtonView.setJustifyContentMode(JustifyContentMode.AROUND);
@@ -192,6 +195,8 @@ public class MainView extends HorizontalLayout {
         Observer<T> observer = null;
         if (ReadablePlayerModel.class.equals(className)) {
             observer = obj -> updatePlayer((ReadablePlayerModel) obj);
+        } else if (PlayerPosition.class.equals(className)) {
+            observer = obj -> updatePosition((PlayerPosition) obj);
         }
 
         if (observer != null) {
@@ -250,6 +255,10 @@ public class MainView extends HorizontalLayout {
                     readablePlayer.isTurn());
             setJustifyContentMode(JustifyContentMode.END);
         });
+    }
+
+    private void updatePosition(PlayerPosition playerPosition) {
+        boardView.updatePosition(playerPosition);
     }
 
     private void getPlayerCommands() {

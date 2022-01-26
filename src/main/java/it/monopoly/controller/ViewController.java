@@ -1,5 +1,6 @@
 package it.monopoly.controller;
 
+import it.monopoly.controller.board.PlayerPosition;
 import it.monopoly.manager.AbstractOfferManager;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.ReadablePlayerModel;
@@ -41,5 +42,7 @@ public class ViewController {
         return playerViewMap.get(player).getObserver(ReadablePlayerModel.class);
     }
 
-
+    public Observer<PlayerPosition> getPlayerPositionObserver(PlayerModel player) {
+        return playerViewMap.get(player).getObserver(PlayerPosition.class);
+    }
 }

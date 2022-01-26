@@ -11,7 +11,9 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.function.SerializableConsumer;
+import it.monopoly.controller.board.PlayerPosition;
 
+//@JavaScript("./js/board.js")
 public class BoardView extends VerticalLayout {
 
     private static final int MAX_ZOOM = 3000;
@@ -21,7 +23,7 @@ public class BoardView extends VerticalLayout {
 
     @Override
     protected void onAttach(AttachEvent attachEvent) {
-        IFrame boardFrame = new IFrame("board.html");
+        IFrame boardFrame = new IFrame("/html/board.html");
         boardFrame.setId("board-frame");
         boardFrame.setSizeFull();
         boardFrame.getStyle().set("border", "none");
@@ -38,7 +40,12 @@ public class BoardView extends VerticalLayout {
 
         add(header, boardFrame);
         setSizeFull();
+
+        UI ui = attachEvent.getUI();
+        ui.getPage().addJavaScript("frontend://js/board.js");
+        addPlayer("name", "id");
     }
+
 
     private void zoomFrame(int value) {
         UI.getCurrent()
@@ -59,5 +66,22 @@ public class BoardView extends VerticalLayout {
         UI.getCurrent()
                 .getPage()
                 .executeJs("return document.getElementById(\"board-frame\").contentWindow.document.getElementById(\"monopoly-board\").style.width = \"" + width + "px\"");
+    }
+
+    public void addPlayer(String name, String id) {
+        getUI().ifPresent(ui -> ui.access(() -> {
+            ui.getPage().executeJs("addPlayer($0, 0)", name + id);
+        }));
+
+    }
+
+    private void movePlayer(String name, String spaceName) {
+        getUI().ifPresent(ui -> ui.access(() -> {
+            ui.getPage().executeJs("movePlayer($0, $1)", name, spaceName);
+        }));
+    }
+
+    public void updatePosition(PlayerPosition playerPosition) {
+        movePlayer(playerPosition.getName() + playerPosition.getId(), playerPosition.getPosition());
     }
 }

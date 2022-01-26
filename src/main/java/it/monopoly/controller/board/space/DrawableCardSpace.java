@@ -39,7 +39,10 @@ public abstract class DrawableCardSpace extends AbstractSpace {
     public void applyEffect(PlayerModel player) {
 
         DrawableCardModel card = draw();
-        eventDispatcher.showDialog(player, card.getCategory() + ": " + card.getText());
+        eventDispatcher.showDialog(
+                player,
+                card.getCategory().name().replace("_", " ") + ": " + card.getText()
+        );
 
         CommandBuilder commandBuilder = null;
 
