@@ -3,6 +3,7 @@ package it.monopoly.controller.board.space;
 import it.monopoly.controller.board.card.DrawableCardController;
 import it.monopoly.controller.command.CommandBuilder;
 import it.monopoly.controller.command.CommandBuilderDispatcher;
+import it.monopoly.controller.event.EventDispatcher;
 import it.monopoly.controller.player.PlayerController;
 import it.monopoly.controller.player.command.MoveCommand;
 import it.monopoly.controller.player.command.MoveCommandBuilder;
@@ -21,20 +22,24 @@ import static it.monopoly.model.enums.Movement.MOVE_TO;
 
 public abstract class DrawableCardSpace extends AbstractSpace {
     private final PlayerController playerController;
+    private final EventDispatcher eventDispatcher;
     protected DrawableCardController drawableCardController;
 
     protected DrawableCardSpace(CommandBuilderDispatcher commandBuilderDispatcher,
                                 DrawableCardController drawableCardController,
-                                PlayerController playerController) {
+                                PlayerController playerController,
+                                EventDispatcher eventDispatcher) {
         super(commandBuilderDispatcher);
         this.drawableCardController = drawableCardController;
         this.playerController = playerController;
+        this.eventDispatcher = eventDispatcher;
     }
 
     @Override
     public void applyEffect(PlayerModel player) {
 
         DrawableCardModel card = draw();
+        eventDispatcher.showDialog(player, card.getCategory() + ": " + card.getText());
 
         CommandBuilder commandBuilder = null;
 

@@ -8,6 +8,7 @@ import it.monopoly.controller.event.callback.BuyOrAuctionCallback;
 import it.monopoly.controller.event.callback.DiceRollEventCallback;
 import it.monopoly.controller.event.DiceRoller;
 import it.monopoly.controller.event.EventDispatcher;
+import it.monopoly.controller.event.callback.UsePointsCallback;
 import it.monopoly.controller.player.PlayerController;
 import it.monopoly.controller.player.command.DiceRollCommandBuilder;
 import it.monopoly.controller.player.command.PayCommandBuilder;
@@ -55,6 +56,16 @@ public class CommandTest extends BaseTest {
 
             @Override
             public void buyOrAuction(PlayerModel player, ReadablePropertyModel propertyModel, BuyOrAuctionCallback callback) {
+            }
+
+            @Override
+            public void useLoyaltyPoints(PlayerModel player, UsePointsCallback usePointsCallback) {
+
+            }
+
+            @Override
+            public void showDialog(PlayerModel player, String message) {
+
             }
 
             @Override

@@ -97,7 +97,7 @@ public class Controller implements Serializable {
                 tradeController,
                 eventDispatcher
         );
-        board = new Board(builderDispatcher, playerController, properties);
+        board = new Board(builderDispatcher, eventDispatcher, playerController, propertyController);
         commandController = new MainCommandController(builderDispatcher);
     }
 

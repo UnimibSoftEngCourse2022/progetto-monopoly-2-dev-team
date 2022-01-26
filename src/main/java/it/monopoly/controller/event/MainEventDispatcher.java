@@ -4,6 +4,7 @@ import it.monopoly.Broadcaster;
 import it.monopoly.controller.ViewController;
 import it.monopoly.controller.event.callback.BuyOrAuctionCallback;
 import it.monopoly.controller.event.callback.DiceRollEventCallback;
+import it.monopoly.controller.event.callback.UsePointsCallback;
 import it.monopoly.manager.AbstractOfferManager;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.property.ReadablePropertyModel;
@@ -44,7 +45,17 @@ public class MainEventDispatcher implements EventDispatcher {
     public void buyOrAuction(PlayerModel player,
                              ReadablePropertyModel propertyModel,
                              BuyOrAuctionCallback callback) {
-        viewController.getView(player).dialog(propertyModel, callback);
+        viewController.getView(player).showBuyPropertyDialog(propertyModel, callback);
+    }
+
+    @Override
+    public void useLoyaltyPoints(PlayerModel player, UsePointsCallback usePointsCallback) {
+        //TODO Ask player to use points
+    }
+
+    @Override
+    public void showDialog(PlayerModel player, String message) {
+        viewController.getView(player).showOkDialog(message);
     }
 
     @Override

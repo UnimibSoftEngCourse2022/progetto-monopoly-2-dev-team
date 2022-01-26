@@ -1,8 +1,6 @@
 package it.monopoly.view;
 
-import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.ClientCallable;
-import com.vaadin.flow.component.Unit;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
@@ -10,6 +8,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Push;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.router.Route;
 import it.monopoly.controller.Controller;
@@ -115,11 +114,24 @@ public class MainView extends HorizontalLayout {
         sellButton.getElement().getStyle().set(margin, auto);
         sellButton.addClickListener(event -> controller.startSell(player));
 
+        NumberField goToField = new NumberField("Go to");
+        goToField.setMin(0);
+        goToField.setMax(40);
+        goToField.addKeyDownListener(
+                Key.ENTER,
+                (ComponentEventListener<KeyDownEvent>) keyDownEvent
+                        -> {
+                    if (goToField.getValue() != null) {
+                        controller.getPlayerController().getManager(player).moveTo(goToField.getValue().intValue(), false);
+                    }
+                }
+        );
+
         testCommandsLayout = new HorizontalLayout();
         if (startGameButton != null) {
             testCommandsLayout.add(startGameButton);
         }
-        testCommandsLayout.add(newPropertyButton, auctionButton, sellButton);
+        testCommandsLayout.add(newPropertyButton, auctionButton, sellButton, goToField);
         testCommandsLayout.setMargin(false);
         testCommandsLayout.setWidthFull();
         testCommandsLayout.setJustifyContentMode(JustifyContentMode.AROUND);
@@ -152,29 +164,22 @@ public class MainView extends HorizontalLayout {
         });
     }
 
-    public void dialog(ReadablePropertyModel property, BuyOrAuctionCallback callback) {
-        Dialog dialog = new Dialog();
-        dialog.setCloseOnEsc(false);
-        dialog.setCloseOnOutsideClick(false);
-        VerticalLayout verticalDialogLayout = new VerticalLayout();
-        verticalDialogLayout.add(property.toString());
+    public void showBuyPropertyDialog(ReadablePropertyModel property, BuyOrAuctionCallback callback) {
+        BuyOrAuctionView dialog = new BuyOrAuctionView(property, callback);
+        showAndRemoveDialog(dialog);
+    }
 
-        HorizontalLayout buttonLayout = new HorizontalLayout();
-        Button yesButton = new Button("Buy", e -> {
-            callback.buy();
-            dialog.close();
-        });
-        Button noButton = new Button("Start Auction", e -> {
-            callback.startAuction();
-            dialog.close();
-        });
+    public void showOkDialog(String message) {
+        OkDialog dialog = new OkDialog(message);
+        showAndRemoveDialog(dialog);
+    }
 
-        buttonLayout.add(yesButton, noButton);
-        verticalDialogLayout.add(buttonLayout);
-        dialog.add(verticalDialogLayout);
-
+    private void showAndRemoveDialog(Dialog dialog) {
+        add(dialog);
+        dialog.addDialogCloseActionListener(e -> MainView.this.remove(dialog));
         dialog.open();
     }
+
 
     @SuppressWarnings(value = "unchecked")
     public <T> Observer<T> getObserver(Class<T> className) {

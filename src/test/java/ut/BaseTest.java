@@ -9,6 +9,7 @@ import it.monopoly.controller.event.callback.BuyOrAuctionCallback;
 import it.monopoly.controller.event.callback.DiceRollEventCallback;
 import it.monopoly.controller.event.DiceRoller;
 import it.monopoly.controller.event.EventDispatcher;
+import it.monopoly.controller.event.callback.UsePointsCallback;
 import it.monopoly.controller.player.PlayerController;
 import it.monopoly.controller.property.PropertyController;
 import it.monopoly.manager.AbstractOfferManager;
@@ -89,6 +90,16 @@ public abstract class BaseTest {
 
             @Override
             public void buyOrAuction(PlayerModel player, ReadablePropertyModel propertyModel, BuyOrAuctionCallback callback) {
+            }
+
+            @Override
+            public void useLoyaltyPoints(PlayerModel player, UsePointsCallback usePointsCallback) {
+                usePointsCallback.use(Integer.parseInt(playerController.getManager(player).getLoyaltyProgram().getValue()));
+            }
+
+            @Override
+            public void showDialog(PlayerModel player, String message) {
+
             }
 
             @Override

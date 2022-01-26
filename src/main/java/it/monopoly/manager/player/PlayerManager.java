@@ -1,6 +1,7 @@
 package it.monopoly.manager.player;
 
 import it.monopoly.manager.Manager;
+import it.monopoly.manager.loyaltyprogram.LoyaltyProgram;
 import it.monopoly.model.DrawableCardModel;
 import it.monopoly.model.PropertyOwnerMapper;
 import it.monopoly.model.player.PlayerModel;
@@ -31,6 +32,7 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     private List<DrawableCardModel> drawableCardModels = new ArrayList<>();
     private PlayerState state;
     private int getOutOfJailTries = 0;
+    private LoyaltyProgram loyaltyProgram = null;
     private Observable<PlayerModel> positionObservable;
 
     public PlayerManager(PlayerModel player, int funds, PropertyOwnerMapper ownerMapper) {
@@ -127,6 +129,20 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
         drawableCardModels.add(cardModel);
     }
 
+    public boolean joinLoyaltyProgram(LoyaltyProgram loyaltyProgram) {
+        if (this.loyaltyProgram == null) {
+            this.loyaltyProgram = loyaltyProgram;
+            return true;
+        }
+        return false;
+    }
+
+    public LoyaltyProgram quitLoyaltyProgram() {
+        LoyaltyProgram temp = loyaltyProgram;
+        this.loyaltyProgram = null;
+        return temp;
+    }
+
     public List<DrawableCardModel> getDrawableCardModels() {
         return drawableCardModels;
     }
@@ -173,6 +189,10 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
 
     public int getFunds() {
         return funds;
+    }
+
+    public LoyaltyProgram getLoyaltyProgram() {
+        return loyaltyProgram;
     }
 
     public PlayerState getState() {

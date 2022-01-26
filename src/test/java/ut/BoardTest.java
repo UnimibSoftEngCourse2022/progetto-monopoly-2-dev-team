@@ -23,7 +23,7 @@ public class BoardTest extends BaseTest {
 
     @Test
     public void chainOfResponsabilityTest() {
-        board = new Board(commandBuilderDispatcher, playerController, properties);
+        board = new Board(commandBuilderDispatcher, eventDispatcher, playerController, propertyController);
         List<Space> boardSpaces = board.getSpaces();
 
         Assert.assertNotNull(boardSpaces);
@@ -95,7 +95,7 @@ public class BoardTest extends BaseTest {
 
         DrawableCardController drawableCardController = new DrawableCardController(false);
 
-        ChanceSpace chanceSpace = new ChanceSpace(commandBuilderDispatcher, drawableCardController, playerController);
+        ChanceSpace chanceSpace = new ChanceSpace(commandBuilderDispatcher, drawableCardController, playerController, eventDispatcher);
 
         PlayerManager playerManager = playerController.getManager(player);
 
@@ -207,7 +207,7 @@ public class BoardTest extends BaseTest {
         DrawableCardController drawableCardController = new DrawableCardController(false);
         PlayerManager playerManager = playerController.getManager(player);
 
-        CommunityChestSpace communityChestSpace = new CommunityChestSpace(commandBuilderDispatcher, drawableCardController, playerController);
+        CommunityChestSpace communityChestSpace = new CommunityChestSpace(commandBuilderDispatcher, drawableCardController, playerController, eventDispatcher);
 
         playerManager.getPosition().setPosition(3);
         int funds = playerManager.getFunds();
@@ -312,9 +312,9 @@ public class BoardTest extends BaseTest {
         ownerMapper.setOwner(property2, player2);
 
 
-        PropertySpace propertySpace1 = new PropertySpace(commandBuilderDispatcher, property1);
-        PropertySpace propertySpace2 = new PropertySpace(commandBuilderDispatcher, property2);
-        PropertySpace propertySpace3 = new PropertySpace(commandBuilderDispatcher, property3);
+        PropertySpace propertySpace1 = new PropertySpace(commandBuilderDispatcher, propertyController.getManager(property1));
+        PropertySpace propertySpace2 = new PropertySpace(commandBuilderDispatcher, propertyController.getManager(property2));
+        PropertySpace propertySpace3 = new PropertySpace(commandBuilderDispatcher, propertyController.getManager(property3));
 
         // player on his property
         funds1 = playerManager1.getFunds();

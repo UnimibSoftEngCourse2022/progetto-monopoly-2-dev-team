@@ -35,9 +35,9 @@ public class MainCommandBuilderDispatcher implements CommandBuilderDispatcher {
         } else if (PayRentCommandBuilder.class.equals(className)) {
             return className.cast(new PayRentCommandBuilder(
                     propertyController,
+                    playerController,
                     new PayCommandBuilder(tradeController),
-                    eventDispatcher,
-                    tradeController
+                    eventDispatcher
             ));
         } else if (MoveCommandBuilder.class.equals(className)) {
             return className.cast(new MoveCommandBuilder(playerController));
@@ -50,8 +50,16 @@ public class MainCommandBuilderDispatcher implements CommandBuilderDispatcher {
                     new MoveCommandBuilder(playerController),
                     new PayCommandBuilder(tradeController)
             ));
+        } else if (JoinLoyaltyProgramCommandBuilder.class.equals(className)) {
+            return className.cast(new JoinLoyaltyProgramCommandBuilder(playerController));
         } else if (SellPropertyCommandBuilder.class.equals(className)) {
             return className.cast(new SellPropertyCommandBuilder(
+                    propertyController,
+                    tradeController,
+                    eventDispatcher
+            ));
+        } else if (BuyOrAuctionCommandBuilder.class.equals(className)) {
+            return className.cast(new BuyOrAuctionCommandBuilder(
                     propertyController,
                     tradeController,
                     eventDispatcher

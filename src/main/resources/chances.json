@@ -21,13 +21,21 @@
     "text": "Advance token to the nearest Utility. If unowned, you may buy it from the Bank. If owned, throw dice and pay owner a total 10 times the amount thrown.",
     "category": "CHANCE",
     "movement": "MOVE_NEAR",
-    "near": [12, 28]
+    "near": [
+      12,
+      28
+    ]
   },
   {
     "text": "Advance to the nearest Railroad. If unowned, you may buy it from the Bank. If owned, pay owner twice the re tal to which they are otherwise entitled. If Railroad is unowned, you may buy it from the Bank.",
     "category": "CHANCE",
     "movement": "MOVE_NEAR",
-    "near": [5, 15, 25, 35]
+    "near": [
+      5,
+      15,
+      25,
+      35
+    ]
   },
   {
     "text": "Bank pays you dividend of $50.",
@@ -45,6 +53,7 @@
     "text": "Go Back Three Spaces.",
     "category": "CHANCE",
     "movement": "MOVE_OF",
+    "direct": true,
     "where": -3
   },
   {
