@@ -31,7 +31,7 @@ public class Board implements Observer<PlayerModel> {
 
         SpaceDispenser chainOfResponsability = new TaxSpaceDispenser(commandBuilderDispatcher, 4, 38);
         chainOfResponsability
-                .setSuccessor(new ChanceSpaceDispenser(commandBuilderDispatcher, drawableCardController, playerController, eventDispatcher,7, 22, 36))
+                .setSuccessor(new ChanceSpaceDispenser(commandBuilderDispatcher, drawableCardController, playerController, eventDispatcher, 7, 22, 36))
                 .setSuccessor(new CommunityChestSpaceDispenser(commandBuilderDispatcher, drawableCardController, playerController, eventDispatcher, 2, 17, 33))
                 .setSuccessor(new GoToJailSpaceDispenser(commandBuilderDispatcher, 30))
                 .setSuccessor(new CornerSpaceDispenser(commandBuilderDispatcher, 0, 10, 20))

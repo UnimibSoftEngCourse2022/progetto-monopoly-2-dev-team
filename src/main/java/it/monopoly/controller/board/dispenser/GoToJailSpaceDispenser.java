@@ -7,7 +7,6 @@ import it.monopoly.controller.player.PlayerController;
 
 public class GoToJailSpaceDispenser extends SpaceDispenser {
 
-    private PlayerController playerController;
 
     public GoToJailSpaceDispenser(CommandBuilderDispatcher commandBuilderDispatcher,
                                   int... spaceIndex) {
@@ -16,6 +15,6 @@ public class GoToJailSpaceDispenser extends SpaceDispenser {
 
     @Override
     protected Space getSpaceInstance() {
-        return new GoToJailSpace(commandBuilderDispatcher, playerController);
+        return new GoToJailSpace(commandBuilderDispatcher);
     }
 }

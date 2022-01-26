@@ -79,7 +79,7 @@ public class BoardTest extends BaseTest {
 
         Assert.assertEquals(PlayerState.FREE, state);
 
-        GoToJailSpace goToJailSpace = new GoToJailSpace(commandBuilderDispatcher, playerController);
+        GoToJailSpace goToJailSpace = new GoToJailSpace(commandBuilderDispatcher);
 
         goToJailSpace.applyEffect(player);
 

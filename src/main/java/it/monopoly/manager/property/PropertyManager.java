@@ -248,7 +248,7 @@ public class PropertyManager extends Manager<PropertyModel> {
                 priceManager.getHousePrice(),
                 priceManager.getHotelPrice(),
                 priceManager.getMortgageValue(),
-                priceManager.getRent()
+                priceManager.getRentString()
         );
     }
 }

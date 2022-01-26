@@ -109,7 +109,7 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     }
 
     public void goToJail() {
-        state = PlayerState.IN_JAIL;
+        setState(PlayerState.IN_JAIL);
     }
 
     public boolean tryToGetOutOfJail() {
