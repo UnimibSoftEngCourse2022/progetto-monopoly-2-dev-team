@@ -24,6 +24,9 @@ public class PropertyMapper implements PropertyOwnerMapper, PropertyCategoryMapp
     }
 
     public List<PropertyModel> getPlayerProperties(PlayerModel player) {
+        if (player == null) {
+            return null;
+        }
         return playerProperties.getOrDefault(player, Collections.emptyList());
     }
 

@@ -62,7 +62,7 @@ public class Board implements Observer<PlayerModel>, Observable<PlayerPosition> 
 
         String stringPosition = manager.isInJail() ? "jail" : String.valueOf(position);
 
-        PlayerPosition playerPosition = updatePosition(player, stringPosition);
+        PlayerPosition playerPosition = updateAndGetPosition(player, stringPosition);
         notifyObservers(playerPosition);
 
         Space space = getSpace(position);
@@ -72,14 +72,16 @@ public class Board implements Observer<PlayerModel>, Observable<PlayerPosition> 
         }
     }
 
-    private PlayerPosition updatePosition(PlayerModel player, String stringPosition) {
+    private PlayerPosition updateAndGetPosition(PlayerModel player, String stringPosition) {
         PlayerPosition playerPosition = new PlayerPosition(
                 player.getName(),
                 player.getId(),
                 player.getColor(),
                 stringPosition
         );
-        positionMap.put(player, playerPosition);
+        if (stringPosition != null) {
+            positionMap.put(player, playerPosition);
+        }
         return playerPosition;
     }
 
@@ -104,5 +106,11 @@ public class Board implements Observer<PlayerModel>, Observable<PlayerPosition> 
         if (observer != null) {
             observers.remove(observer);
         }
+    }
+
+    public void removePlayer(PlayerModel player) {
+        positionMap.remove(player);
+        PlayerPosition playerPosition = updateAndGetPosition(player, null);
+        notifyObservers(playerPosition);
     }
 }

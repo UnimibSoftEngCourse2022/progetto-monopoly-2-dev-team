@@ -10,6 +10,10 @@ public class ViewUtil {
     }
 
     public static void runOnUiThread(Optional<UI> optionalUI, Runnable runnable) {
-        optionalUI.ifPresent(ui -> ui.access((Command) runnable::run));
+        optionalUI.ifPresent(ui -> {
+            if (!ui.isClosing()) {
+                ui.access((Command) runnable::run);
+            }
+        });
     }
 }

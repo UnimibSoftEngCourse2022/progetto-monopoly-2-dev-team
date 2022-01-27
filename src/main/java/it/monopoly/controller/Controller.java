@@ -130,6 +130,7 @@ public class Controller implements Serializable {
 
             mapper.deregister(manager);
             board.deregister(viewController.getPlayerPositionObserver(player));
+            board.removePlayer(player);
             broadcaster.deregisterFromOffers(viewController.getAuctionConsumer(player));
             broadcaster.deregisterForPlayers(viewController.getAllPlayersConsumer(player));
             broadcaster.deregisterForMessages(viewController.getMessageConsumer(player));

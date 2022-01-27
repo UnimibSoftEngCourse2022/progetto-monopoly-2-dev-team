@@ -106,7 +106,6 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
             if (!lastMovement.isDirect() && movement.getFirst() > movement.getSecond()) {
                 earn(EARN_ON_GO);
             }
-            notifyReadable();
         }
         return position;
     }

@@ -68,24 +68,36 @@ public class BoardView extends VerticalLayout {
                 .executeJs("return document.getElementById(\"board-frame\").contentWindow.document.getElementById(\"monopoly-board\").style.width = \"" + width + "px\"");
     }
 
-//    public void addPlayer(String name, String id) {
-//        getUI().ifPresent(ui -> ui.access(() -> {
-//            String string = name + id;
-//            ui.getPage().executeJs("addPlayer($0, \"0\")", string);
-//        }));
-//    }
-
     private void movePlayer(JsonObject player) {
         getUI().ifPresent(ui -> ui.access(() -> {
-            ui.getPage().executeJs("movePlayer($0)", player);
+            if (!ui.isClosing()) {
+                ui.getPage().executeJs("movePlayer($0)", player);
+            }
+        }));
+    }
+
+    private void removePlayer(String nameId) {
+        getUI().ifPresent(ui -> ui.access(() -> {
+            if (!ui.isClosing()) {
+                ui.getPage().executeJs("removePlayer($0)", nameId);
+            }
         }));
     }
 
     public void updatePosition(PlayerPosition playerPosition) {
-        JsonObject jsonObject = Json.createObject();
-        jsonObject.put("name", playerPosition.getName() + "#" + playerPosition.getId());
-        jsonObject.put("color", playerPosition.getColor());
-        jsonObject.put("position", playerPosition.getPosition());
-        movePlayer(jsonObject);
+        if (playerPosition == null) {
+            return;
+        }
+        String nameId = playerPosition.getName() + "#" + playerPosition.getId();
+        if (playerPosition.getPosition() != null) {
+            JsonObject jsonObject = Json.createObject();
+            jsonObject.put("displayName", playerPosition.getName());
+            jsonObject.put("id", nameId);
+            jsonObject.put("color", playerPosition.getColor());
+            jsonObject.put("position", playerPosition.getPosition());
+            movePlayer(jsonObject);
+        } else {
+            removePlayer(nameId);
+        }
     }
 }
