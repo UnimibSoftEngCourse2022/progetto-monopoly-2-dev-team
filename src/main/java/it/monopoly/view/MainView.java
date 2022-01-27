@@ -56,12 +56,6 @@ public class MainView extends HorizontalLayout {
 
     @Override
     protected void onAttach(AttachEvent attachEvent) {
-        logger.info("Attached " + this);
-        if (player == null) {
-            player = controller.setupPlayer(this);
-        }
-        readablePlayer = controller.getReadablePlayer(player);
-
         String js = "window.onbeforeunload = function () {" +
                 "element.$server.closeSession();" +
                 "};";
@@ -93,13 +87,12 @@ public class MainView extends HorizontalLayout {
 
         VerticalLayout rightLayout = new VerticalLayout();
 
-        boardView = new BoardView();
-        rightLayout.add(boardView);
-        //boardView.addPlayer(player.getName(), player.getId());
-
-        playerCommandButtonView = new CommandButtonView(controller.getCommandController().generateCommands(player));
+        playerCommandButtonView = new CommandButtonView();//controller.getCommandController().generateCommands(player));
         playerCommandButtonView.setJustifyContentMode(JustifyContentMode.AROUND);
         playerCommandButtonView.setWidthFull();
+
+        boardView = new BoardView();
+        rightLayout.add(boardView);
 
         startGameButton = null;
         String margin = "margin";
@@ -154,6 +147,12 @@ public class MainView extends HorizontalLayout {
 
         add(leftLayout, rightLayout);
         setFlexGrow(.5, leftLayout, rightLayout);
+
+        logger.info("Attached " + this);
+        if (player == null) {
+            player = controller.setupPlayer(this);
+        }
+        readablePlayer = controller.getReadablePlayer(player);
     }
 
     private void notifyOffers(AbstractOfferManager offerManager) {
@@ -201,7 +200,7 @@ public class MainView extends HorizontalLayout {
         if (ReadablePlayerModel.class.equals(className)) {
             observer = obj -> updatePlayer((ReadablePlayerModel) obj);
         } else if (PlayerPosition.class.equals(className)) {
-            observer = obj -> updatePosition((PlayerPosition) obj);
+            observer = obj -> boardView.updatePosition((PlayerPosition) obj);
         }
 
         if (observer != null) {
@@ -260,10 +259,6 @@ public class MainView extends HorizontalLayout {
                     readablePlayer.isTurn());
             setJustifyContentMode(JustifyContentMode.END);
         });
-    }
-
-    private void updatePosition(PlayerPosition playerPosition) {
-        boardView.updatePosition(playerPosition);
     }
 
     private void getPlayerCommands() {

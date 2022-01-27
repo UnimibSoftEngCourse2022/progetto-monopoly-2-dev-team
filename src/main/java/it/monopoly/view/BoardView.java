@@ -11,10 +11,10 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.function.SerializableConsumer;
+import elemental.json.Json;
+import elemental.json.JsonObject;
 import it.monopoly.controller.board.PlayerPosition;
-import it.monopoly.model.player.PlayerModel;
 
-//@JavaScript("./js/board.js")
 public class BoardView extends VerticalLayout {
 
     private static final int MAX_ZOOM = 3000;
@@ -44,8 +44,6 @@ public class BoardView extends VerticalLayout {
 
         UI ui = attachEvent.getUI();
         ui.getPage().addJavaScript("frontend://js/board.js");
-
-        //addPlayer("name", "id");
     }
 
 
@@ -70,20 +68,24 @@ public class BoardView extends VerticalLayout {
                 .executeJs("return document.getElementById(\"board-frame\").contentWindow.document.getElementById(\"monopoly-board\").style.width = \"" + width + "px\"");
     }
 
-    public void addPlayer(String name, String id) {
-        getUI().ifPresent(ui -> ui.access(() -> {
-            String string = name + id;
-            ui.getPage().executeJs("addPlayer($0, \"0\")", string);
-        }));
-    }
+//    public void addPlayer(String name, String id) {
+//        getUI().ifPresent(ui -> ui.access(() -> {
+//            String string = name + id;
+//            ui.getPage().executeJs("addPlayer($0, \"0\")", string);
+//        }));
+//    }
 
-    private void movePlayer(String name, String spaceName) {
+    private void movePlayer(JsonObject player) {
         getUI().ifPresent(ui -> ui.access(() -> {
-            ui.getPage().executeJs("movePlayer($0, $1)", name, spaceName);
+            ui.getPage().executeJs("movePlayer($0)", player);
         }));
     }
 
     public void updatePosition(PlayerPosition playerPosition) {
-        movePlayer(playerPosition.getName() + playerPosition.getId(), playerPosition.getPosition());
+        JsonObject jsonObject = Json.createObject();
+        jsonObject.put("name", playerPosition.getName() + "#" + playerPosition.getId());
+        jsonObject.put("color", playerPosition.getColor());
+        jsonObject.put("position", playerPosition.getPosition());
+        movePlayer(jsonObject);
     }
 }

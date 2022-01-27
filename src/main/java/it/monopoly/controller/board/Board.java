@@ -14,12 +14,11 @@ import it.monopoly.view.Observer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Board implements Observer<PlayerModel>, Observable<PlayerPosition> {
     private final Logger logger = LogManager.getLogger(getClass());
+    private final Map<PlayerModel, PlayerPosition> positionMap = new HashMap<>();
     private final List<Observer<PlayerPosition>> observers = new LinkedList<>();
     private final List<Space> spaces;
     private final PlayerController playerController;
@@ -62,7 +61,8 @@ public class Board implements Observer<PlayerModel>, Observable<PlayerPosition> 
         int position = manager.getPosition().getIntPosition();
 
         String stringPosition = manager.isInJail() ? "jail" : String.valueOf(position);
-        PlayerPosition playerPosition = new PlayerPosition(player.getName(), player.getId(), stringPosition);
+
+        PlayerPosition playerPosition = updatePosition(player, stringPosition);
         notifyObservers(playerPosition);
 
         Space space = getSpace(position);
@@ -70,6 +70,17 @@ public class Board implements Observer<PlayerModel>, Observable<PlayerPosition> 
         if (space != null) {
             space.applyEffect(player);
         }
+    }
+
+    private PlayerPosition updatePosition(PlayerModel player, String stringPosition) {
+        PlayerPosition playerPosition = new PlayerPosition(
+                player.getName(),
+                player.getId(),
+                player.getColor(),
+                stringPosition
+        );
+        positionMap.put(player, playerPosition);
+        return playerPosition;
     }
 
     private void notifyObservers(PlayerPosition playerPosition) {
@@ -82,6 +93,9 @@ public class Board implements Observer<PlayerModel>, Observable<PlayerPosition> 
     public void register(Observer<PlayerPosition> observer) {
         if (observer != null) {
             observers.add(observer);
+            for (PlayerPosition playerPosition : positionMap.values()) {
+                observer.notify(playerPosition);
+            }
         }
     }
 

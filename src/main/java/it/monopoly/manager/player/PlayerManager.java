@@ -239,6 +239,7 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     public void register(Observer<ReadablePlayerModel> observer) {
         if (observer != null) {
             observers.add(observer);
+            observer.notify(getReadable());
         }
     }
 
@@ -274,6 +275,7 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     private void registerPositionObserver(Observer<PlayerModel> observer) {
         if (observer != null) {
             positionObservers.add(observer);
+            observer.notify(model);
         }
     }
 

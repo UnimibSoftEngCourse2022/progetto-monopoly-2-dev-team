@@ -1,14 +1,22 @@
 package it.monopoly.model.player;
 
+import it.monopoly.util.ColorGenerator;
+
 import java.io.Serializable;
 
 public class PlayerModel implements Serializable {
-    private String id;
-    private String name;
+    private final String id;
+    private final String name;
+    private final String color;
 
     public PlayerModel(String id, String name) {
+        this(id, name, ColorGenerator.getRandomColor());
+    }
+
+    public PlayerModel(String id, String name, String color) {
         this.id = id;
         this.name = name;
+        this.color = color;
     }
 
     public String getId() {
@@ -17,6 +25,10 @@ public class PlayerModel implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public String getColor() {
+        return color;
     }
 
     @Override
