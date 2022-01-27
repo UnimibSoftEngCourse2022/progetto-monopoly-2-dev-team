@@ -10,6 +10,13 @@ function getRandomColor() {
 }
 
 function addPlayer(name, position) {
+    var space = board().getElementById("space-" + position);
+    if(space == null) {
+        setTimeout(function() {
+            addPlayer(name, position)
+        }, 500);
+        return
+    }
     var svg = board().createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.id = name;
     svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
@@ -21,7 +28,8 @@ function addPlayer(name, position) {
     circle.setAttribute("r", "50");
     circle.style = "position: relative";
     svg.appendChild(circle);
-    board().getElementById("space-" + position).appendChild(svg);
+    var space = board().getElementById("space-" + position);
+    space.appendChild(svg);
 }
 
 function movePlayer(name, position) {

@@ -12,6 +12,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.function.SerializableConsumer;
 import it.monopoly.controller.board.PlayerPosition;
+import it.monopoly.model.player.PlayerModel;
 
 //@JavaScript("./js/board.js")
 public class BoardView extends VerticalLayout {
@@ -43,7 +44,8 @@ public class BoardView extends VerticalLayout {
 
         UI ui = attachEvent.getUI();
         ui.getPage().addJavaScript("frontend://js/board.js");
-        addPlayer("name", "id");
+
+        //addPlayer("name", "id");
     }
 
 
@@ -70,9 +72,9 @@ public class BoardView extends VerticalLayout {
 
     public void addPlayer(String name, String id) {
         getUI().ifPresent(ui -> ui.access(() -> {
-            ui.getPage().executeJs("addPlayer($0, 0)", name + id);
+            String string = name + id;
+            ui.getPage().executeJs("addPlayer($0, \"0\")", string);
         }));
-
     }
 
     private void movePlayer(String name, String spaceName) {

@@ -21,6 +21,8 @@ import it.monopoly.model.player.PlayerState;
 import it.monopoly.model.player.ReadablePlayerModel;
 import it.monopoly.model.property.ReadablePropertyModel;
 import it.monopoly.util.ViewUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
@@ -31,6 +33,7 @@ import java.util.function.Consumer;
 @Push
 @Route("")
 public class MainView extends HorizontalLayout {
+    private final Logger logger = LogManager.getLogger(getClass());
     private final Controller controller;
     private final Map<Class<?>, Observer<?>> observers = new HashMap<>();
     private final Map<Class<?>, Consumer<?>> consumers = new HashMap<>();
@@ -53,8 +56,10 @@ public class MainView extends HorizontalLayout {
 
     @Override
     protected void onAttach(AttachEvent attachEvent) {
-
-        player = controller.setupPlayer(this);
+        logger.info("Attached " + this);
+        if (player == null) {
+            player = controller.setupPlayer(this);
+        }
         readablePlayer = controller.getReadablePlayer(player);
 
         String js = "window.onbeforeunload = function () {" +
@@ -288,6 +293,7 @@ public class MainView extends HorizontalLayout {
 
     @ClientCallable
     public void closeSession() {
+        logger.info("Closing " + this);
         controller.closePlayerSession(player);
     }
 
