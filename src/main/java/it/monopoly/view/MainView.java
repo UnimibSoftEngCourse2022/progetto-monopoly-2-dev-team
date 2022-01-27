@@ -10,8 +10,11 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.data.selection.SelectionListener;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import it.monopoly.controller.Controller;
+import it.monopoly.controller.RouteController;
 import it.monopoly.controller.board.PlayerPosition;
 import it.monopoly.controller.command.Command;
 import it.monopoly.controller.event.callback.BuyOrAuctionCallback;
@@ -31,10 +34,11 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 @Push
-@Route("")
-public class MainView extends HorizontalLayout {
+@Route(value = ":id(([0-9]|[a-z]){16})")
+public class MainView extends HorizontalLayout implements BeforeEnterObserver {
     private final Logger logger = LogManager.getLogger(getClass());
-    private final Controller controller;
+    private final RouteController routeController;
+    private Controller controller;
     private final Map<Class<?>, Observer<?>> observers = new HashMap<>();
     private final Map<Class<?>, Consumer<?>> consumers = new HashMap<>();
     private CommandButtonView propertyCommandButtonView;
@@ -49,9 +53,21 @@ public class MainView extends HorizontalLayout {
     private transient Consumer<ReadablePlayerModel> allPlayersConsumer;
     private transient Consumer<String> messageConsumer;
     private BoardView boardView;
+    private String id;
 
-    public MainView(@Autowired Controller controller) {
-        this.controller = controller;
+    public MainView(@Autowired RouteController routeController) {
+        this.routeController = routeController;
+    }
+
+    @Override
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
+        beforeEnterEvent.getRouteParameters().get("id").ifPresent(s -> {
+            id = s.toLowerCase();
+            controller = routeController.getController(id);
+        });
+        if (controller == null) {
+            beforeEnterEvent.forwardTo(WelcomeView.class);
+        }
     }
 
     @Override
