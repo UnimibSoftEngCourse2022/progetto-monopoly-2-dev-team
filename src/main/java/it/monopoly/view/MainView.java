@@ -10,9 +10,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.data.selection.SelectionListener;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeEnterObserver;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 import it.monopoly.controller.Controller;
 import it.monopoly.controller.RouteController;
 import it.monopoly.controller.board.PlayerPosition;
@@ -33,11 +31,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static it.monopoly.view.WelcomeView.PLAYER_NAME;
+import static it.monopoly.view.WelcomeView.*;
 
 @Push
 @Route(value = ":id(([0-9]|[a-z]){16})")
-public class MainView extends HorizontalLayout implements BeforeEnterObserver {
+public class MainView extends HorizontalLayout implements BeforeEnterObserver, BeforeLeaveObserver {
     private final Logger logger = LogManager.getLogger(getClass());
     private final RouteController routeController;
     private Controller controller;
@@ -56,6 +54,8 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver {
     private transient Consumer<String> messageConsumer;
     private BoardView boardView;
     private String id;
+    private String playerName;
+    private Command quitCommand;
 
     public MainView(@Autowired RouteController routeController) {
         this.routeController = routeController;
@@ -68,19 +68,32 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver {
             controller = routeController.getController(id);
         });
         if (controller == null) {
+            ComponentUtil.setData(beforeEnterEvent.getUI(), ERROR, "Game not found");
             beforeEnterEvent.forwardTo(WelcomeView.class);
+            return;
+        } else if (controller.maxPlayerReached()) {
+            ComponentUtil.setData(beforeEnterEvent.getUI(), ERROR, "Max player number reached");
+            beforeEnterEvent.forwardTo(WelcomeView.class);
+            return;
         }
+        Object playerNameObject = ComponentUtil.getData(beforeEnterEvent.getUI(), PLAYER_NAME);
+        if (playerNameObject == null) {
+            ComponentUtil.setData(beforeEnterEvent.getUI(), NO_NAME_ID, id);
+            ComponentUtil.setData(beforeEnterEvent.getUI(), ERROR, "Set player name");
+            beforeEnterEvent.rerouteTo(WelcomeView.class);
+            return;
+        }
+        playerName = String.valueOf(playerNameObject);
     }
 
     @Override
     protected void onAttach(AttachEvent attachEvent) {
+        getElement().executeJs("element = $0", getElement());
+
         String js = "window.onbeforeunload = function () {" +
                 "element.$server.closeSession();" +
                 "};";
-
         getElement().executeJs(js);
-
-        getElement().executeJs("element = $0", getElement());
 
 
         VerticalLayout leftLayout = new VerticalLayout();
@@ -105,7 +118,7 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver {
 
         VerticalLayout rightLayout = new VerticalLayout();
 
-        playerCommandButtonView = new CommandButtonView();//controller.getCommandController().generateCommands(player));
+        playerCommandButtonView = new CommandButtonView();
         playerCommandButtonView.setJustifyContentMode(JustifyContentMode.AROUND);
         playerCommandButtonView.setWidthFull();
 
@@ -168,8 +181,11 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver {
 
         logger.info("Attached " + this);
         if (player == null) {
-            String playerName = String.valueOf(ComponentUtil.getData(attachEvent.getUI(), PLAYER_NAME));
             player = controller.setupPlayer(playerName, this);
+            if (player == null) {
+                attachEvent.getUI().navigate(WelcomeView.class);
+                return;
+            }
         }
         readablePlayer = controller.getReadablePlayer(player);
     }
@@ -283,8 +299,32 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver {
     private void getPlayerCommands() {
         ViewUtil.runOnUiThread(getUI(), () -> {
             List<Command> commands = controller.getCommandController().generateCommands(player);
+            commands.add(getQuitCommand());
             playerCommandButtonView.newCommands(commands);
         });
+    }
+
+    private Command getQuitCommand() {
+        if (quitCommand == null) {
+            quitCommand = new Command() {
+                @Override
+                public String getCommandName() {
+                    return "Quit";
+                }
+
+                @Override
+                public boolean isEnabled() {
+                    return true;
+                }
+
+                @Override
+                public void execute() {
+                    closeSession();
+                    UI.getCurrent().navigate(WelcomeView.class);
+                }
+            };
+        }
+        return quitCommand;
     }
 
     private void getPropertiesAndUpdate() {
@@ -319,5 +359,10 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver {
     private void displayCommands(ReadablePropertyModel property) {
         List<Command> commands = controller.getCommandController().generateCommands(property.getModel());
         propertyCommandButtonView.newCommands(commands);
+    }
+
+    @Override
+    public void beforeLeave(BeforeLeaveEvent beforeLeaveEvent) {
+        logger.info("Leaving");
     }
 }

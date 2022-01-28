@@ -16,11 +16,11 @@ public class PropertyListView extends Div {
 
         grid = new Grid<>(ReadablePropertyModel.class, false);
         grid.addSelectionListener(selectionListener);
-        grid.addColumn(ReadablePropertyModel::getName).setHeader("Street name");
-        grid.addColumn(ReadablePropertyModel::getHouseNumber).setHeader("House number");
-        grid.addColumn(ReadablePropertyModel::getHotelNumber).setHeader("Hotel number");
-        grid.addColumn(ReadablePropertyModel::getRent).setHeader("Rent");
-        grid.addColumn(ReadablePropertyModel::getCategory).setHeader("Category");
+        grid.addColumn(ReadablePropertyModel::getName).setHeader("Street name").setAutoWidth(true).setResizable(true);
+        grid.addColumn(ReadablePropertyModel::getHouseNumber).setHeader("House number").setAutoWidth(true).setResizable(true);
+        grid.addColumn(ReadablePropertyModel::getHotelNumber).setHeader("Hotel number").setAutoWidth(true).setResizable(true);
+        grid.addColumn(ReadablePropertyModel::getRent).setHeader("Rent").setAutoWidth(true).setResizable(true);
+        grid.addColumn(ReadablePropertyModel::getCategory).setHeader("Category").setAutoWidth(true).setResizable(true);
 
         grid.setSizeFull();
 

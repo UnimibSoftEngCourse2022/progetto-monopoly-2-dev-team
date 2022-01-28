@@ -54,7 +54,7 @@ function showPlayerName(name) {
         }
         boardDiv.appendChild(displayNameDiv);
         displayNameDiv.id = "display-name";
-        displayNameDiv.style = "background: white; position: absolute;";
+        displayNameDiv.style = "background: rgba(255, 255, 255, 0.8); position: absolute; font: system-ui; border-radius: 5px;";
         displayNameDiv.style.padding = "2px"
     } else if (displayNameDiv.parentNode == null) {
         var boardDiv = board().getElementById("monopoly-board");

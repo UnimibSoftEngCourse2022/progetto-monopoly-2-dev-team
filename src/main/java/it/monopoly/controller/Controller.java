@@ -22,6 +22,8 @@ import it.monopoly.model.player.ReadablePlayerModel;
 import it.monopoly.model.property.PropertyModel;
 import it.monopoly.model.property.ReadablePropertyModel;
 import it.monopoly.view.MainView;
+import it.monopoly.view.Observable;
+import it.monopoly.view.Observer;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,8 +36,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
-@Component
-public class Controller implements Serializable {
+public class Controller implements Serializable, Observable<Controller> {
+    private final List<Observer<Controller>> observers = new LinkedList<>();
+    private final String id;
+    private final Configuration configuration;
     private final PlayerController playerController;
     private final PropertyController propertyController;
     private final PropertyMapper mapper;
@@ -46,17 +50,17 @@ public class Controller implements Serializable {
     private final ViewController viewController;
     private final TradeController tradeController;
     private final RandomizationManager randomizationManager;
-    private final Configuration configuration;
     private final Logger logger = LogManager.getLogger(getClass());
     private final Random random = new Random();
     private boolean gameStarted = false;
-    private Board board;
+    private final Board board;
 
-    Controller() {
-        this(null);
+    Controller(String id) {
+        this(id, null);
     }
 
-    Controller(Configuration configuration) {
+    Controller(String id, Configuration configuration) {
+        this.id = id;
         this.configuration = configuration;
         List<PropertyModel> properties = Collections.emptyList();
         List<PlayerModel> players = new ArrayList<>();
@@ -102,6 +106,9 @@ public class Controller implements Serializable {
     }
 
     public synchronized PlayerModel setupPlayer(String playerName, MainView view) {
+        if (maxPlayerReached()) {
+            return null;
+        }
         PlayerModel player = new PlayerModel(RandomStringUtils.randomAlphanumeric(6), playerName);
         viewController.setUp(player, view);
         synchronized (propertyController.getModels()) {
@@ -162,6 +169,14 @@ public class Controller implements Serializable {
                 gameStarted = true;
             }
         }
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public boolean maxPlayerReached() {
+        return getPlayers().size() >= configuration.getPlayerNumber();
     }
 
     public boolean isGameStarted() {
@@ -225,6 +240,9 @@ public class Controller implements Serializable {
         logger.info("Stopping game");
         turnController.stop();
         gameStarted = false;
+        for (Observer<Controller> observer : observers) {
+            observer.notify(this);
+        }
     }
 
     public void startAuction(PlayerModel player) {
@@ -237,5 +255,19 @@ public class Controller implements Serializable {
         List<PropertyModel> models = propertyController.getModels();
         int index = random.nextInt(models.size());
         eventDispatcher.startOffer(new SellManager(player, models.get(index), tradeController));
+    }
+
+    @Override
+    public void register(Observer<Controller> observer) {
+        if (observer != null) {
+            observers.add(observer);
+        }
+    }
+
+    @Override
+    public void deregister(Observer<Controller> observer) {
+        if (observer != null) {
+            observers.remove(observer);
+        }
     }
 }
