@@ -10,17 +10,15 @@ public class RandomizationManager implements Randomizer {
     private final PropertyRandomizerManager propertyRandomizerManager;
     private final TaxRandomizerManager taxRandomizerManager;
     private final Random random = new Random();
-    private float priceChangeRate = .25f;
-    private float taxChangeRate = .25f;
+    private float priceChangeRate = 0;
+    private float taxChangeRate = 0;
 
     public RandomizationManager(List<PropertyModel> properties, Configuration configuration) {
-        float randomnessIndex;
+        float randomnessIndex = 0;
         if (configuration != null) {
             randomnessIndex = configuration.getRandomnessIndex();
             priceChangeRate = configuration.getPriceChangeRate();
             taxChangeRate = configuration.getTaxRate();
-        } else {
-            randomnessIndex = .25f;
         }
         this.propertyRandomizerManager = new PropertyRandomizerManager(properties, randomnessIndex);
         this.taxRandomizerManager = new TaxRandomizerManager(randomnessIndex);

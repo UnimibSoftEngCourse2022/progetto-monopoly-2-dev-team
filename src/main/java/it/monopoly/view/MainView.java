@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static it.monopoly.view.WelcomeView.PLAYER_NAME;
+
 @Push
 @Route(value = ":id(([0-9]|[a-z]){16})")
 public class MainView extends HorizontalLayout implements BeforeEnterObserver {
@@ -166,7 +168,8 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver {
 
         logger.info("Attached " + this);
         if (player == null) {
-            player = controller.setupPlayer(this);
+            String playerName = String.valueOf(ComponentUtil.getData(attachEvent.getUI(), PLAYER_NAME));
+            player = controller.setupPlayer(playerName, this);
         }
         readablePlayer = controller.getReadablePlayer(player);
     }

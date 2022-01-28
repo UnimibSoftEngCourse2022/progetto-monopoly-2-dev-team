@@ -1,15 +1,24 @@
 package it.monopoly.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import it.monopoly.manager.loyaltyprogram.LoyaltyProgram;
 
 public class Configuration {
+    @JsonAlias("player_number")
+    private int playerNumber = 6;
+    @JsonAlias("player_funds")
+    private int playerFund = 1500;
+    @JsonAlias("randomness_index")
+    private float randomnessIndex = 0;
+    @JsonAlias("tax_rate")
+    private float taxRate = 0;
+    @JsonAlias("price_change_rate")
+    private float priceChangeRate = 0;
+    @JsonAlias("loyalty_program")
+    private LoyaltyProgram.Type loyaltyType = null;
 
-    private final int playerNumber;
-    private final int playerFund;
-    private final float randomnessIndex;
-    private final float taxRate;
-    private final float priceChangeRate;
-    private final LoyaltyProgram.Type loyaltyType;
+    public Configuration() {
+    }
 
     public Configuration(int playerNumber,
                          int playerFund,

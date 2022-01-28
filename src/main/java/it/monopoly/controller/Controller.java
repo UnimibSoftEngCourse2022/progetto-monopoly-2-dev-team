@@ -61,7 +61,7 @@ public class Controller implements Serializable {
         List<PropertyModel> properties = Collections.emptyList();
         List<PlayerModel> players = new ArrayList<>();
         ObjectMapper jacksonMapper = new ObjectMapper();
-        URL jsonURL = MainView.class.getClassLoader().getResource("properties.json");
+        URL jsonURL = Controller.class.getClassLoader().getResource("properties.json");
         if (jsonURL != null) {
             try {
                 properties = jacksonMapper.readValue(new File(jsonURL.toURI()), new TypeReference<>() {
@@ -101,11 +101,11 @@ public class Controller implements Serializable {
         commandController = new MainCommandController(builderDispatcher);
     }
 
-    public synchronized PlayerModel setupPlayer(MainView view) {
-        PlayerModel player = new PlayerModel(RandomStringUtils.randomAlphanumeric(6), "nome");
+    public synchronized PlayerModel setupPlayer(String playerName, MainView view) {
+        PlayerModel player = new PlayerModel(RandomStringUtils.randomAlphanumeric(6), playerName);
         viewController.setUp(player, view);
         synchronized (propertyController.getModels()) {
-            playerController.addPlayer(player, 1000);
+            playerController.addPlayer(player, configuration.getPlayerFund());
         }
         PlayerManager manager = playerController.getManager(player);
         mapper.register(manager);

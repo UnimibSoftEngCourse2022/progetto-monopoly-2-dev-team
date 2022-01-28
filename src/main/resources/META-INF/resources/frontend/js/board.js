@@ -56,6 +56,11 @@ function showPlayerName(name) {
         displayNameDiv.id = "display-name";
         displayNameDiv.style = "background: white; position: absolute;";
         displayNameDiv.style.padding = "2px"
+    } else if (displayNameDiv.parentNode == null) {
+        var boardDiv = board().getElementById("monopoly-board");
+        if(boardDiv != null) {
+            boardDiv.appendChild(displayNameDiv);
+        }
     }
     displayNameDiv.style.display = "block";
     displayNameDiv.innerHTML = name;

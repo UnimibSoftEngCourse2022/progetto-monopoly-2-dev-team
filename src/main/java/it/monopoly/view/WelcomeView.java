@@ -1,30 +1,27 @@
 package it.monopoly.view;
 
-import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.select.Select;
-import com.vaadin.flow.component.textfield.IntegerField;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import it.monopoly.controller.Controller;
 import it.monopoly.controller.RouteController;
-import it.monopoly.manager.loyaltyprogram.LoyaltyProgram;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Route("")
 public class WelcomeView extends VerticalLayout {
     private final RouteController routeController;
-    private static final String NONE = "None";
-    private static final String CUSTOM = "Custom";
-    private static final String EASY = "Easy";
-    private static final String MEDIUM = "Medium";
-    private static final String HARD = "Hard";
-
+    private ConfigurationView configurationView;
+    public static final String PLAYER_NAME = "PLAYER_NAME";
+    private VerticalLayout content;
+    private TextField nameField;
 
     public WelcomeView(@Autowired RouteController routeController) {
         this.routeController = routeController;
@@ -32,103 +29,87 @@ public class WelcomeView extends VerticalLayout {
 
     @Override
     protected void onAttach(AttachEvent attachEvent) {
-        TextField nameField = new TextField("Player name");
+        Tab createGameTab = new Tab("Create Game");
+        Tab participateGameTab = new Tab("Participate Game");
 
-        Button createGameButton = new Button("Create Game", e -> createGame());
+        Tabs tabs = new Tabs(createGameTab, participateGameTab);
+        tabs.setSelectedTab(createGameTab);
 
-        VerticalLayout configLayout = new VerticalLayout();
-        configLayout.setVisible(false);
+        nameField = new TextField("Player name");
+        nameField.setPlaceholder("Name");
 
-        IntegerField playerNumberField = new IntegerField("Max player number");
-        playerNumberField.setHasControls(true);
-        playerNumberField.setValue(6);
-        playerNumberField.setMax(10);
-        playerNumberField.setMin(2);
+        content = new VerticalLayout();
+        content.setPadding(false);
+        content.setMargin(false);
 
-        IntegerField initialFundsField = new IntegerField("Initial funds");
-        initialFundsField.setHasControls(true);
-        initialFundsField.setStep(100);
-        initialFundsField.setValue(1000);
-        initialFundsField.setMin(500);
-        initialFundsField.setMax(5000);
+        tabs.addSelectedChangeListener(selectedChangeEvent -> {
+            Tab selectedTab = selectedChangeEvent.getSelectedTab();
+            if (selectedTab != null && selectedTab.equals(createGameTab)) {
+                setCreateContent();
+            } else {
+                setParticipateContent();
+            }
+        });
+        setCreateContent();
 
-        IntegerField randomnessIndexField = new IntegerField("Randomness index");
-        randomnessIndexField.setHasControls(true);
-        randomnessIndexField.setStep(10);
-        randomnessIndexField.setValue(20);
-        Div suffixComponent = new Div();
-        suffixComponent.setText("%");
-        randomnessIndexField.setSuffixComponent(suffixComponent);
-        randomnessIndexField.setMin(0);
+        add(tabs, nameField, content);
+    }
 
-        IntegerField taxChangeRateField = new IntegerField("Tax change rate");
-        taxChangeRateField.setHasControls(true);
-        taxChangeRateField.setStep(10);
-        taxChangeRateField.setValue(20);
-        Div suffixTax = new Div();
-        suffixTax.setText("%");
-        taxChangeRateField.setSuffixComponent(suffixTax);
-        taxChangeRateField.setMin(0);
-        taxChangeRateField.setMax(100);
+    private void setCreateContent() {
+        if (content == null) {
+            return;
+        }
+        content.removeAll();
+        configurationView = new ConfigurationView();
+        Button createGameButton = new Button("Create Game", event -> createGame());
 
-        IntegerField propertiesChangeRateField = new IntegerField("Properties values change rate");
-        propertiesChangeRateField.setHasControls(true);
-        propertiesChangeRateField.setStep(10);
-        propertiesChangeRateField.setValue(20);
-        Div suffixPropertiesRate = new Div();
-        suffixPropertiesRate.setText("%");
-        propertiesChangeRateField.setSuffixComponent(suffixPropertiesRate);
-        propertiesChangeRateField.setMin(0);
-        propertiesChangeRateField.setMax(100);
+        content.add(configurationView, createGameButton);
+    }
 
-        Select<LoyaltyProgram.Type> loyaltySelect = new Select<>();
-        loyaltySelect.setEmptySelectionAllowed(true);
-        loyaltySelect.setLabel("Loyalty program type");
-        loyaltySelect.setItems(LoyaltyProgram.Type.values());
-        loyaltySelect.setItemLabelGenerator(
-                (ItemLabelGenerator<LoyaltyProgram.Type>)
-                        type -> type != null ? StringUtils.capitalize(type.name().toLowerCase()) : "None"
+    private void setParticipateContent() {
+        if (content == null) {
+            return;
+        }
+        content.removeAll();
+        Button participateGameButton = new Button("Create Game");
+
+        TextField gameIdField = new TextField("Game Id");
+        gameIdField.setPlaceholder("16 characters code");
+        gameIdField.addKeyDownListener(
+                Key.ENTER,
+                keyDownEvent -> participateGameButton.click()
         );
 
-        configLayout.add(
-                playerNumberField,
-                initialFundsField,
-                randomnessIndexField,
-                taxChangeRateField,
-                propertiesChangeRateField,
-                loyaltySelect
-        );
+        participateGameButton.addClickListener(event -> participateGame(gameIdField.getValue()));
 
-        Select<String> select = new Select<>();
-        select.setLabel("Special Configuration");
-        select.setItems(NONE, CUSTOM, EASY, MEDIUM, HARD);
-        select.setValue(NONE);
-        select.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<Select<String>, String>>)
-                event -> {
-                    if (NONE.equals(event.getValue())) {
-                        configLayout.setVisible(false);
-                        return;
-                    }
-                    configLayout.setVisible(true);
-                });
-
-        add(nameField, select, configLayout, createGameButton);
+        content.add(gameIdField, participateGameButton);
     }
 
     private void createGame() {
-        String id = RandomStringUtils.randomAlphanumeric(16).toLowerCase();
-        routeController.createGame(null, id);
-        navigate(id);
+        String route = routeController.createGame(configurationView.buildConfigurationFromView());
+        setPlayerNameData();
+        navigate(route);
     }
 
     private void participateGame(String id) {
+        if (id == null) {
+            return;
+        }
         Controller controller = routeController.getController(id);
         if (controller != null) {
+            setPlayerNameData();
             navigate(id);
         } else {
             Notification notification = new Notification("Game does not exist");
+            notification.setPosition(Notification.Position.TOP_CENTER);
             add(notification);
+            notification.setDuration(2500);
+            notification.open();
         }
+    }
+
+    private void setPlayerNameData() {
+        ComponentUtil.setData(UI.getCurrent(), PLAYER_NAME, nameField.getValue());
     }
 
     private void navigate(String id) {

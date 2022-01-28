@@ -1,6 +1,7 @@
 package it.monopoly.controller;
 
 import it.monopoly.model.Configuration;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -14,8 +15,10 @@ public class RouteController {
         return controllerMap.getOrDefault(id, null);
     }
 
-    public void createGame(Configuration configuration, String id) {
+    public String createGame(Configuration configuration) {
+        String id = RandomStringUtils.randomAlphanumeric(16).toLowerCase();
         Controller controller = new Controller(configuration);
         controllerMap.put(id, controller);
+        return id;
     }
 }
