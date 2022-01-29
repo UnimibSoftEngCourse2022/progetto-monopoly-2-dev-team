@@ -3,12 +3,13 @@ package ut;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.monopoly.controller.TradeController;
+import it.monopoly.controller.board.card.DrawableCardController;
 import it.monopoly.controller.command.CommandBuilderDispatcher;
 import it.monopoly.controller.command.MainCommandBuilderDispatcher;
-import it.monopoly.controller.event.callback.BuyOrAuctionCallback;
-import it.monopoly.controller.event.callback.DiceRollEventCallback;
 import it.monopoly.controller.event.DiceRoller;
 import it.monopoly.controller.event.EventDispatcher;
+import it.monopoly.controller.event.callback.BuyOrAuctionCallback;
+import it.monopoly.controller.event.callback.DiceRollEventCallback;
 import it.monopoly.controller.event.callback.UsePointsCallback;
 import it.monopoly.controller.player.PlayerController;
 import it.monopoly.controller.property.PropertyController;
@@ -114,6 +115,7 @@ public abstract class BaseTest {
         commandBuilderDispatcher = new MainCommandBuilderDispatcher(
                 propertyController,
                 playerController,
+                new DrawableCardController(false),
                 tradeController,
                 eventDispatcher
         );

@@ -14,4 +14,6 @@ public interface PropertyOwnerMapper {
     void setOwner(final PropertyModel property, final PlayerModel player);
 
     PlayerModel removeOwner(final PropertyModel property);
+
+    List<PropertyModel> removeAllPlayerProperties(PlayerModel player);
 }

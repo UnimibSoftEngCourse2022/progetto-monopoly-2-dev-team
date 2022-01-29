@@ -41,6 +41,10 @@ public class Broadcaster {
         });
     }
 
+    public void notifyRemovePlayer() {
+        notifyAllPlayers(null);
+    }
+
     public void startOffers(AbstractOfferManager offerManager) {
         if (this.offerManager != null) {
             logger.error("Sell/Auction already started");

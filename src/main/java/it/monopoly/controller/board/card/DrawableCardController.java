@@ -15,8 +15,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class DrawableCardController {
 
-    private Queue<DrawableCardModel> chancesCards = new ConcurrentLinkedQueue<>();
-    private Queue<DrawableCardModel> communitiesCards = new ConcurrentLinkedQueue<>();
+    private final Queue<DrawableCardModel> chancesCards = new ConcurrentLinkedQueue<>();
+    private final Queue<DrawableCardModel> communitiesCards = new ConcurrentLinkedQueue<>();
+
+    public DrawableCardController() {
+        this(true);
+    }
 
     public DrawableCardController(boolean shuffle) {
 

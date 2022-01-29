@@ -11,10 +11,16 @@ public class PlayerController extends ManagerController<PlayerModel, PlayerManag
 
     private final PropertyOwnerMapper ownerMapper;
 
+    public PlayerController(PropertyOwnerMapper ownerMapper) {
+        this(null, ownerMapper);
+    }
+
     public PlayerController(List<PlayerModel> players, PropertyOwnerMapper ownerMapper) {
         this.ownerMapper = ownerMapper;
-        for (PlayerModel player : players) {
-            addPlayer(player, 1000); //TODO Connect to game configuration
+        if (players != null) {
+            for (PlayerModel player : players) {
+                addPlayer(player, 1000);
+            }
         }
     }
 

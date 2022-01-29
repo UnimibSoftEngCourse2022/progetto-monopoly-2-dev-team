@@ -1,6 +1,7 @@
 package it.monopoly.controller.command;
 
 import it.monopoly.controller.TradeController;
+import it.monopoly.controller.board.card.DrawableCardController;
 import it.monopoly.controller.event.EventDispatcher;
 import it.monopoly.controller.player.PlayerController;
 import it.monopoly.controller.player.command.*;
@@ -11,15 +12,18 @@ import it.monopoly.controller.property.command.SellPropertyCommandBuilder;
 public class MainCommandBuilderDispatcher implements CommandBuilderDispatcher {
     private final PropertyController propertyController;
     private final PlayerController playerController;
+    private final DrawableCardController drawableCardController;
     private final TradeController tradeController;
     private final EventDispatcher eventDispatcher;
 
     public MainCommandBuilderDispatcher(PropertyController propertyController,
                                         PlayerController playerController,
+                                        DrawableCardController drawableCardController,
                                         TradeController tradeController,
                                         EventDispatcher eventDispatcher) {
         this.propertyController = propertyController;
         this.playerController = playerController;
+        this.drawableCardController = drawableCardController;
         this.tradeController = tradeController;
         this.eventDispatcher = eventDispatcher;
     }
@@ -64,6 +68,8 @@ public class MainCommandBuilderDispatcher implements CommandBuilderDispatcher {
                     tradeController,
                     eventDispatcher
             ));
+        } else if (GetOutOfJailCommandBuilder.class.equals(className)) {
+            return className.cast(new GetOutOfJailCommandBuilder(playerController, drawableCardController));
         }
         return null;
     }

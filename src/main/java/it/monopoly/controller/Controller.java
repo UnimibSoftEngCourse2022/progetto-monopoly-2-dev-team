@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.monopoly.Broadcaster;
 import it.monopoly.controller.board.Board;
+import it.monopoly.controller.board.card.DrawableCardController;
 import it.monopoly.controller.command.CommandBuilderDispatcher;
 import it.monopoly.controller.command.MainCommandBuilderDispatcher;
 import it.monopoly.controller.event.EventDispatcher;
@@ -27,7 +28,6 @@ import it.monopoly.view.Observer;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,14 +56,13 @@ public class Controller implements Serializable, Observable<Controller> {
     private final Board board;
 
     Controller(String id) {
-        this(id, null);
+        this(id, new Configuration());
     }
 
     Controller(String id, Configuration configuration) {
         this.id = id;
         this.configuration = configuration;
         List<PropertyModel> properties = Collections.emptyList();
-        List<PlayerModel> players = new ArrayList<>();
         ObjectMapper jacksonMapper = new ObjectMapper();
         URL jsonURL = Controller.class.getClassLoader().getResource("properties.json");
         if (jsonURL != null) {
@@ -77,13 +76,12 @@ public class Controller implements Serializable, Observable<Controller> {
 
         viewController = new ViewController();
 
-        playerController = new PlayerController(players, mapper);
+        playerController = new PlayerController(mapper);
 
         broadcaster = new Broadcaster();
         eventDispatcher = new MainEventDispatcher(broadcaster, viewController);
 
         randomizationManager = new RandomizationManager(properties, configuration);
-        turnController = new TurnController(playerController, eventDispatcher, randomizationManager);
 
         PriceManagerDispatcher priceManagerDispatcher = new PriceManagerDispatcher(
                 randomizationManager.getPropertyRandomizerManager(),
@@ -93,15 +91,25 @@ public class Controller implements Serializable, Observable<Controller> {
         );
         propertyController = new PropertyController(properties, priceManagerDispatcher, mapper, mapper);
 
+        turnController = new TurnController(propertyController, playerController, eventDispatcher, randomizationManager);
+
         tradeController = new TradeController(playerController, propertyController);
 
+        DrawableCardController drawableCardController = new DrawableCardController();
         CommandBuilderDispatcher builderDispatcher = new MainCommandBuilderDispatcher(
                 propertyController,
                 playerController,
+                drawableCardController,
                 tradeController,
                 eventDispatcher
         );
-        board = new Board(builderDispatcher, eventDispatcher, playerController, propertyController);
+        board = new Board(
+                builderDispatcher,
+                eventDispatcher,
+                drawableCardController,
+                playerController,
+                propertyController
+        );
         commandController = new MainCommandController(builderDispatcher);
     }
 
@@ -115,7 +123,7 @@ public class Controller implements Serializable, Observable<Controller> {
             playerController.addPlayer(player, configuration.getPlayerFund());
         }
         PlayerManager manager = playerController.getManager(player);
-        mapper.register(manager);
+        mapper.getOwnerObservable().register(manager);
         board.register(viewController.getPlayerPositionObserver(player));
         broadcaster.registerForOffers(viewController.getAuctionConsumer(player));
         broadcaster.registerForPlayers(viewController.getAllPlayersConsumer(player));
@@ -130,12 +138,12 @@ public class Controller implements Serializable, Observable<Controller> {
 
     public void closePlayerSession(PlayerModel player) {
         synchronized (playerController.getModels()) {
-
             logger.info("Removing player {}#{}", player.getName(), player.getId());
 
             PlayerManager manager = playerController.getManager(player);
 
-            mapper.deregister(manager);
+            mapper.getOwnerObservable().deregister(manager);
+            mapper.removeAllPlayerProperties(player);
             board.deregister(viewController.getPlayerPositionObserver(player));
             board.removePlayer(player);
             broadcaster.deregisterFromOffers(viewController.getAuctionConsumer(player));
@@ -145,15 +153,11 @@ public class Controller implements Serializable, Observable<Controller> {
             manager.getPositionObservable().deregister(board);
             manager.deregister(turnController);
             manager.deregister(broadcaster.getPlayerObserver());
-
             manager.setDiceRolled();
             manager.endTurn();
-            mapper.removeAllPlayerProperties(player);
 
             playerController.removePlayer(player);
-            manager.deregister(turnController);
             viewController.remove(player);
-
 
             if (playerController.getModels().isEmpty()) {
                 stopGame();

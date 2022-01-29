@@ -13,13 +13,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class PlayerManager extends Manager<PlayerModel> implements Observable<ReadablePlayerModel>, Observer<List<PropertyModel>> {
+public class PlayerManager extends Manager<PlayerModel> implements Observable<ReadablePlayerModel>, Observer<PlayerModel> {
     private static final int EARN_ON_GO = 200; //TODO Check configuration
+    public static final Object lock = new Object();
     private final Logger logger = LogManager.getLogger(getClass());
     private final Executor executor = Executors.newSingleThreadExecutor();
     private final List<Observer<ReadablePlayerModel>> observers = new LinkedList<>();
@@ -29,7 +31,7 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     private boolean isTurn = false;
     private boolean hasRolledDice = false;
     private int funds;
-    private List<DrawableCardModel> drawableCardModels = new ArrayList<>();
+    private final List<DrawableCardModel> drawableCardModels = new ArrayList<>();
     private PlayerState state;
     private int getOutOfJailTries = 0;
     private LoyaltyProgram loyaltyProgram = null;
@@ -72,8 +74,15 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
         notifyReadable();
     }
 
-    public ReadablePlayerModel getReadable() {
-        return new ReadablePlayerModel(model.getName(), funds, state, position, isTurn, getProperties());
+    public synchronized ReadablePlayerModel getReadable() {
+        return new ReadablePlayerModel(
+                model,
+                funds,
+                state,
+                position,
+                isTurn,
+                PlayerState.BANKRUPT.equals(state) ? Collections.emptyList() : getProperties()
+        );
     }
 
     public void earn(int money) {
@@ -95,7 +104,7 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     }
 
     public Position moveTo(int space, boolean direct) {
-        synchronized (getPosition()) {
+        synchronized (lock) {
             if (canMove()) {
                 position.setPosition(space, direct);
                 notifyPosition();
@@ -164,7 +173,7 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
         }
     }
 
-    public List<PropertyModel> getProperties() {
+    public synchronized List<PropertyModel> getProperties() {
         return ownerMapper.getPlayerProperties(model);
     }
 
@@ -207,6 +216,9 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
         this.state = state;
         if (changed) {
             logger.info("Player {} changed its state from {} to {}", model.getId(), previous, state);
+            if (PlayerState.BANKRUPT.equals(state)) {
+                endTurn();
+            }
             notifyReadable();
         }
     }
@@ -220,8 +232,6 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     private void checkBankrupt() {
         if (funds <= 0) {
             setState(PlayerState.BANKRUPT);
-        } else if (PlayerState.BANKRUPT.equals(state)) {
-            setState(PlayerState.FREE);
         }
     }
 
@@ -229,7 +239,9 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
         if (!observers.isEmpty()) {
             ReadablePlayerModel readable = getReadable();
             for (Observer<ReadablePlayerModel> observer : observers) {
-                executor.execute(() -> observer.notify(readable));
+                synchronized (lock) {
+                    observer.notify(readable);
+                }
             }
         }
     }
@@ -250,8 +262,10 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     }
 
     @Override
-    public void notify(List<PropertyModel> obj) {
-        notifyReadable();
+    public void notify(PlayerModel playerModel) {
+        if (model.equals(playerModel)) {
+            notifyReadable();
+        }
     }
 
     public Observable<PlayerModel> getPositionObservable() {

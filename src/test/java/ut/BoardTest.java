@@ -23,7 +23,13 @@ public class BoardTest extends BaseTest {
 
     @Test
     public void chainOfResponsabilityTest() {
-        board = new Board(commandBuilderDispatcher, eventDispatcher, playerController, propertyController);
+        board = new Board(
+                commandBuilderDispatcher,
+                eventDispatcher,
+                new DrawableCardController(true),
+                playerController,
+                propertyController
+        );
         List<Space> boardSpaces = board.getSpaces();
 
         Assert.assertNotNull(boardSpaces);

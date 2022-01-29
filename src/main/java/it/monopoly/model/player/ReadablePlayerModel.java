@@ -6,15 +6,15 @@ import java.io.Serializable;
 import java.util.List;
 
 public class ReadablePlayerModel implements Serializable {
-    private final String name;
     private final int funds;
     private final PlayerState state;
     private final Position position;
     private final boolean isTurn;
     private final List<PropertyModel> properties;
+    private final PlayerModel model;
 
-    public ReadablePlayerModel(String name, int funds, PlayerState state, Position position, boolean isTurn, List<PropertyModel> properties) {
-        this.name = name;
+    public ReadablePlayerModel(PlayerModel model, int funds, PlayerState state, Position position, boolean isTurn, List<PropertyModel> properties) {
+        this.model = model;
         this.funds = funds;
         this.state = state;
         this.isTurn = isTurn;
@@ -29,7 +29,7 @@ public class ReadablePlayerModel implements Serializable {
     }
 
     public String getName() {
-        return name;
+        return model.getName();
     }
 
     public int getFunds() {
@@ -58,5 +58,9 @@ public class ReadablePlayerModel implements Serializable {
 
     public boolean isTurn() {
         return isTurn;
+    }
+
+    public PlayerModel getModel() {
+        return model;
     }
 }

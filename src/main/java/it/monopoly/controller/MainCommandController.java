@@ -4,6 +4,7 @@ import it.monopoly.controller.command.Command;
 import it.monopoly.controller.command.CommandBuilderDispatcher;
 import it.monopoly.controller.player.command.DiceRollCommandBuilder;
 import it.monopoly.controller.player.command.EndTurnCommandBuilder;
+import it.monopoly.controller.player.command.GetOutOfJailCommandBuilder;
 import it.monopoly.controller.property.command.PropertyCommandBuilder;
 import it.monopoly.controller.property.command.SellPropertyCommandBuilder;
 import it.monopoly.model.player.PlayerModel;
@@ -37,6 +38,7 @@ public class MainCommandController {
     public List<Command> generateCommands(PlayerModel player) {
         ArrayList<Command> commands = new ArrayList<>();
         commands.add(commandBuilderDispatcher.createCommandBuilder(DiceRollCommandBuilder.class).setPlayer(player).build());
+        commands.add(commandBuilderDispatcher.createCommandBuilder(GetOutOfJailCommandBuilder.class).setPlayer(player).build());
         commands.add(commandBuilderDispatcher.createCommandBuilder(EndTurnCommandBuilder.class).setPlayer(player).build());
         return commands;
     }

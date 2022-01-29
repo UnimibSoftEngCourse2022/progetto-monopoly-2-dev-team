@@ -2,6 +2,7 @@ package it.monopoly.controller;
 
 import it.monopoly.controller.event.EventDispatcher;
 import it.monopoly.controller.player.PlayerController;
+import it.monopoly.controller.property.PropertyController;
 import it.monopoly.manager.player.PlayerManager;
 import it.monopoly.manager.randomizer.RandomizationManager;
 import it.monopoly.model.player.PlayerModel;
@@ -12,15 +13,17 @@ public class TurnController implements Observer<ReadablePlayerModel> {
     private final PlayerController playerController;
     private final EventDispatcher eventDispatcher;
     private final RandomizationManager randomizationManager;
+    private final PlayerCheck playerCheck;
     private int currentPlayerIndex = -1;
     private PlayerModel currentPlayer;
 
-    public TurnController(PlayerController playerController,
+    public TurnController(PropertyController propertyController, PlayerController playerController,
                           EventDispatcher eventDispatcher,
                           RandomizationManager randomizationManager) {
         this.playerController = playerController;
         this.eventDispatcher = eventDispatcher;
         this.randomizationManager = randomizationManager;
+        this.playerCheck = new PlayerCheck(propertyController, playerController);
     }
 
     public void start() {
@@ -65,14 +68,20 @@ public class TurnController implements Observer<ReadablePlayerModel> {
     }
 
     @Override
-    public synchronized void notify(ReadablePlayerModel player) {
-        if (currentPlayer != null) {
-            PlayerManager manager = playerController.getManager(currentPlayer);
-            if (manager != null && !manager.isTakingTurn()) {
+    public void notify(ReadablePlayerModel player) {
+        synchronized (PlayerManager.lock) {
+            PlayerModel winner = playerCheck.checkPlayers();
+            if (winner != null) {
+                return;
+            }
+            if (currentPlayer != null) {
+                PlayerManager manager = playerController.getManager(currentPlayer);
+                if (manager != null && !manager.isTakingTurn()) {
+                    nextTurn();
+                }
+            } else {
                 nextTurn();
             }
-        } else {
-            nextTurn();
         }
     }
 

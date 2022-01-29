@@ -28,7 +28,8 @@ public class GetOutOfJailCommand implements Command {
 
     @Override
     public boolean isEnabled() {
-        return playerController.getManager(player).getState().equals(PlayerState.IN_JAIL) && !playerController.getManager(player).getDrawableCardModels().isEmpty();
+        PlayerManager manager = playerController.getManager(player);
+        return manager.getState().equals(PlayerState.IN_JAIL) && !manager.getDrawableCardModels().isEmpty();
     }
 
     @Override

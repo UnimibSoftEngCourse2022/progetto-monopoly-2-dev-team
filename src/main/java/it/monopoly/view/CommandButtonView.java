@@ -36,13 +36,15 @@ public class CommandButtonView extends HorizontalLayout {
         if (commands != null) {
             clear();
             for (Command command : commands) {
-                Button button = new Button(command.getCommandName());
-                button.getElement().getStyle().set("margin", "auto");
-                button.setEnabled(active && command.isEnabled());
-                button.addClickListener(
-                        (ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> command.execute()
-                );
-                add(button);
+                if (command != null) {
+                    Button button = new Button(command.getCommandName());
+                    button.getElement().getStyle().set("margin", "auto");
+                    button.setEnabled(active && command.isEnabled());
+                    button.addClickListener(
+                            (ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> command.execute()
+                    );
+                    add(button);
+                }
             }
         }
     }

@@ -1,13 +1,14 @@
 package ut;
 
 import it.monopoly.controller.TradeController;
+import it.monopoly.controller.board.card.DrawableCardController;
 import it.monopoly.controller.command.Command;
 import it.monopoly.controller.command.CommandBuilderDispatcher;
 import it.monopoly.controller.command.MainCommandBuilderDispatcher;
-import it.monopoly.controller.event.callback.BuyOrAuctionCallback;
-import it.monopoly.controller.event.callback.DiceRollEventCallback;
 import it.monopoly.controller.event.DiceRoller;
 import it.monopoly.controller.event.EventDispatcher;
+import it.monopoly.controller.event.callback.BuyOrAuctionCallback;
+import it.monopoly.controller.event.callback.DiceRollEventCallback;
 import it.monopoly.controller.event.callback.UsePointsCallback;
 import it.monopoly.controller.player.PlayerController;
 import it.monopoly.controller.player.command.DiceRollCommandBuilder;
@@ -78,6 +79,7 @@ public class CommandTest extends BaseTest {
         commandBuilderDispatcher = new MainCommandBuilderDispatcher(
                 propertyController,
                 playerController,
+                new DrawableCardController(false),
                 new TradeController(playerController, propertyController),
                 eventDispatcher
         );

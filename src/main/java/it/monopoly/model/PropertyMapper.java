@@ -9,13 +9,24 @@ import it.monopoly.view.Observer;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class PropertyMapper implements PropertyOwnerMapper, PropertyCategoryMapper, Observable<List<PropertyModel>> {
-
-    private final List<Observer<List<PropertyModel>>> observers = new LinkedList<>();
+public class PropertyMapper implements PropertyOwnerMapper, PropertyCategoryMapper {
+    private final List<Observer<PlayerModel>> ownerObservers = new LinkedList<>();
 
     private final Map<PlayerModel, List<PropertyModel>> playerProperties = new ConcurrentHashMap<>();
     private final Map<PropertyModel, PlayerModel> propertyOwner = new ConcurrentHashMap<>();
     private final Map<PropertyCategory, List<PropertyModel>> propertyCategory = new ConcurrentHashMap<>();
+
+    private final Observable<PlayerModel> ownerObservable = new Observable<>() {
+        @Override
+        public void register(Observer<PlayerModel> observer) {
+            PropertyMapper.this.registerOwnerObserver(observer);
+        }
+
+        @Override
+        public void deregister(Observer<PlayerModel> observer) {
+            PropertyMapper.this.deregisterOwnerObserver(observer);
+        }
+    };
 
     public PropertyMapper(List<PropertyModel> properties) {
         for (PropertyModel property : properties) {
@@ -41,7 +52,7 @@ public class PropertyMapper implements PropertyOwnerMapper, PropertyCategoryMapp
             List<PropertyModel> list = playerProperties.get(player);
             if (!list.contains(property)) {
                 list.add(property);
-                notify(player);
+                notifyPlayerObservers(player);
             }
             propertyOwner.put(property, player);
         } else if (property != null) {
@@ -59,7 +70,7 @@ public class PropertyMapper implements PropertyOwnerMapper, PropertyCategoryMapp
                 propertyModels.remove(property);
                 return propertyModels;
             });
-            notify(player);
+            notifyPlayerObservers(player);
         }
         return player;
     }
@@ -71,7 +82,7 @@ public class PropertyMapper implements PropertyOwnerMapper, PropertyCategoryMapp
                 propertyOwner.remove(property);
             }
         }
-        notify(player);
+        notifyPlayerObservers(player);
         return removedProperties;
     }
 
@@ -79,19 +90,25 @@ public class PropertyMapper implements PropertyOwnerMapper, PropertyCategoryMapp
         return propertyCategory.get(category);
     }
 
-    private void notify(PlayerModel player) {
-        for (Observer<List<PropertyModel>> observer : observers) {
-            observer.notify(getPlayerProperties(player));
+    private void notifyPlayerObservers(PlayerModel player) {
+        for (Observer<PlayerModel> observer : ownerObservers) {
+            observer.notify(player);
         }
     }
 
-    @Override
-    public void register(Observer<List<PropertyModel>> observer) {
-        observers.add(observer);
+    public Observable<PlayerModel> getOwnerObservable() {
+        return ownerObservable;
     }
 
-    @Override
-    public void deregister(Observer<List<PropertyModel>> observer) {
-        observers.remove(observer);
+    private void registerOwnerObserver(Observer<PlayerModel> observer) {
+        if (observer != null) {
+            ownerObservers.add(observer);
+        }
+    }
+
+    private void deregisterOwnerObserver(Observer<PlayerModel> observer) {
+        if (observer != null) {
+            ownerObservers.remove(observer);
+        }
     }
 }
