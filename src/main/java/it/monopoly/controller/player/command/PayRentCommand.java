@@ -2,6 +2,8 @@ package it.monopoly.controller.player.command;
 
 import it.monopoly.controller.command.Command;
 import it.monopoly.controller.event.EventDispatcher;
+import it.monopoly.controller.event.callback.FirstOrSecondCallback;
+import it.monopoly.controller.event.callback.FirstSecondChoice;
 import it.monopoly.controller.player.PlayerController;
 import it.monopoly.controller.property.PropertyController;
 import it.monopoly.manager.loyaltyprogram.LoyaltyProgram;
@@ -48,6 +50,7 @@ public class PayRentCommand implements Command {
 
     @Override
     public void execute() {
+        if (!isEnabled()) return;
         logger.info("Executing PayRentCommand for player {} on property {}", player.getId(), property.getName());
         PropertyManager propertyManager = propertyController.getManager(property);
         if (!player.equals(propertyManager.getOwner())) {
@@ -61,17 +64,18 @@ public class PayRentCommand implements Command {
 
         int rent = propertyManager.getPriceManager().getRent();
 
-        if (loyaltyProgram != null) {
+        if (loyaltyProgram != null && propertyManager.getOwner().equals(loyaltyProgram.getCreditor())) {
             if (loyaltyProgram.getType().equals(LoyaltyProgram.Type.PERCENTAGE)) {
                 int price = loyaltyProgram.spendSales(propertyManager.getOwner(), rent);
                 loyaltyProgram.gatherSales(propertyManager.getOwner(), rent);
                 pay(price);
             } else {
-                eventDispatcher.useLoyaltyPoints(player, points -> {
-                    if (points == 0) {
-                        loyaltyProgram.gatherSales(propertyManager.getOwner(), rent);
-                    } else {
+                eventDispatcher.useLoyaltyPoints(player, loyaltyProgram, choice -> {
+                    if (FirstSecondChoice.FIRST.equals(choice)) {
                         pay(loyaltyProgram.spendSales(propertyManager.getOwner(), rent));
+                    } else {
+                        loyaltyProgram.gatherSales(propertyManager.getOwner(), rent);
+                        pay(rent);
                     }
                 });
             }

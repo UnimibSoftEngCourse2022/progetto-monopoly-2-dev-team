@@ -63,4 +63,8 @@ public class ReadablePlayerModel implements Serializable {
     public PlayerModel getModel() {
         return model;
     }
+
+    public String getColor() {
+        return model.getColor();
+    }
 }

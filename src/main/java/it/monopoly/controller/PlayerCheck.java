@@ -24,7 +24,9 @@ public class PlayerCheck {
         for (PlayerModel model : playerController.getModels()) {
             PlayerManager manager = playerController.getManager(model);
             if (PlayerState.BANKRUPT.equals(manager.getState()) && !manager.getProperties().isEmpty()) {
-                removeBuildingsAndOwner(manager);
+                removeBuildings(manager);
+                manager.removeAllProperties();
+                playerController.removePlayer(model);
             } else {
                 freeCounter++;
                 potentialWinner = model;
@@ -33,13 +35,10 @@ public class PlayerCheck {
         return freeCounter == 1 ? potentialWinner : null;
     }
 
-    private synchronized void removeBuildingsAndOwner(PlayerManager manager) {
-        synchronized (PlayerManager.lock) {
-            for (PropertyModel property : manager.getProperties()) {
-                PropertyManager propertyManager = propertyController.getManager(property);
-                propertyManager.removeAllBuildings();
-                propertyManager.removeOwner();
-            }
+    private synchronized void removeBuildings(PlayerManager manager) {
+        for (PropertyModel property : manager.getProperties()) {
+            PropertyManager propertyManager = propertyController.getManager(property);
+            propertyManager.removeAllBuildings();
         }
     }
 }

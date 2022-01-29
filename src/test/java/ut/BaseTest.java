@@ -8,12 +8,13 @@ import it.monopoly.controller.command.CommandBuilderDispatcher;
 import it.monopoly.controller.command.MainCommandBuilderDispatcher;
 import it.monopoly.controller.event.DiceRoller;
 import it.monopoly.controller.event.EventDispatcher;
-import it.monopoly.controller.event.callback.BuyOrAuctionCallback;
 import it.monopoly.controller.event.callback.DiceRollEventCallback;
-import it.monopoly.controller.event.callback.UsePointsCallback;
+import it.monopoly.controller.event.callback.FirstOrSecondCallback;
+import it.monopoly.controller.event.callback.FirstSecondChoice;
 import it.monopoly.controller.player.PlayerController;
 import it.monopoly.controller.property.PropertyController;
 import it.monopoly.manager.AbstractOfferManager;
+import it.monopoly.manager.loyaltyprogram.LoyaltyProgram;
 import it.monopoly.manager.pricemanager.PriceManagerDispatcher;
 import it.monopoly.model.PropertyCategoryMapper;
 import it.monopoly.model.PropertyMapper;
@@ -90,13 +91,18 @@ public abstract class BaseTest {
             }
 
             @Override
-            public void buyOrAuction(PlayerModel player, ReadablePropertyModel propertyModel, BuyOrAuctionCallback callback) {
+            public void buyOrAuction(PlayerModel player, ReadablePropertyModel propertyModel, FirstOrSecondCallback callback) {
             }
 
             @Override
-            public void useLoyaltyPoints(PlayerModel player, UsePointsCallback usePointsCallback) {
-                usePointsCallback.use(Integer.parseInt(playerController.getManager(player).getLoyaltyProgram().getValue()));
+            public void useLoyaltyPoints(PlayerModel player, LoyaltyProgram loyalty, FirstOrSecondCallback callback) {
+                callback.choose(FirstSecondChoice.SECOND);
             }
+
+            @Override
+            public void jailOrFine(PlayerModel player, FirstOrSecondCallback callback) {
+            }
+
 
             @Override
             public void showDialog(PlayerModel player, String message) {

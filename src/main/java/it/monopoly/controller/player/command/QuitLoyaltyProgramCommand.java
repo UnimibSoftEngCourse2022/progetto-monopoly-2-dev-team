@@ -8,7 +8,7 @@ import it.monopoly.manager.loyaltyprogram.LoyaltyProgram;
 import it.monopoly.manager.player.PlayerManager;
 import it.monopoly.model.player.PlayerModel;
 
-public class JoinLoyaltyProgramCommand implements Command {
+public class QuitLoyaltyProgramCommand implements Command {
 
     private final PlayerController playerController;
     private final PlayerModel player;
@@ -16,7 +16,7 @@ public class JoinLoyaltyProgramCommand implements Command {
     private final LoyaltyProgram.Type type;
 
 
-    public JoinLoyaltyProgramCommand(PlayerController playerController,
+    public QuitLoyaltyProgramCommand(PlayerController playerController,
                                      PlayerModel player,
                                      PlayerModel creditor,
                                      LoyaltyProgram.Type type) {
@@ -28,29 +28,20 @@ public class JoinLoyaltyProgramCommand implements Command {
 
     @Override
     public String getCommandName() {
-        PlayerManager manager = playerController.getManager(player);
-        String name = "Join Loyalty Program";
-        if (manager.canJoinLoyaltyInTurns() != 0) {
-            name += " (in " + manager.canJoinLoyaltyInTurns() + " turns)";
-        }
-        return name;
+        return "Quit Loyalty Program";
     }
 
     @Override
     public boolean isEnabled() {
         PlayerManager manager = playerController.getManager(player);
-        return manager.canJoinLoyalty();
+        return manager.getLoyaltyProgram() != null && creditor.equals(manager.getLoyaltyProgram().getCreditor());
     }
 
     @Override
     public void execute() {
         if (player != null && playerController != null && isEnabled()) {
             PlayerManager playerManager = playerController.getManager(player);
-            if (LoyaltyProgram.Type.PERCENTAGE.equals(type)) {
-                playerManager.joinLoyaltyProgram(new LoyaltyPercentage(creditor));
-            } else {
-                playerManager.joinLoyaltyProgram(new LoyaltyPoints(creditor));
-            }
+            playerManager.quitLoyaltyProgram();
         }
     }
 }

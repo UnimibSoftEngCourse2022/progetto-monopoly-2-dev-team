@@ -110,7 +110,7 @@ public class Controller implements Serializable, Observable<Controller> {
                 playerController,
                 propertyController
         );
-        commandController = new MainCommandController(builderDispatcher);
+        commandController = new MainCommandController(builderDispatcher, configuration);
     }
 
     public synchronized PlayerModel setupPlayer(String playerName, MainView view) {

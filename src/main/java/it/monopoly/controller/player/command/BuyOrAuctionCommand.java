@@ -3,7 +3,8 @@ package it.monopoly.controller.player.command;
 import it.monopoly.controller.TradeController;
 import it.monopoly.controller.command.Command;
 import it.monopoly.controller.event.EventDispatcher;
-import it.monopoly.controller.event.callback.BuyOrAuctionCallback;
+import it.monopoly.controller.event.callback.FirstOrSecondCallback;
+import it.monopoly.controller.event.callback.FirstSecondChoice;
 import it.monopoly.controller.property.PropertyController;
 import it.monopoly.manager.AuctionManager;
 import it.monopoly.manager.property.PropertyManager;
@@ -12,7 +13,7 @@ import it.monopoly.model.property.PropertyModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class BuyOrAuctionCommand implements Command, BuyOrAuctionCallback {
+public class BuyOrAuctionCommand implements Command, FirstOrSecondCallback {
     private final Logger logger = LogManager.getLogger(getClass());
     private final PropertyController propertyController;
     private final TradeController tradeController;
@@ -54,13 +55,23 @@ public class BuyOrAuctionCommand implements Command, BuyOrAuctionCallback {
         }
     }
 
-    @Override
     public void buy() {
         tradeController.buyProperty(player, property);
     }
 
-    @Override
     public void startAuction() {
         eventDispatcher.startOffer(new AuctionManager(player, property, tradeController));
+    }
+
+    @Override
+    public void choose(FirstSecondChoice choice) {
+        if (choice == null) {
+            return;
+        }
+        if (FirstSecondChoice.FIRST.equals(choice)) {
+            buy();
+        } else {
+            startAuction();
+        }
     }
 }

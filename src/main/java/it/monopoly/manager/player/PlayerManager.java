@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
 
 public class PlayerManager extends Manager<PlayerModel> implements Observable<ReadablePlayerModel>, Observer<PlayerModel> {
     private static final int EARN_ON_GO = 200; //TODO Check configuration
-    public static final Object lock = new Object();
+    public final Object lock = new Object();
     private final Logger logger = LogManager.getLogger(getClass());
     private final Executor executor = Executors.newSingleThreadExecutor();
     private final List<Observer<ReadablePlayerModel>> observers = new LinkedList<>();
@@ -34,6 +34,8 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     private final List<DrawableCardModel> drawableCardModels = new ArrayList<>();
     private PlayerState state;
     private int getOutOfJailTries = 0;
+    private int joinLoyaltyInTurns = 0;
+    private int freeInTurns = 0;
     private LoyaltyProgram loyaltyProgram = null;
     private Observable<PlayerModel> positionObservable;
 
@@ -57,10 +59,12 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
 
     public void endTurn() {
         if (canEndTurn()) {
+            if (joinLoyaltyInTurns > 0) joinLoyaltyInTurns--;
             if (isTurn) {
                 logger.info("Player {} ended turn", model.getId());
             }
             isTurn = false;
+            checkFineState();
             notifyReadable();
         }
     }
@@ -141,8 +145,9 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     }
 
     public boolean joinLoyaltyProgram(LoyaltyProgram loyaltyProgram) {
-        if (this.loyaltyProgram == null) {
+        if (this.loyaltyProgram == null && joinLoyaltyInTurns == 0) {
             this.loyaltyProgram = loyaltyProgram;
+            notifyReadable();
             return true;
         }
         return false;
@@ -151,6 +156,7 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     public LoyaltyProgram quitLoyaltyProgram() {
         LoyaltyProgram temp = loyaltyProgram;
         this.loyaltyProgram = null;
+        joinLoyaltyInTurns = 4;
         return temp;
     }
 
@@ -169,12 +175,17 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     public void getOutOfJailWithFine() {
         if (PlayerState.IN_JAIL.equals(state)) {
             setState(PlayerState.FINED);
+            freeInTurns = 3;
             logger.info("Player {} got out of jail with fine", model.getId());
         }
     }
 
     public synchronized List<PropertyModel> getProperties() {
         return ownerMapper.getPlayerProperties(model);
+    }
+
+    public synchronized List<PropertyModel> removeAllProperties() {
+        return ownerMapper.removeAllPlayerProperties(model);
     }
 
     public boolean canMove() {
@@ -227,7 +238,16 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
         return position;
     }
 
+
     //PRIVATE METHODS
+    private void checkFineState() {
+        if (freeInTurns > 0) {
+            freeInTurns--;
+            if (freeInTurns == 0 && PlayerState.FINED.equals(state)) {
+                setState(PlayerState.FREE);
+            }
+        }
+    }
 
     private void checkBankrupt() {
         if (funds <= 0) {
@@ -236,11 +256,11 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     }
 
     public void notifyReadable() {
-        if (!observers.isEmpty()) {
-            ReadablePlayerModel readable = getReadable();
-            for (Observer<ReadablePlayerModel> observer : observers) {
-                synchronized (lock) {
-                    observer.notify(readable);
+        synchronized (lock) {
+            if (!observers.isEmpty()) {
+                ReadablePlayerModel readable = getReadable();
+                for (Observer<ReadablePlayerModel> observer : observers) {
+                    executor.execute(() -> observer.notify(readable));
                 }
             }
         }
@@ -302,5 +322,13 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
         for (Observer<PlayerModel> observer : positionObservers) {
             executor.execute(() -> observer.notify(model));
         }
+    }
+
+    public boolean canJoinLoyalty() {
+        return loyaltyProgram == null && canJoinLoyaltyInTurns() == 0;
+    }
+
+    public int canJoinLoyaltyInTurns() {
+        return joinLoyaltyInTurns;
     }
 }

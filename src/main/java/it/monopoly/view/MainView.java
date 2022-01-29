@@ -3,19 +3,17 @@ package it.monopoly.view;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.textfield.NumberField;
-import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.router.*;
 import it.monopoly.controller.Controller;
 import it.monopoly.controller.RouteController;
 import it.monopoly.controller.board.PlayerPosition;
 import it.monopoly.controller.command.Command;
-import it.monopoly.controller.event.callback.BuyOrAuctionCallback;
+import it.monopoly.controller.event.callback.FirstOrSecondCallback;
 import it.monopoly.manager.AbstractOfferManager;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.PlayerState;
@@ -99,16 +97,17 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver, B
         VerticalLayout leftLayout = new VerticalLayout();
 
         propertyListView = new PropertyListView(
-                (SelectionListener<Grid<ReadablePropertyModel>, ReadablePropertyModel>) selectionEvent -> selectionEvent
-                        .getFirstSelectedItem()
-                        .ifPresentOrElse(MainView.this::displayCommands, () -> propertyCommandButtonView.clear())
+                selectionEvent ->
+                        selectionEvent
+                                .getFirstSelectedItem()
+                                .ifPresentOrElse(MainView.this::displayCommands, () -> propertyCommandButtonView.clear())
         );
         propertyCommandButtonView = new CommandButtonView();
         VerticalLayout propertiesVerticalLayout = new VerticalLayout();
         propertiesVerticalLayout.setMargin(false);
         propertiesVerticalLayout.setHeight(50, Unit.PERCENTAGE);
 
-        playerListView = new PlayerListView();
+        playerListView = new PlayerListView(controller);
         playerListView.setHeight(50, Unit.PERCENTAGE);
         updateAllPlayers(readablePlayer);
 
@@ -121,6 +120,14 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver, B
         playerCommandButtonView = new CommandButtonView();
         playerCommandButtonView.setJustifyContentMode(JustifyContentMode.AROUND);
         playerCommandButtonView.setWidthFull();
+
+
+        HorizontalLayout playerButtons = new HorizontalLayout();
+        Button quitButton = new Button("Quit", e -> {
+            closeSession();
+            UI.getCurrent().navigate(WelcomeView.class);
+        });
+        playerButtons.add(playerCommandButtonView, quitButton);
 
         boardView = new BoardView();
         rightLayout.add(boardView);
@@ -167,10 +174,9 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver, B
         testCommandsLayout.setMargin(false);
         testCommandsLayout.setWidthFull();
         testCommandsLayout.setJustifyContentMode(JustifyContentMode.AROUND);
-        testCommandsLayout.add(playerCommandButtonView);
 
         rightLayout.setJustifyContentMode(JustifyContentMode.END);
-        rightLayout.add(testCommandsLayout, playerCommandButtonView);
+        rightLayout.add(testCommandsLayout, playerButtons);
 
         setSizeFull();
         setSpacing(false);
@@ -206,13 +212,21 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver, B
         });
     }
 
-    public void showBuyPropertyDialog(ReadablePropertyModel property, BuyOrAuctionCallback callback) {
-        BuyOrAuctionView dialog = new BuyOrAuctionView(property, callback);
+    public void showOkDialog(String message) {
+        OkDialog dialog = new OkDialog(message);
         showAndRemoveDialog(dialog);
     }
 
-    public void showOkDialog(String message) {
-        OkDialog dialog = new OkDialog(message);
+    public void showYesNoDialog(
+            String text,
+            String first,
+            String second,
+            FirstOrSecondCallback callback
+    ) {
+        FirstSecondChoiceDialog dialog = new FirstSecondChoiceDialog(callback);
+        dialog.setText(text);
+        dialog.setFirstChoice(first);
+        dialog.setSecondChoice(second);
         showAndRemoveDialog(dialog);
     }
 
@@ -299,32 +313,8 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver, B
     private void getPlayerCommands() {
         ViewUtil.runOnUiThread(getUI(), () -> {
             List<Command> commands = controller.getCommandController().generateCommands(player);
-            commands.add(getQuitCommand());
             playerCommandButtonView.newCommands(commands);
         });
-    }
-
-    private Command getQuitCommand() {
-        if (quitCommand == null) {
-            quitCommand = new Command() {
-                @Override
-                public String getCommandName() {
-                    return "Quit";
-                }
-
-                @Override
-                public boolean isEnabled() {
-                    return true;
-                }
-
-                @Override
-                public void execute() {
-                    closeSession();
-                    UI.getCurrent().navigate(WelcomeView.class);
-                }
-            };
-        }
-        return quitCommand;
     }
 
     private void getPropertiesAndUpdate() {
@@ -342,7 +332,7 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver, B
 
     public void updateAllPlayers(ReadablePlayerModel players) {
         List<ReadablePlayerModel> list = controller.getPlayers();
-        ViewUtil.runOnUiThread(getUI(), () -> playerListView.setPlayers(list));
+        ViewUtil.runOnUiThread(getUI(), () -> playerListView.setPlayers(player, list));
     }
 
     @ClientCallable

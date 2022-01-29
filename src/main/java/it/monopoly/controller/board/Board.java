@@ -33,11 +33,34 @@ public class Board implements Observer<PlayerModel>, Observable<PlayerPosition> 
 
         SpaceDispenser chainOfResponsibility = new TaxSpaceDispenser(commandBuilderDispatcher, 4, 38);
         chainOfResponsibility
-                .setSuccessor(new ChanceSpaceDispenser(commandBuilderDispatcher, drawableCardController, playerController, eventDispatcher, 7, 22, 36))
-                .setSuccessor(new CommunityChestSpaceDispenser(commandBuilderDispatcher, drawableCardController, playerController, eventDispatcher, 2, 17, 33))
+                .setSuccessor(new ChanceSpaceDispenser(
+                        commandBuilderDispatcher,
+                        drawableCardController,
+                        playerController,
+                        eventDispatcher,
+                        7,
+                        22,
+                        36)
+                )
+                .setSuccessor(new CommunityChestSpaceDispenser(
+                        commandBuilderDispatcher,
+                        drawableCardController,
+                        playerController,
+                        eventDispatcher,
+                        2,
+                        17,
+                        33)
+                )
                 .setSuccessor(new GoToJailSpaceDispenser(commandBuilderDispatcher, 30))
-                .setSuccessor(new CornerSpaceDispenser(commandBuilderDispatcher, 0, 10, 20))
+                .setSuccessor(new CornerSpaceDispenser(commandBuilderDispatcher, 0, 20))
+                .setSuccessor(new JailSpaceDispenser(
+                        commandBuilderDispatcher,
+                        eventDispatcher,
+                        playerController,
+                        10)
+                )
                 .setSuccessor(new PropertySpaceDispenser(commandBuilderDispatcher, propertyController));
+
         for (int i = 0; i < 40; i++) {
             spaces.add(chainOfResponsibility.processSpace(i));
         }

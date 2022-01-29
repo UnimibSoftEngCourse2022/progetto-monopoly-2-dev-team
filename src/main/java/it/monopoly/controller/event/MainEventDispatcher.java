@@ -2,10 +2,11 @@ package it.monopoly.controller.event;
 
 import it.monopoly.Broadcaster;
 import it.monopoly.controller.ViewController;
-import it.monopoly.controller.event.callback.BuyOrAuctionCallback;
 import it.monopoly.controller.event.callback.DiceRollEventCallback;
-import it.monopoly.controller.event.callback.UsePointsCallback;
+import it.monopoly.controller.event.callback.FirstOrSecondCallback;
+import it.monopoly.controller.event.callback.FirstSecondChoice;
 import it.monopoly.manager.AbstractOfferManager;
+import it.monopoly.manager.loyaltyprogram.LoyaltyProgram;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.property.ReadablePropertyModel;
 
@@ -44,13 +45,28 @@ public class MainEventDispatcher implements EventDispatcher {
     @Override
     public void buyOrAuction(PlayerModel player,
                              ReadablePropertyModel propertyModel,
-                             BuyOrAuctionCallback callback) {
-        viewController.getView(player).showBuyPropertyDialog(propertyModel, callback);
+                             FirstOrSecondCallback callback) {
+        viewController.getView(player).showYesNoDialog(propertyModel.toString(), "Buy", "Start Auction", callback);
     }
 
     @Override
-    public void useLoyaltyPoints(PlayerModel player, UsePointsCallback usePointsCallback) {
-        //TODO Ask player to use points
+    public void useLoyaltyPoints(PlayerModel player, LoyaltyProgram loyalty, FirstOrSecondCallback callback) {
+        if (loyalty.getValue().equals("0")) {
+            callback.choose(FirstSecondChoice.SECOND);
+            return;
+        }
+        viewController.getView(player).showYesNoDialog(
+                "You have " + loyalty.getValue() + " points",
+                "Spend points",
+                "Do not use points (gather points)",
+                callback
+        );
+    }
+
+    @Override
+    public void jailOrFine(PlayerModel player, FirstOrSecondCallback callback) {
+        String text = "You are in jail\nDo you want to try to get out by throwing doubles in one of the next three turns or pay a fine (50) for the next two turns?";
+        viewController.getView(player).showYesNoDialog(text, "Stay in jail", "Get out and pay fine", callback);
     }
 
     @Override

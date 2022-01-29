@@ -54,8 +54,8 @@ public class MainCommandBuilderDispatcher implements CommandBuilderDispatcher {
                     new MoveCommandBuilder(playerController),
                     new PayCommandBuilder(tradeController)
             ));
-        } else if (JoinLoyaltyProgramCommandBuilder.class.equals(className)) {
-            return className.cast(new JoinLoyaltyProgramCommandBuilder(playerController));
+        } else if (LoyaltyProgramCommandBuilder.class.equals(className)) {
+            return className.cast(new LoyaltyProgramCommandBuilder(playerController));
         } else if (SellPropertyCommandBuilder.class.equals(className)) {
             return className.cast(new SellPropertyCommandBuilder(
                     propertyController,

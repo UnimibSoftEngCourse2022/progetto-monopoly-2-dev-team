@@ -69,19 +69,17 @@ public class TurnController implements Observer<ReadablePlayerModel> {
 
     @Override
     public void notify(ReadablePlayerModel player) {
-        synchronized (PlayerManager.lock) {
-            PlayerModel winner = playerCheck.checkPlayers();
-            if (winner != null) {
-                return;
-            }
-            if (currentPlayer != null) {
-                PlayerManager manager = playerController.getManager(currentPlayer);
-                if (manager != null && !manager.isTakingTurn()) {
-                    nextTurn();
-                }
-            } else {
+        PlayerModel winner = playerCheck.checkPlayers();
+        if (winner != null) {
+            return;
+        }
+        if (currentPlayer != null) {
+            PlayerManager manager = playerController.getManager(currentPlayer);
+            if (manager != null && !manager.isTakingTurn()) {
                 nextTurn();
             }
+        } else {
+            nextTurn();
         }
     }
 

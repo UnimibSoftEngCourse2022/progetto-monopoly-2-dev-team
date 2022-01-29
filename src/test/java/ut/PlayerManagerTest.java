@@ -1,7 +1,7 @@
 package ut;
 
 import it.monopoly.controller.command.Command;
-import it.monopoly.controller.player.command.JoinLoyaltyProgramCommandBuilder;
+import it.monopoly.controller.player.command.LoyaltyProgramCommandBuilder;
 import it.monopoly.controller.player.command.PayRentCommandBuilder;
 import it.monopoly.manager.loyaltyprogram.LoyaltyProgram;
 import it.monopoly.manager.player.PlayerManager;
@@ -71,7 +71,7 @@ public class PlayerManagerTest extends BaseTest {
 
         Command joinLoyaltyProgramCommand =
                 commandBuilderDispatcher
-                        .createCommandBuilder(JoinLoyaltyProgramCommandBuilder.class)
+                        .createCommandBuilder(LoyaltyProgramCommandBuilder.class)
                         .setDebtor(debtor)
                         .setCreditor(creditor)
                         .setType(LoyaltyProgram.Type.PERCENTAGE)
@@ -169,7 +169,7 @@ public class PlayerManagerTest extends BaseTest {
 
         Command joinLoyaltyProgramCommand =
                 commandBuilderDispatcher
-                        .createCommandBuilder(JoinLoyaltyProgramCommandBuilder.class)
+                        .createCommandBuilder(LoyaltyProgramCommandBuilder.class)
                         .setDebtor(debtor)
                         .setCreditor(creditor)
                         .setType(LoyaltyProgram.Type.POINTS)
