@@ -1,7 +1,7 @@
 package it.monopoly.manager.pricemanager;
 
 import it.monopoly.controller.event.DiceRoller;
-import it.monopoly.manager.randomizer.PropertyRandomizerManager;
+import it.monopoly.manager.randomizer.RandomizationManager;
 import it.monopoly.model.PropertyCategoryMapper;
 import it.monopoly.model.PropertyOwnerMapper;
 import it.monopoly.model.player.PlayerModel;
@@ -13,11 +13,11 @@ public class UtilityPriceManager extends PriceManager {
     private final DiceRoller diceRoller;
 
     public UtilityPriceManager(PropertyModel property,
-                               PropertyRandomizerManager propertyRandomizerManager,
+                               RandomizationManager randomizationManager,
                                PropertyOwnerMapper propertyOwnerMapper,
                                PropertyCategoryMapper propertyCategoryMapper,
                                DiceRoller diceRoller) {
-        super(property, propertyRandomizerManager, propertyOwnerMapper, propertyCategoryMapper);
+        super(property, randomizationManager, propertyOwnerMapper, propertyCategoryMapper);
         this.diceRoller = diceRoller;
     }
 

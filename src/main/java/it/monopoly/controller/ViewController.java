@@ -26,8 +26,8 @@ public class ViewController {
         return playerViewMap.remove(player);
     }
 
-    public Consumer<AbstractOfferManager> getAuctionConsumer(PlayerModel player) {
-        return playerViewMap.get(player).getConsumer(AbstractOfferManager.class);
+    public Consumer<AbstractOfferManager> getOfferConsumer(PlayerModel player) {
+        return playerViewMap.get(player).getOfferConsumer();
     }
 
     public Consumer<ReadablePlayerModel> getAllPlayersConsumer(PlayerModel player) {
@@ -36,6 +36,10 @@ public class ViewController {
 
     public Consumer<String> getMessageConsumer(PlayerModel player) {
         return playerViewMap.get(player).getMessageConsumer();
+    }
+
+    public Consumer<PlayerModel> getWinnerConsumer(PlayerModel player) {
+        return playerViewMap.get(player).getWinnerConsumer();
     }
 
     public Observer<ReadablePlayerModel> getPlayerObserver(PlayerModel player) {

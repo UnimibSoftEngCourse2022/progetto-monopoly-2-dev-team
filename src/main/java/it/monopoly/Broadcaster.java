@@ -1,6 +1,7 @@
 package it.monopoly;
 
 import it.monopoly.manager.AbstractOfferManager;
+import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.ReadablePlayerModel;
 import it.monopoly.view.Observer;
 import org.apache.logging.log4j.LogManager;
@@ -18,6 +19,7 @@ public class Broadcaster {
 
     private final List<Consumer<String>> messageListeners = new LinkedList<>();
     private final List<Consumer<ReadablePlayerModel>> playerListeners = new LinkedList<>();
+    private final List<Consumer<PlayerModel>> winnerListeners = new LinkedList<>();
     private final List<Consumer<AbstractOfferManager>> offersListeners = new LinkedList<>();
     private final Observer<ReadablePlayerModel> playerObserver = this::notifyAllPlayers;
     private AbstractOfferManager offerManager;
@@ -43,6 +45,12 @@ public class Broadcaster {
 
     public void notifyRemovePlayer() {
         notifyAllPlayers(null);
+    }
+
+    public void notifyWinner(PlayerModel winner) {
+        for (Consumer<PlayerModel> listener : winnerListeners) {
+            listener.accept(winner);
+        }
     }
 
     public void startOffers(AbstractOfferManager offerManager) {
@@ -82,6 +90,18 @@ public class Broadcaster {
     public void deregisterForPlayers(Consumer<ReadablePlayerModel> consumer) {
         if (consumer != null) {
             playerListeners.remove(consumer);
+        }
+    }
+
+    public void registerForWinner(Consumer<PlayerModel> playerModelConsumer) {
+        if (playerModelConsumer != null) {
+            winnerListeners.add(playerModelConsumer);
+        }
+    }
+
+    public void deregisterForWinner(Consumer<PlayerModel> playerModelConsumer) {
+        if (playerModelConsumer != null) {
+            winnerListeners.remove(playerModelConsumer);
         }
     }
 

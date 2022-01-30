@@ -70,6 +70,7 @@ public class PlayerListView extends VerticalLayout {
 
         OkDialog dialog = new OkDialog(propertyListView);
         dialog.setCloseOnEsc(true);
+        dialog.setOkButtonLabel("Close");
         dialog.setWidth(80, Unit.PERCENTAGE);
         dialog.setHeight(80, Unit.PERCENTAGE);
         add(dialog);

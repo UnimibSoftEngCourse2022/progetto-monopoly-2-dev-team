@@ -2,7 +2,6 @@ package it.monopoly.controller.player.command;
 
 import it.monopoly.controller.command.Command;
 import it.monopoly.controller.event.EventDispatcher;
-import it.monopoly.controller.event.callback.FirstOrSecondCallback;
 import it.monopoly.controller.event.callback.FirstSecondChoice;
 import it.monopoly.controller.player.PlayerController;
 import it.monopoly.controller.property.PropertyController;
@@ -51,7 +50,7 @@ public class PayRentCommand implements Command {
     @Override
     public void execute() {
         if (!isEnabled()) return;
-        logger.info("Executing PayRentCommand for player {} on property {}", player.getId(), property.getName());
+        logger.info("Executing PayRentCommand for player {}#{} on property {}", player.getName(), player.getId(), property.getName());
         PropertyManager propertyManager = propertyController.getManager(property);
         if (!player.equals(propertyManager.getOwner())) {
             payRent();
@@ -87,11 +86,13 @@ public class PayRentCommand implements Command {
 
     private void pay(int price) {
         PropertyManager propertyManager = propertyController.getManager(property);
+        PlayerModel owner = propertyManager.getOwner();
         payCommandBuilder
                 .addDebtor(player)
-                .addCreditor(propertyManager.getOwner())
+                .addCreditor(owner)
                 .setMoney(price)
                 .build()
                 .execute();
+        eventDispatcher.sendMessage(player.getName() + " paid rent (" + price + ") to " + owner.getName());
     }
 }

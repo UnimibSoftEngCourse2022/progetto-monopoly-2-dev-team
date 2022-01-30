@@ -7,8 +7,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import it.monopoly.controller.Controller;
 import it.monopoly.controller.RouteController;
@@ -103,7 +101,7 @@ public class WelcomeView extends VerticalLayout {
     private void createContent() {
         configurationView = new ConfigurationView();
         Button createGameButton = new Button("Create Game", event -> createGame());
-        createGameButton.setEnabled(false);
+        createGameButton.setEnabled(!nameField.isEmpty());
         nameField.addValueChangeListener(
                 event -> createGameButton.setEnabled(event.getValue() != null && !event.getValue().isEmpty())
         );

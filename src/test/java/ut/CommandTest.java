@@ -16,14 +16,12 @@ import it.monopoly.controller.player.command.PayCommandBuilder;
 import it.monopoly.controller.player.command.PayRentCommandBuilder;
 import it.monopoly.controller.property.PropertyController;
 import it.monopoly.controller.property.command.PropertyCommandBuilder;
-import it.monopoly.manager.AbstractOfferManager;
 import it.monopoly.manager.loyaltyprogram.LoyaltyProgram;
 import it.monopoly.manager.player.PlayerManager;
 import it.monopoly.manager.pricemanager.PriceManagerDispatcher;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.property.PropertyCategory;
 import it.monopoly.model.property.PropertyModel;
-import it.monopoly.model.property.ReadablePropertyModel;
 import it.monopoly.util.Pair;
 import org.junit.Assert;
 import org.junit.Before;
@@ -40,7 +38,7 @@ public class CommandTest extends BaseTest {
     @Before
     public void init() {
         super.init();
-        EventDispatcher eventDispatcher = new EventDispatcher() {
+        EventDispatcher eventDispatcher = new DummyEventDispatcher() {
             @Override
             public DiceRoller diceRollEvent() {
                 return diceRoller;
@@ -52,30 +50,8 @@ public class CommandTest extends BaseTest {
             }
 
             @Override
-            public void startOffer(AbstractOfferManager offerManager) {
-
-            }
-
-            @Override
-            public void buyOrAuction(PlayerModel player, ReadablePropertyModel propertyModel, FirstOrSecondCallback callback) {
-            }
-
-            @Override
             public void useLoyaltyPoints(PlayerModel player, LoyaltyProgram loyalty, FirstOrSecondCallback callback) {
                 callback.choose(FirstSecondChoice.FIRST);
-            }
-
-            @Override
-            public void jailOrFine(PlayerModel player, FirstOrSecondCallback callback) {
-            }
-
-            @Override
-            public void showDialog(PlayerModel player, String message) {
-
-            }
-
-            @Override
-            public void sendMessage(String message) {
             }
         };
         playerController = new PlayerController(players, ownerMapper);

@@ -50,7 +50,7 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
     public boolean startTurn() {
         isTurn = canTakeTurn();
         if (isTurn) {
-            logger.info("Player {} turn", model.getId());
+            logger.info("Player {}#{} turn", model.getName(), model.getId());
             hasRolledDice = false;
             notifyReadable();
         }
@@ -61,7 +61,7 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
         if (canEndTurn()) {
             if (joinLoyaltyInTurns > 0) joinLoyaltyInTurns--;
             if (isTurn) {
-                logger.info("Player {} ended turn", model.getId());
+                logger.info("Player {}#{} ended turn", model.getName(), model.getId());
             }
             isTurn = false;
             checkFineState();
@@ -91,14 +91,14 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
 
     public void earn(int money) {
         funds += money;
-        logger.info("Player {} earned {}: new funds {}", model.getId(), money, funds);
+        logger.info("Player {}#{} earned {}: new funds {}", model.getName(), model.getId(), money, funds);
         checkBankrupt();
         notifyReadable();
     }
 
     public void spend(int money) {
         funds -= money;
-        logger.info("Player {} spent {}: new funds {}", model.getId(), money, funds);
+        logger.info("Player {}#{} spent {}: new funds {}", model.getName(), model.getId(), money, funds);
         checkBankrupt();
         notifyReadable();
     }
@@ -112,7 +112,7 @@ public class PlayerManager extends Manager<PlayerModel> implements Observable<Re
             if (canMove()) {
                 position.setPosition(space, direct);
                 notifyPosition();
-                logger.info("Player {} moved to space {}", model.getId(), space);
+                logger.info("Player {}#{} moved to space {}", model.getName(), model.getId(), space);
             }
             PlayerMovement lastMovement = position.getLastMovement();
             Pair<Integer, Integer> movement = lastMovement.getMovement();

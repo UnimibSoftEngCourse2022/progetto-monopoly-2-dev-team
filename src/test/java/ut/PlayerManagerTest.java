@@ -153,7 +153,7 @@ public class PlayerManagerTest extends BaseTest {
         Assert.assertEquals(funds2 - 200, playerController.getManager(debtor2).getFunds());
     }
 
-    //@Test
+    @Test
     public void loyaltyProgramPointsTest() {
 
         resetPlayers();

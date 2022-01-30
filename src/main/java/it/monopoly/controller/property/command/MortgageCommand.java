@@ -2,7 +2,6 @@ package it.monopoly.controller.property.command;
 
 import it.monopoly.controller.ManagerController;
 import it.monopoly.controller.command.Command;
-import it.monopoly.controller.property.PropertyController;
 import it.monopoly.manager.pricemanager.PriceManager;
 import it.monopoly.manager.property.PropertyManager;
 import it.monopoly.model.property.PropertyModel;
@@ -21,12 +20,11 @@ public class MortgageCommand implements Command {
     }
 
 
-
     @Override
     public String getCommandName() {
         PriceManager priceManager = controller.getManager(property).getPriceManager();
         return property.isMortgaged() ?
-                "Lift Mortgage: " + (priceManager.getMortgageValue() + priceManager.getMortgageValue() / 10) //TODO: set randomness
+                "Lift Mortgage: " + priceManager.getLiftMortgageValue()
                 :
                 "Mortgage: " + priceManager.getMortgageValue();
     }
@@ -39,11 +37,12 @@ public class MortgageCommand implements Command {
 
     @Override
     public void execute() {
-        logger.info("Mortgaging property {}", property.getName());
         PropertyManager manager = controller.getManager(property);
         if (property.isMortgaged()) {
+            logger.info("Lifting mortgage for property {}", property.getName());
             manager.liftMortgage();
         } else {
+            logger.info("Mortgaging property {}", property.getName());
             manager.mortgage();
         }
     }

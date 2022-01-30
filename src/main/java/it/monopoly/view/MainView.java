@@ -14,6 +14,7 @@ import it.monopoly.controller.RouteController;
 import it.monopoly.controller.board.PlayerPosition;
 import it.monopoly.controller.command.Command;
 import it.monopoly.controller.event.callback.FirstOrSecondCallback;
+import it.monopoly.controller.event.callback.FirstSecondChoice;
 import it.monopoly.manager.AbstractOfferManager;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.player.PlayerState;
@@ -38,7 +39,6 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver, B
     private final RouteController routeController;
     private Controller controller;
     private final Map<Class<?>, Observer<?>> observers = new HashMap<>();
-    private final Map<Class<?>, Consumer<?>> consumers = new HashMap<>();
     private CommandButtonView propertyCommandButtonView;
     private PropertyListView propertyListView;
     private PlayerModel player;
@@ -53,7 +53,7 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver, B
     private BoardView boardView;
     private String id;
     private String playerName;
-    private Command quitCommand;
+    private FirstSecondChoiceDialog startGameDialog;
 
     public MainView(@Autowired RouteController routeController) {
         this.routeController = routeController;
@@ -103,6 +103,7 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver, B
                                 .ifPresentOrElse(MainView.this::displayCommands, () -> propertyCommandButtonView.clear())
         );
         propertyCommandButtonView = new CommandButtonView();
+        propertyCommandButtonView.setWidthFull();
         VerticalLayout propertiesVerticalLayout = new VerticalLayout();
         propertiesVerticalLayout.setMargin(false);
         propertiesVerticalLayout.setHeight(50, Unit.PERCENTAGE);
@@ -123,23 +124,48 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver, B
 
 
         HorizontalLayout playerButtons = new HorizontalLayout();
-        Button quitButton = new Button("Quit", e -> {
-            closeSession();
-            UI.getCurrent().navigate(WelcomeView.class);
-        });
+        playerButtons.setWidthFull();
+        playerButtons.setJustifyContentMode(JustifyContentMode.AROUND
+        );
+        Button quitButton = new Button("Quit", e -> closeSessionAndQuit());
+
         playerButtons.add(playerCommandButtonView, quitButton);
 
         boardView = new BoardView();
         rightLayout.add(boardView);
 
-        startGameButton = null;
+        //testCommands();
+        if (testCommandsLayout != null) {
+            rightLayout.add(testCommandsLayout);
+        }
+
+        rightLayout.setJustifyContentMode(JustifyContentMode.END);
+        rightLayout.add(playerButtons);
+
+        setSizeFull();
+        setSpacing(false);
+        setPadding(false);
+
+        add(leftLayout, rightLayout);
+        setFlexGrow(.5, leftLayout, rightLayout);
+
+        logger.info("Attached " + this);
+        if (player == null) {
+            player = controller.setupPlayer(playerName, this);
+            if (player == null) {
+                attachEvent.getUI().navigate(WelcomeView.class);
+                return;
+            }
+        }
+        readablePlayer = controller.getReadablePlayer(player);
+
+        refreshStartDialog();
+    }
+
+    private void testCommands() {
         String margin = "margin";
         String auto = "auto";
-        if (!controller.isGameStarted()) {
-            startGameButton = new Button("Start Game");
-            startGameButton.getElement().getStyle().set(margin, auto);
-            startGameButton.addClickListener(listener -> startGame());
-        }
+
 
         Button newPropertyButton = new Button("New Property");
         newPropertyButton.getElement().getStyle().set(margin, auto);
@@ -174,26 +200,43 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver, B
         testCommandsLayout.setMargin(false);
         testCommandsLayout.setWidthFull();
         testCommandsLayout.setJustifyContentMode(JustifyContentMode.AROUND);
+    }
 
-        rightLayout.setJustifyContentMode(JustifyContentMode.END);
-        rightLayout.add(testCommandsLayout, playerButtons);
+    private void refreshStartDialog() {
+        if (!controller.isGameStarted()) {
+            if (startGameDialog == null) {
 
-        setSizeFull();
-        setSpacing(false);
-        setPadding(false);
-
-        add(leftLayout, rightLayout);
-        setFlexGrow(.5, leftLayout, rightLayout);
-
-        logger.info("Attached " + this);
-        if (player == null) {
-            player = controller.setupPlayer(playerName, this);
-            if (player == null) {
-                attachEvent.getUI().navigate(WelcomeView.class);
-                return;
+                startGameDialog = new FirstSecondChoiceDialog(
+                        choice -> {
+                            if (FirstSecondChoice.FIRST.equals(choice)) {
+                                startGame();
+                            } else {
+                                closeSessionAndQuit();
+                            }
+                        });
+                showAndRemoveDialog(startGameDialog);
             }
+            ViewUtil.runOnUiThread(getUI(), () -> {
+                List<PlayerModel> players = controller.getPlayerModels();
+                boolean isCreator = players.indexOf(player) == 0;
+                boolean isMoreThanOnePlayer = players.size() > 1;
+                startGameDialog.setFirstChoice("Start Game", isCreator && isMoreThanOnePlayer);
+                String text = "Wait for";
+                if (isCreator) {
+                    text += " other players to join";
+                    if (isMoreThanOnePlayer) {
+                        text += " or start the game";
+                    }
+                } else {
+                    text += " creator to start the game";
+                }
+                startGameDialog.setText(text);
+                startGameDialog.setSecondChoice("Quit");
+            });
+        } else if (startGameDialog != null) {
+            startGameDialog.close();
+            remove(startGameDialog);
         }
-        readablePlayer = controller.getReadablePlayer(player);
     }
 
     private void notifyOffers(AbstractOfferManager offerManager) {
@@ -258,21 +301,12 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver, B
         return observer;
     }
 
-    @SuppressWarnings(value = "unchecked")
-    public <T> Consumer<T> getConsumer(Class<T> className) {
-        if (consumers.containsKey(className)) {
-            return (Consumer<T>) consumers.get(className);
-        }
+    public Consumer<AbstractOfferManager> getOfferConsumer() {
+        return this::notifyOffers;
+    }
 
-        Consumer<T> consumer = null;
-        if (AbstractOfferManager.class.equals(className)) {
-            consumer = auctionManager -> MainView.this.notifyOffers((AbstractOfferManager) auctionManager);
-        }
-
-        if (consumer != null) {
-            consumers.put(className, consumer);
-        }
-        return consumer;
+    public Consumer<PlayerModel> getWinnerConsumer() {
+        return this::showWinner;
     }
 
     public Consumer<String> getMessageConsumer() {
@@ -286,7 +320,7 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver, B
         ViewUtil.runOnUiThread(getUI(), () -> {
             Notification notification = new Notification(message);
             notification.setPosition(Notification.Position.TOP_END);
-            notification.setDuration(2000);
+            notification.setDuration(3000);
             add(notification);
             notification.open();
         });
@@ -332,7 +366,28 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver, B
 
     public void updateAllPlayers(ReadablePlayerModel players) {
         List<ReadablePlayerModel> list = controller.getPlayers();
-        ViewUtil.runOnUiThread(getUI(), () -> playerListView.setPlayers(player, list));
+        ViewUtil.runOnUiThread(getUI(), () -> {
+            refreshStartDialog();
+            playerListView.setPlayers(player, list);
+        });
+    }
+
+    private void displayCommands(ReadablePropertyModel property) {
+        List<Command> commands = controller.getCommandController().generateCommands(property.getModel());
+        propertyCommandButtonView.newCommands(commands);
+    }
+
+    public void showWinner(PlayerModel winner) {
+        ViewUtil.runOnUiThread(getUI(), () -> {
+            OkDialog dialog = new OkDialog(winner.getName() + " wins the game!");
+            dialog.setCloseOnEsc(false);
+            dialog.setCloseOnOutsideClick(false);
+            dialog.setOkButtonLabel("Quit");
+            dialog.addOkListener(event -> closeSessionAndQuit());
+            add(dialog);
+            dialog.addDialogCloseActionListener(e -> remove(dialog));
+            dialog.open();
+        });
     }
 
     @ClientCallable
@@ -341,14 +396,13 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver, B
         controller.closePlayerSession(player);
     }
 
-    private void startGame() {
-        controller.startGame();
-        testCommandsLayout.remove(startGameButton);
+    public void closeSessionAndQuit() {
+        closeSession();
+        UI.getCurrent().navigate(WelcomeView.class);
     }
 
-    private void displayCommands(ReadablePropertyModel property) {
-        List<Command> commands = controller.getCommandController().generateCommands(property.getModel());
-        propertyCommandButtonView.newCommands(commands);
+    private void startGame() {
+        controller.startGame();
     }
 
     @Override

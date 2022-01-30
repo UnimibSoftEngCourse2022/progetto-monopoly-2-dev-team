@@ -56,9 +56,13 @@ public class PropertyCommandBuilder implements CommandBuilder {
                 propertyCommand = new SellHouseCommand(propertyController, property);
                 price = propertyManager.getPriceManager().getHousePrice() / 2;
             }
-        } else {//(Type.MORTGAGE.equals(type))
+        } else {
             propertyCommand = new MortgageCommand(propertyController, property);
-            price = propertyManager.getPriceManager().getMortgageValue();
+            if (property.isMortgaged()) {
+                price = propertyManager.getPriceManager().getLiftMortgageValue();
+            } else {
+                price = propertyManager.getPriceManager().getMortgageValue();
+            }
         }
 
         PayCommandBuilder payCommandBuilder = new PayCommandBuilder(tradeController);

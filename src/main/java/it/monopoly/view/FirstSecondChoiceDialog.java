@@ -1,6 +1,5 @@
 package it.monopoly.view;
 
-import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -40,8 +39,18 @@ public class FirstSecondChoiceDialog extends Dialog {
         firstButton.setText(first);
     }
 
+    public void setFirstChoice(String first, boolean enabled) {
+        firstButton.setText(first);
+        firstButton.setEnabled(enabled);
+    }
+
     public void setSecondChoice(String second) {
         secondButton.setText(second);
+    }
+
+    public void setSecondChoice(String second, boolean enabled) {
+        secondButton.setText(second);
+        secondButton.setEnabled(enabled);
     }
 
     public void setText(String message) {

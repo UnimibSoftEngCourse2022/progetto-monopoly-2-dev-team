@@ -1,6 +1,8 @@
 package it.monopoly.manager.pricemanager;
 
 import it.monopoly.manager.randomizer.PropertyRandomizerManager;
+import it.monopoly.manager.randomizer.RandomizationManager;
+import it.monopoly.manager.randomizer.TaxRandomizerManager;
 import it.monopoly.model.PropertyCategoryMapper;
 import it.monopoly.model.PropertyOwnerMapper;
 import it.monopoly.model.PropertyRandomizeModel;
@@ -11,13 +13,20 @@ public abstract class PriceManager {
     protected final PropertyRandomizerManager propertyRandomizerManager;
     protected final PropertyOwnerMapper propertyOwnerMapper;
     protected final PropertyCategoryMapper propertyCategoryMapper;
+    private final TaxRandomizerManager taxRandomizerManager;
 
     protected PriceManager(PropertyModel property,
-                           PropertyRandomizerManager propertyRandomizerManager,
+                           RandomizationManager randomizationManager,
                            PropertyOwnerMapper propertyOwnerMapper,
                            PropertyCategoryMapper propertyCategoryMapper) {
         this.property = property;
-        this.propertyRandomizerManager = propertyRandomizerManager;
+        if (randomizationManager != null) {
+            this.propertyRandomizerManager = randomizationManager.getPropertyRandomizerManager();
+            this.taxRandomizerManager = randomizationManager.getTaxRandomizerManager();
+        } else {
+            this.propertyRandomizerManager = null;
+            this.taxRandomizerManager = null;
+        }
         this.propertyOwnerMapper = propertyOwnerMapper;
         this.propertyCategoryMapper = propertyCategoryMapper;
     }
@@ -57,6 +66,22 @@ public abstract class PriceManager {
             randomValue = mortgageValue * getRandomizeModel().getMortgagePercentage();
         }
         return (int) (mortgageValue + randomValue);
+    }
+
+    public int getLiftMortgageValue() {
+        int mortgageValue = property.getMortgageValue();
+        float randomValue = 0;
+        if (propertyRandomizerManager != null) {
+            randomValue = mortgageValue * getRandomizeModel().getMortgagePercentage();
+        }
+
+        float value = mortgageValue + randomValue;
+        float randomTax = 0;
+        if (taxRandomizerManager != null) {
+            randomTax = taxRandomizerManager.getTaxesPercentage();
+        }
+        value += value * (.1f * randomTax);
+        return (int) value;
     }
 
     public int getRent() {

@@ -13,7 +13,6 @@ import it.monopoly.controller.event.callback.FirstOrSecondCallback;
 import it.monopoly.controller.event.callback.FirstSecondChoice;
 import it.monopoly.controller.player.PlayerController;
 import it.monopoly.controller.property.PropertyController;
-import it.monopoly.manager.AbstractOfferManager;
 import it.monopoly.manager.loyaltyprogram.LoyaltyProgram;
 import it.monopoly.manager.pricemanager.PriceManagerDispatcher;
 import it.monopoly.model.PropertyCategoryMapper;
@@ -21,7 +20,6 @@ import it.monopoly.model.PropertyMapper;
 import it.monopoly.model.PropertyOwnerMapper;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.property.PropertyModel;
-import it.monopoly.model.property.ReadablePropertyModel;
 import org.junit.Before;
 
 import java.io.File;
@@ -75,7 +73,7 @@ public abstract class BaseTest {
             resetPlayers();
         }
 
-        eventDispatcher = new EventDispatcher() {
+        eventDispatcher = new DummyEventDispatcher() {
             @Override
             public DiceRoller diceRollEvent() {
                 return diceRoller;
@@ -87,30 +85,8 @@ public abstract class BaseTest {
             }
 
             @Override
-            public void startOffer(AbstractOfferManager offerManager) {
-            }
-
-            @Override
-            public void buyOrAuction(PlayerModel player, ReadablePropertyModel propertyModel, FirstOrSecondCallback callback) {
-            }
-
-            @Override
             public void useLoyaltyPoints(PlayerModel player, LoyaltyProgram loyalty, FirstOrSecondCallback callback) {
                 callback.choose(FirstSecondChoice.SECOND);
-            }
-
-            @Override
-            public void jailOrFine(PlayerModel player, FirstOrSecondCallback callback) {
-            }
-
-
-            @Override
-            public void showDialog(PlayerModel player, String message) {
-
-            }
-
-            @Override
-            public void sendMessage(String message) {
             }
         };
         PriceManagerDispatcher priceManagerDispatcher = new PriceManagerDispatcher(null, ownerMapper, categoryMapper, eventDispatcher.diceRollEvent());

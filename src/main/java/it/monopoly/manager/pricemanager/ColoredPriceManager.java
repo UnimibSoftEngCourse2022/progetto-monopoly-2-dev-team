@@ -1,6 +1,6 @@
 package it.monopoly.manager.pricemanager;
 
-import it.monopoly.manager.randomizer.PropertyRandomizerManager;
+import it.monopoly.manager.randomizer.RandomizationManager;
 import it.monopoly.model.PropertyCategoryMapper;
 import it.monopoly.model.PropertyOwnerMapper;
 import it.monopoly.model.player.PlayerModel;
@@ -11,10 +11,10 @@ import java.util.List;
 public class ColoredPriceManager extends PriceManager {
 
     public ColoredPriceManager(PropertyModel property,
-                               PropertyRandomizerManager propertyRandomizerManager,
+                               RandomizationManager randomizationManager,
                                PropertyOwnerMapper propertyOwnerMapper,
                                PropertyCategoryMapper propertyCategoryMapper) {
-        super(property, propertyRandomizerManager, propertyOwnerMapper, propertyCategoryMapper);
+        super(property, randomizationManager, propertyOwnerMapper, propertyCategoryMapper);
     }
 
     @Override

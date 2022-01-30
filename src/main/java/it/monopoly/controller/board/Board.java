@@ -8,6 +8,7 @@ import it.monopoly.controller.event.EventDispatcher;
 import it.monopoly.controller.player.PlayerController;
 import it.monopoly.controller.property.PropertyController;
 import it.monopoly.manager.player.PlayerManager;
+import it.monopoly.manager.randomizer.RandomizationManager;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.view.Observable;
 import it.monopoly.view.Observer;
@@ -26,12 +27,13 @@ public class Board implements Observer<PlayerModel>, Observable<PlayerPosition> 
     public Board(CommandBuilderDispatcher commandBuilderDispatcher,
                  EventDispatcher eventDispatcher,
                  DrawableCardController drawableCardController,
+                 RandomizationManager randomizationManager,
                  PlayerController playerController,
                  PropertyController propertyController) {
         this.playerController = playerController;
         this.spaces = new ArrayList<>();
 
-        SpaceDispenser chainOfResponsibility = new TaxSpaceDispenser(commandBuilderDispatcher, 4, 38);
+        SpaceDispenser chainOfResponsibility = new TaxSpaceDispenser(commandBuilderDispatcher, randomizationManager, 4, 38);
         chainOfResponsibility
                 .setSuccessor(new ChanceSpaceDispenser(
                         commandBuilderDispatcher,

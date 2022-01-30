@@ -27,6 +27,7 @@ public class BoardTest extends BaseTest {
                 commandBuilderDispatcher,
                 eventDispatcher,
                 new DrawableCardController(true),
+                null,
                 playerController,
                 propertyController
         );
@@ -56,7 +57,7 @@ public class BoardTest extends BaseTest {
         resetPlayers();
         PlayerModel player = players.get(0);
 
-        TaxSpace taxSpace = new TaxSpace(commandBuilderDispatcher, 100);
+        TaxSpace taxSpace = new TaxSpace(commandBuilderDispatcher, null, 100);
 
         int funds = playerController.getManager(player).getFunds();
 

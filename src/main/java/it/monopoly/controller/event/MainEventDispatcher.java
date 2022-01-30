@@ -78,4 +78,9 @@ public class MainEventDispatcher implements EventDispatcher {
     public void sendMessage(String message) {
         broadcaster.broadcastMessage(message);
     }
+
+    @Override
+    public void announceWinner(PlayerModel winner) {
+        broadcaster.notifyWinner(winner);
+    }
 }

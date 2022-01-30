@@ -25,4 +25,6 @@ public interface EventDispatcher {
     void showDialog(PlayerModel player, String message);
 
     void sendMessage(String message);
+
+    void announceWinner(PlayerModel winner);
 }

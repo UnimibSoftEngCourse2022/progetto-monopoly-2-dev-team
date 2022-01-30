@@ -79,12 +79,13 @@ public class Controller implements Serializable, Observable<Controller> {
         playerController = new PlayerController(mapper);
 
         broadcaster = new Broadcaster();
+
         eventDispatcher = new MainEventDispatcher(broadcaster, viewController);
 
         randomizationManager = new RandomizationManager(properties, configuration);
 
         PriceManagerDispatcher priceManagerDispatcher = new PriceManagerDispatcher(
-                randomizationManager.getPropertyRandomizerManager(),
+                randomizationManager,
                 mapper,
                 mapper,
                 eventDispatcher.diceRollEvent()
@@ -107,6 +108,7 @@ public class Controller implements Serializable, Observable<Controller> {
                 builderDispatcher,
                 eventDispatcher,
                 drawableCardController,
+                randomizationManager,
                 playerController,
                 propertyController
         );
@@ -125,9 +127,10 @@ public class Controller implements Serializable, Observable<Controller> {
         PlayerManager manager = playerController.getManager(player);
         mapper.getOwnerObservable().register(manager);
         board.register(viewController.getPlayerPositionObserver(player));
-        broadcaster.registerForOffers(viewController.getAuctionConsumer(player));
+        broadcaster.registerForOffers(viewController.getOfferConsumer(player));
         broadcaster.registerForPlayers(viewController.getAllPlayersConsumer(player));
         broadcaster.registerForMessages(viewController.getMessageConsumer(player));
+        broadcaster.registerForWinner(viewController.getWinnerConsumer(player));
         manager.register(viewController.getPlayerObserver(player));
         manager.getPositionObservable().register(board);
         manager.register(turnController);
@@ -146,15 +149,17 @@ public class Controller implements Serializable, Observable<Controller> {
             mapper.removeAllPlayerProperties(player);
             board.deregister(viewController.getPlayerPositionObserver(player));
             board.removePlayer(player);
-            broadcaster.deregisterFromOffers(viewController.getAuctionConsumer(player));
+            broadcaster.deregisterFromOffers(viewController.getOfferConsumer(player));
             broadcaster.deregisterForPlayers(viewController.getAllPlayersConsumer(player));
             broadcaster.deregisterForMessages(viewController.getMessageConsumer(player));
+            broadcaster.deregisterForWinner(viewController.getWinnerConsumer(player));
+            broadcaster.notifyAllPlayers(manager.getReadable());
+            manager.setDiceRolled();
+            manager.endTurn();
             manager.deregister(viewController.getPlayerObserver(player));
             manager.getPositionObservable().deregister(board);
             manager.deregister(turnController);
             manager.deregister(broadcaster.getPlayerObserver());
-            manager.setDiceRolled();
-            manager.endTurn();
 
             playerController.removePlayer(player);
             viewController.remove(player);
@@ -197,6 +202,10 @@ public class Controller implements Serializable, Observable<Controller> {
             list.add(playerController.getManager(model).getReadable());
         }
         return list;
+    }
+
+    public List<PlayerModel> getPlayerModels() {
+        return playerController.getModels();
     }
 
     public ReadablePlayerModel getReadablePlayer(PlayerModel playerModel) {

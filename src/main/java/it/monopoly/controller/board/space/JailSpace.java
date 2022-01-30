@@ -4,6 +4,7 @@ import it.monopoly.controller.command.CommandBuilderDispatcher;
 import it.monopoly.controller.event.EventDispatcher;
 import it.monopoly.controller.event.callback.FirstSecondChoice;
 import it.monopoly.controller.player.PlayerController;
+import it.monopoly.manager.player.PlayerManager;
 import it.monopoly.model.player.PlayerModel;
 
 public class JailSpace extends AbstractSpace {
@@ -20,10 +21,13 @@ public class JailSpace extends AbstractSpace {
 
     @Override
     public void applyEffect(PlayerModel player) {
-        eventDispatcher.jailOrFine(player, choice -> {
-            if (FirstSecondChoice.SECOND.equals(choice)) {
-                playerController.getManager(player).getOutOfJailWithFine();
-            }
-        });
+        PlayerManager playerManager = playerController.getManager(player);
+        if (playerManager.isInJail()) {
+            eventDispatcher.jailOrFine(player, choice -> {
+                if (FirstSecondChoice.SECOND.equals(choice)) {
+                    playerManager.getOutOfJailWithFine();
+                }
+            });
+        }
     }
 }

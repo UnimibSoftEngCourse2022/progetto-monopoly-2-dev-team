@@ -10,6 +10,7 @@ import it.monopoly.model.player.ReadablePlayerModel;
 import it.monopoly.view.Observer;
 
 public class TurnController implements Observer<ReadablePlayerModel> {
+    private boolean started = false;
     private final PlayerController playerController;
     private final EventDispatcher eventDispatcher;
     private final RandomizationManager randomizationManager;
@@ -29,6 +30,7 @@ public class TurnController implements Observer<ReadablePlayerModel> {
     public void start() {
         synchronized (playerController.getModels()) {
             if (!playerController.getModels().isEmpty()) {
+                started = true;
                 nextTurn();
             }
         }
@@ -69,8 +71,13 @@ public class TurnController implements Observer<ReadablePlayerModel> {
 
     @Override
     public void notify(ReadablePlayerModel player) {
+        if (!started) {
+            return;
+        }
         PlayerModel winner = playerCheck.checkPlayers();
         if (winner != null) {
+            eventDispatcher.announceWinner(winner);
+            stop();
             return;
         }
         if (currentPlayer != null) {
@@ -84,6 +91,7 @@ public class TurnController implements Observer<ReadablePlayerModel> {
     }
 
     public void stop() {
+        started = false;
         currentPlayerIndex = -1;
         currentPlayer = null;
     }
