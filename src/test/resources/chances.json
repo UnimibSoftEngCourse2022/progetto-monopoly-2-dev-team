@@ -1,0 +1,67 @@
+[
+  {
+    "text": "Advance to \"GO\".",
+    "category": "CHANCE",
+    "movement": "MOVE_TO",
+    "where": 0
+  },
+  {
+    "text": "Go to Jail. Go directly to Jail. Do not pass GO, do not collect $200.",
+    "category": "CHANCE",
+    "movement": "MOVE_TO",
+    "direct": true,
+    "where": 10
+  },
+  {
+    "text": "Go Back Three Spaces.",
+    "category": "CHANCE",
+    "movement": "MOVE_OF",
+    "where": -3
+  },
+  {
+    "text": "Advance to the nearest Railroad. If unowned, you may buy it from the Bank. If owned, pay owner twice the re tal to which they are otherwise entitled. If Railroad is unowned, you may buy it from the Bank.",
+    "category": "CHANCE",
+    "movement": "MOVE_NEAR",
+    "near": [
+      5,
+      15,
+      25,
+      35
+    ]
+  },
+  {
+    "text": "Bank pays you dividend of $50.",
+    "category": "CHANCE",
+    "pay": "AMOUNT",
+    "amount": 50,
+    "creditor": "PLAYER"
+  },
+  {
+    "text": "Pay poor tax of $15.",
+    "category": "CHANCE",
+    "pay": "AMOUNT",
+    "amount": 15,
+    "debtor": "PLAYER"
+  },
+  {
+    "text": "You have been elected Chairman of the Board. Pay each player $50.",
+    "category": "CHANCE",
+    "pay": "AMOUNT",
+    "amount": 50,
+    "debtor": "PLAYER",
+    "creditor": "ALL"
+  },
+  {
+    "text": "Make general repairs on all your property: For each house pay $25, For each hotel $100",
+    "category": "CHANCE",
+    "pay": "HOUSE_HOTEL_NUMBER",
+    "houseFee": 25,
+    "hotelFee": 100,
+    "debtor": "PLAYER"
+  },
+  {
+    "text": "Get out of Jail Free. This card may be kept until needed, or traded/sold.",
+    "category": "CHANCE",
+    "keep": true
+  }
+]

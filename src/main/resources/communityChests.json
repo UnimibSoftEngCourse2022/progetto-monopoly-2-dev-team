@@ -1,0 +1,121 @@
+[
+  {
+    "text": "Advance to \"Go\".",
+    "category": "COMMUNITY_CHEST",
+    "movement": "MOVE_TO",
+    "where": 0
+  },
+  {
+    "text": "Bank error in your favor. Collect $200.",
+    "category": "COMMUNITY_CHEST",
+    "pay": "AMOUNT",
+    "amount": 200,
+    "creditor": "PLAYER"
+  },
+  {
+    "text": "Doctor's fees. Pay $50.",
+    "category": "COMMUNITY_CHEST",
+    "pay": "AMOUNT",
+    "amount": 50,
+    "debtor": "PLAYER"
+  },
+  {
+    "text": "From sale of stock you get $50.",
+    "category": "COMMUNITY_CHEST",
+    "pay": "AMOUNT",
+    "amount": 50,
+    "creditor": "PLAYER"
+  },
+  {
+    "text": "Get Out of Jail Free. This card may be kept until needed or sold/traded.",
+    "category": "COMMUNITY_CHEST",
+    "keep": true
+  },
+  {
+    "text": "Go to Jail. Go directly to jail. Do not pass Go, Do not collect $200.",
+    "category": "COMMUNITY_CHEST",
+    "movement": "MOVE_TO",
+    "direct": true,
+    "where": 10
+  },
+  {
+    "text": "Grand Opera Night. Collect $50 from every player for opening night seats.",
+    "category": "COMMUNITY_CHEST",
+    "pay": "AMOUNT",
+    "amount": 50,
+    "creditor": "PLAYER",
+    "debtor": "ALL"
+  },
+  {
+    "text": "Holiday Fund matures. Receive $100.",
+    "category": "COMMUNITY_CHEST",
+    "pay": "AMOUNT",
+    "amount": 100,
+    "creditor": "PLAYER"
+  },
+  {
+    "text": "Income tax refund. Collect $20.",
+    "category": "COMMUNITY_CHEST",
+    "pay": "AMOUNT",
+    "amount": 20,
+    "creditor": "PLAYER"
+  },
+  {
+    "text": "It is your birthday. Collect $10 from every player.",
+    "category": "COMMUNITY_CHEST",
+    "pay": "AMOUNT",
+    "amount": 10,
+    "creditor": "PLAYER",
+    "debtor": "ALL"
+  },
+  {
+    "text": "Life insurance matures. Collect $100",
+    "category": "COMMUNITY_CHEST",
+    "pay": "AMOUNT",
+    "amount": 100,
+    "creditor": "PLAYER"
+  },
+  {
+    "text": "Hospital Fees. Pay $50.",
+    "category": "COMMUNITY_CHEST",
+    "pay": "AMOUNT",
+    "amount": 50,
+    "debtor": "PLAYER"
+  },
+  {
+    "text": "School fees. Pay $50.",
+    "category": "COMMUNITY_CHEST",
+    "pay": "AMOUNT",
+    "amount": 50,
+    "debtor": "PLAYER"
+  },
+  {
+    "text": "Receive $25 consultancy fee.",
+    "category": "COMMUNITY_CHEST",
+    "pay": "AMOUNT",
+    "amount": 25,
+    "creditor": "PLAYER"
+  },
+  {
+    "text": "You are assessed for street repairs: Pay $40 per house and $115 per hotel you own.",
+    "category": "COMMUNITY_CHEST",
+    "pay": "HOUSE_HOTEL_NUMBER",
+    "houseFee": 40,
+    "hotelFee": 115,
+    "debtor": "PLAYER"
+  },
+  {
+    "text": "You have won second prize in a beauty contest. Collect $10.",
+    "category": "COMMUNITY_CHEST",
+    "pay":"AMOUNT",
+    "amount": 10,
+    "creditor": "PLAYER"
+  },
+  {
+    "text": "You inherit $100.",
+    "category": "COMMUNITY_CHEST",
+    "pay": "AMOUNT",
+    "amount": 100,
+    "creditor": "PLAYER"
+  }
+]

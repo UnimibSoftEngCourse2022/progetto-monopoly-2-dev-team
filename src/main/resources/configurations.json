@@ -1,0 +1,34 @@
+[
+  {
+    "player_number": 6,
+    "player_funds": 1500,
+    "randomness_index": 0,
+    "tax_rate": 0,
+    "price_change_rate": 0,
+    "loyalty_program": null
+  },
+  {
+    "player_number": 6,
+    "player_funds": 2000,
+    "randomness_index": 0,
+    "tax_rate": 0,
+    "price_change_rate": 0,
+    "loyalty_program": "PERCENTAGE"
+  },
+  {
+    "player_number": 8,
+    "player_funds": 1500,
+    "randomness_index": 0.5,
+    "tax_rate": 0.3,
+    "price_change_rate": 0.3,
+    "loyalty_program": "POINTS"
+  },
+  {
+    "player_number": 10,
+    "player_funds": 1000,
+    "randomness_index": 1,
+    "tax_rate": 0.7,
+    "price_change_rate": 0.7,
+    "loyalty_program": null
+  }
+]
