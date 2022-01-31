@@ -12,7 +12,6 @@ import it.monopoly.model.Configuration;
 import it.monopoly.model.player.PlayerModel;
 import it.monopoly.model.property.PropertyModel;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 

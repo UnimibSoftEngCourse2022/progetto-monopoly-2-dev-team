@@ -41,9 +41,8 @@ public class PlayerListView extends VerticalLayout {
 
         buttonsLayout = new HorizontalLayout();
 
-        grid.addSelectionListener(event -> {
-            event.getFirstSelectedItem().ifPresentOrElse(this::updateButtons, buttonsLayout::removeAll);
-        });
+        grid.addSelectionListener(event ->
+                event.getFirstSelectedItem().ifPresentOrElse(this::updateButtons, buttonsLayout::removeAll));
 
         add(grid, buttonsLayout);
     }

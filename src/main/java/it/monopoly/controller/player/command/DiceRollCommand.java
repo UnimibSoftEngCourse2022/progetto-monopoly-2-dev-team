@@ -15,10 +15,10 @@ public abstract class DiceRollCommand implements Command {
     protected final PlayerModel player;
     protected final MoveCommandBuilder moveCommandBuilder;
 
-    public DiceRollCommand(PlayerController playerController,
-                           EventDispatcher eventDispatcher,
-                           PlayerModel player,
-                           MoveCommandBuilder moveCommandBuilder) {
+    protected DiceRollCommand(PlayerController playerController,
+                              EventDispatcher eventDispatcher,
+                              PlayerModel player,
+                              MoveCommandBuilder moveCommandBuilder) {
         this.playerController = playerController;
         this.eventDispatcher = eventDispatcher;
         this.player = player;

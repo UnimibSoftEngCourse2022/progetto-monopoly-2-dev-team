@@ -4,7 +4,7 @@ import it.monopoly.model.player.PlayerModel;
 
 public class LoyaltyPercentage extends LoyaltyProgram {
 
-    private final float MAX_PERCENTAGE = 0.25F;
+    private static final float MAX_PERCENTAGE = 0.25F;
     private final float randomnessIndex;
     private float percentage = 0.05F;
 

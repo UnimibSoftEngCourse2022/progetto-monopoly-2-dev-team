@@ -70,6 +70,7 @@ public class Controller implements Serializable, Observable<Controller> {
                 properties = jacksonMapper.readValue(new File(jsonURL.toURI()), new TypeReference<>() {
                 });
             } catch (IOException | URISyntaxException ignored) {
+                logger.error("Error while parsing properties json file");
             }
         }
         mapper = new PropertyMapper(properties);
