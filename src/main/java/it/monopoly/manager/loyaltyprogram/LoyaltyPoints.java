@@ -4,7 +4,7 @@ import it.monopoly.model.player.PlayerModel;
 
 public class LoyaltyPoints extends LoyaltyProgram {
 
-    private final int MAX_POINTS = 200;
+    private static final int MAX_POINTS = 200;
     private final float randomnessIndex;
     private int points = 0;
 

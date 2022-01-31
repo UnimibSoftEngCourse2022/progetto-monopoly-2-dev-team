@@ -4,7 +4,6 @@ import it.monopoly.model.player.PlayerModel;
 
 public abstract class LoyaltyProgram {
 
-    private float value;
     private final Type type;
     protected PlayerModel creditor;
 
@@ -13,7 +12,7 @@ public abstract class LoyaltyProgram {
         POINTS
     }
 
-    public LoyaltyProgram(PlayerModel creditor, Type type) {
+    protected LoyaltyProgram(PlayerModel creditor, Type type) {
         this.creditor = creditor;
         this.type = type;
     }

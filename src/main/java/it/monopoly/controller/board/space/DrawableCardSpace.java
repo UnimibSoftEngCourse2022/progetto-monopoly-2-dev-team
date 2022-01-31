@@ -46,14 +46,12 @@ public abstract class DrawableCardSpace extends AbstractSpace {
 
         CommandBuilder commandBuilder = null;
 
-        if (card != null) {
-            if (card.getMovement() != null) {
-                commandBuilder = movementEffect(player, card);
-            } else if (card.getPay() != null) {
-                commandBuilder = payEffect(player, card);
-            } else {
-                playerController.getManager(player).keepCard(card);
-            }
+        if (card.getMovement() != null) {
+            commandBuilder = movementEffect(player, card);
+        } else if (card.getPay() != null) {
+            commandBuilder = payEffect(player, card);
+        } else {
+            playerController.getManager(player).keepCard(card);
         }
 
         if (commandBuilder != null) {

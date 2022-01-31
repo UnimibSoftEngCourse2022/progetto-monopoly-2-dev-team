@@ -2,9 +2,6 @@ package it.monopoly.controller.player.command;
 
 import it.monopoly.controller.command.Command;
 import it.monopoly.controller.player.PlayerController;
-import it.monopoly.manager.loyaltyprogram.LoyaltyPercentage;
-import it.monopoly.manager.loyaltyprogram.LoyaltyPoints;
-import it.monopoly.manager.loyaltyprogram.LoyaltyProgram;
 import it.monopoly.manager.player.PlayerManager;
 import it.monopoly.model.player.PlayerModel;
 
@@ -13,17 +10,14 @@ public class QuitLoyaltyProgramCommand implements Command {
     private final PlayerController playerController;
     private final PlayerModel player;
     private final PlayerModel creditor;
-    private final LoyaltyProgram.Type type;
 
 
     public QuitLoyaltyProgramCommand(PlayerController playerController,
                                      PlayerModel player,
-                                     PlayerModel creditor,
-                                     LoyaltyProgram.Type type) {
+                                     PlayerModel creditor) {
         this.playerController = playerController;
         this.player = player;
         this.creditor = creditor;
-        this.type = type;
     }
 
     @Override

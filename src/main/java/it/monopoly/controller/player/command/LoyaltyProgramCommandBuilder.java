@@ -41,8 +41,8 @@ public class LoyaltyProgramCommandBuilder implements CommandBuilder {
         if (loyaltyProgram != null && loyaltyProgram.getCreditor().equals(creditor)) {
             return new QuitLoyaltyProgramCommand(playerController,
                     debtor,
-                    creditor,
-                    type);
+                    creditor
+            );
         }
         return new JoinLoyaltyProgramCommand(playerController,
                 debtor,

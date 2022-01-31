@@ -149,7 +149,7 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver, B
         add(leftLayout, rightLayout);
         setFlexGrow(.5, leftLayout, rightLayout);
 
-        logger.info("Attached " + this);
+        logger.info("Attached {}", this);
         if (player == null) {
             player = controller.setupPlayer(playerName, this);
             if (player == null) {
@@ -397,7 +397,7 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver, B
 
     @ClientCallable
     public void closeSession() {
-        logger.info("Closing " + this);
+        logger.info("Closing {}", this);
         controller.closePlayerSession(player);
     }
 
