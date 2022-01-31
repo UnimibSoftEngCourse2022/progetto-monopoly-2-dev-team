@@ -219,7 +219,8 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver, B
             ViewUtil.runOnUiThread(getUI(), () -> {
                 List<PlayerModel> players = controller.getPlayerModels();
                 boolean isCreator = players.indexOf(player) == 0;
-                boolean isMoreThanOnePlayer = players.size() > 1;
+                int playerNumber = players.size();
+                boolean isMoreThanOnePlayer = playerNumber > 1;
                 startGameDialog.setFirstChoice("Start Game", isCreator && isMoreThanOnePlayer);
                 String text = "Wait for";
                 if (isCreator) {
@@ -230,6 +231,10 @@ public class MainView extends HorizontalLayout implements BeforeEnterObserver, B
                 } else {
                     text += " creator to start the game";
                 }
+
+                text += " | Code: " + id;
+                text += " | Players: " + playerNumber;
+
                 startGameDialog.setText(text);
                 startGameDialog.setSecondChoice("Quit");
             });

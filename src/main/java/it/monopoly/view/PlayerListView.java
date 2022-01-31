@@ -27,10 +27,10 @@ public class PlayerListView extends VerticalLayout {
         grid = new Grid<>(ReadablePlayerModel.class, false);
 
         grid.addColumn(TemplateRenderer.<ReadablePlayerModel>of(
-                "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" style=\"width: 8%; fill: [[item.color]];\"><circle cx=\"50\" cy=\"50\" r=\"50\" style=\"position: relative;\"></circle></svg>"
-        ).withProperty("color", ReadablePlayerModel::getColor)).setHeader("Color").setAutoWidth(true);
-        grid.addColumn(ReadablePlayerModel::getName).setHeader("Name");
-        grid.addColumn(ReadablePlayerModel::getFunds).setHeader("Funds");
+                "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" style=\"width: 24px; fill: [[item.color]];\"><circle cx=\"50\" cy=\"50\" r=\"50\" style=\"position: relative;\"></circle></svg>"
+        ).withProperty("color", ReadablePlayerModel::getColor)).setHeader("Color").setAutoWidth(true).setResizable(true);
+        grid.addColumn(ReadablePlayerModel::getName).setHeader("Name").setAutoWidth(true).setResizable(true);
+        grid.addColumn(ReadablePlayerModel::getFunds).setHeader("Funds").setAutoWidth(true).setResizable(true);
         grid.addColumn(ReadablePlayerModel::getStateName).setHeader("State");
 
         grid.setSizeFull();
